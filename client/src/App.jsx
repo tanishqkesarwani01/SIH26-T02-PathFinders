@@ -238,6 +238,7 @@ export default function App() {
                 setVerificationModal({ isOpen: true, type: 'pickup', shipment: shp })
               }
               driverRatings={ratings}
+              onRefreshData={refreshAllData}
             />
           )}
 

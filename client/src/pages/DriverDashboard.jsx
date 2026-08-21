@@ -19,9 +19,15 @@ import {
   CheckCheck,
   Layers,
   Sparkles,
-  Info
+  Info,
+  Radio,
+  Zap,
+  Navigation
 } from 'lucide-react';
+import confetti from 'canvas-confetti';
 import MapView from '../components/MapView';
+import EnRouteAlertModal from '../components/EnRouteAlertModal';
+import { tripsAPI } from '../services/api';
 
 export default function DriverDashboard({
   trips = [],
@@ -31,13 +37,22 @@ export default function DriverDashboard({
   onRejectShipment,
   onUpdateTripStatus,
   onOpenPickupVerification,
+  onRefreshData,
   driverRatings = []
 }) {
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [selectedTripId, setSelectedTripId] = useState(trips[0]?.id || null);
   const [activeTripData, setActiveTripData] = useState(null);
 
+  // En-Route Proximity Alert State
+  const [isEnRouteModalOpen, setIsEnRouteModalOpen] = useState(false);
+  const [enRouteOpportunity, setEnRouteOpportunity] = useState(null);
+  const [isSimulatingEnRoute, setIsSimulatingEnRoute] = useState(false);
+  const [enRouteStatusMsg, setEnRouteStatusMsg] = useState('');
+  const [isAcceptingEnRoute, setIsAcceptingEnRoute] = useState(false);
+
   // Form State
+
   const [source, setSource] = useState('Lucknow');
   const [destination, setDestination] = useState('Varanasi');
   const [departureDate, setDepartureDate] = useState(new Date().toISOString().split('T')[0]);
@@ -80,10 +95,69 @@ export default function DriverDashboard({
     }
   };
 
+  // 10km En-Route Proximity Simulator Trigger
+  const handleSimulateEnRouteTrigger = async (enRouteCity = 'Sultanpur') => {
+    if (!currentTrip) return;
+    setIsSimulatingEnRoute(true);
+    setEnRouteStatusMsg(`Scanning 10km radius as truck approaches ${enRouteCity}...`);
+    try {
+      const res = await tripsAPI.simulateEnRouteOpportunity(currentTrip.id, { enRouteLocation: enRouteCity });
+      const opp = res.data.proximityOpportunities?.[0];
+      if (opp) {
+        setEnRouteOpportunity(opp);
+        setIsEnRouteModalOpen(true);
+        setEnRouteStatusMsg(`🚨 En-route load detected ${opp.proximityDistanceKm} km away in ${opp.pickupLocation}!`);
+      } else {
+        setEnRouteStatusMsg('No new consignments within 10km right now.');
+      }
+    } catch (err) {
+      console.error('Failed to trigger en-route simulation:', err);
+      setEnRouteStatusMsg('Error scanning proximity consignments.');
+    } finally {
+      setIsSimulatingEnRoute(false);
+    }
+  };
+
+  // Driver Decision: Accept En-Route Consignment
+  const handleAcceptEnRouteConsignment = async () => {
+    if (!currentTrip || !enRouteOpportunity) return;
+    setIsAcceptingEnRoute(true);
+    try {
+      await tripsAPI.acceptEnRouteConsignment(currentTrip.id, enRouteOpportunity.shipmentId);
+      setIsEnRouteModalOpen(false);
+      setEnRouteStatusMsg(`✅ Accepted en-route consignment from ${enRouteOpportunity.senderName}! Added to trip load.`);
+      confetti({
+        particleCount: 80,
+        spread: 70,
+        origin: { y: 0.3 }
+      });
+      if (onRefreshData) onRefreshData();
+    } catch (err) {
+      console.error(err);
+      alert(err.response?.data?.error || 'Failed to accept consignment');
+    } finally {
+      setIsAcceptingEnRoute(false);
+    }
+  };
+
+  // Driver Decision: Decline / Dismiss En-Route Consignment
+  const handleDeclineEnRouteConsignment = async () => {
+    if (!currentTrip || !enRouteOpportunity) return;
+    try {
+      await tripsAPI.declineEnRouteConsignment(currentTrip.id, enRouteOpportunity.shipmentId, 'Driver opted not to take detour');
+      setIsEnRouteModalOpen(false);
+      setEnRouteStatusMsg('Consignment declined. Your trip continues as scheduled.');
+      setTimeout(() => setEnRouteStatusMsg(''), 4000);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   // Compute stats for current driver
   const avgRating = driverRatings.length > 0
     ? (driverRatings.reduce((sum, r) => sum + r.rating, 0) / driverRatings.length).toFixed(1)
-    : (currentTrip?.driverRating || '4.9');
+    : (currentTrip?.driverRating || '4.85');
+
 
   return (
     <div className="space-y-6">
@@ -126,6 +200,49 @@ export default function DriverDashboard({
           </button>
         </div>
       </div>
+
+      {/* 🚨 EN-ROUTE 10KM PROXIMITY RADAR & TRIGGER BANNER */}
+      {currentTrip && (
+        <div className="bg-gradient-to-r from-slate-900 via-slate-900 to-indigo-950 border-2 border-indigo-500/40 rounded-2xl p-4 sm:p-5 shadow-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+          <div className="flex items-center gap-3.5">
+            <div className="w-11 h-11 rounded-xl bg-indigo-500/20 border border-indigo-500/40 flex items-center justify-center text-indigo-400 flex-shrink-0 relative">
+              <Radio className="w-6 h-6 animate-pulse" />
+              <span className="absolute top-1 right-1 w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <h3 className="text-sm font-extrabold text-white">
+                  En-Route Proximity Radar (10km Corridor Detection)
+                </h3>
+                <span className="bg-emerald-500/10 text-emerald-400 text-[10px] font-bold px-2 py-0.5 rounded-full border border-emerald-500/30 uppercase tracking-wider">
+                  Active
+                </span>
+              </div>
+              <p className="text-xs text-slate-300 mt-0.5">
+                Automatically alerts the driver when an en-route sender requests delivery within 10km of the truck's forward path.
+              </p>
+              {enRouteStatusMsg && (
+                <p className="text-xs font-semibold text-amber-300 mt-1 flex items-center gap-1.5 animate-fadeIn">
+                  <Zap className="w-3.5 h-3.5 text-amber-400" /> {enRouteStatusMsg}
+                </p>
+              )}
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2.5 w-full md:w-auto justify-end flex-wrap">
+            <button
+              type="button"
+              onClick={() => handleSimulateEnRouteTrigger('Sultanpur')}
+              disabled={isSimulatingEnRoute}
+              className="px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs flex items-center gap-2 shadow-lg shadow-indigo-600/30 hover:scale-105 active:scale-95 transition-all disabled:opacity-50"
+            >
+              <Zap className="w-4 h-4 fill-white" />
+              <span>{isSimulatingEnRoute ? 'Scanning 10km...' : 'Simulate 10km Proximity Trigger'}</span>
+            </button>
+          </div>
+        </div>
+      )}
+
 
       {/* Create Trip Form Collapsible Drawer */}
       {showCreateForm && (
@@ -581,6 +698,18 @@ export default function DriverDashboard({
         </div>
       )}
 
+      {/* 🚨 En-Route Proximity Load Alert Modal */}
+      <EnRouteAlertModal
+        isOpen={isEnRouteModalOpen}
+        opportunity={enRouteOpportunity}
+        trip={currentTrip}
+        onAccept={handleAcceptEnRouteConsignment}
+        onDecline={handleDeclineEnRouteConsignment}
+        isLoading={isAcceptingEnRoute}
+      />
+
+
     </div>
   );
 }
+

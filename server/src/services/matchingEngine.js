@@ -327,9 +327,95 @@ function matchTripRoutes(trip, availableShipments) {
   return evaluatedRoutes;
 }
 
+/**
+ * Real-time En-Route Proximity Matching Algorithm:
+ * Detects if a truck on its chosen route is within 10 km radius of any pending consignment's pickup address.
+ */
+function scanEnRouteProximityConsignments(trip, currentCoords, proximityRadiusKm = 10, allShipments = []) {
+  if (!trip) return [];
+
+  const activeRoute = (trip.routes || []).find(r => r.id === trip.selectedRouteId) || trip.routes?.[0] || {
+    stops: [
+      { name: trip.source, ...getCityCoords(trip.source) },
+      { name: trip.destination, ...getCityCoords(trip.destination) }
+    ]
+  };
+
+  const truckLat = currentCoords?.lat || getCityCoords(trip.source).lat;
+  const truckLng = currentCoords?.lng || getCityCoords(trip.source).lng;
+  const remainingCapacity = trip.availableCapacityKg || (trip.totalCapacityKg - (trip.currentLoadKg || 0));
+
+  const opportunities = [];
+
+  for (const shipment of allShipments) {
+    // Only check open/pending shipments not yet accepted on this trip
+    if (shipment.status !== 'PENDING' && shipment.status !== 'MATCHED') continue;
+    if (shipment.assignedTripId === trip.id) continue;
+
+    // Hard Constraint 1: Space Availability
+    if (shipment.weightKg > remainingCapacity) continue;
+
+    const pCoords = shipment.pickupCoords || getCityCoords(shipment.pickupLocation);
+    const dCoords = shipment.dropCoords || getCityCoords(shipment.dropLocation);
+
+    // Hard Constraint 2: Proximity Radius (<= 10 km)
+    const distanceToPickupKm = haversineDistance(truckLat, truckLng, pCoords.lat, pCoords.lng);
+    if (distanceToPickupKm > proximityRadiusKm) continue;
+
+    // Hard Constraint 3: Destination Alignment
+    const tripDestNorm = normalizeCityName(trip.destination);
+    const dropNorm = normalizeCityName(shipment.dropLocation);
+
+    let isDestinationCompatible = false;
+    if (tripDestNorm && dropNorm && tripDestNorm === dropNorm) {
+      isDestinationCompatible = true;
+    } else if (activeRoute.stops && activeRoute.stops.length > 0) {
+      const stopNames = activeRoute.stops.map(s => normalizeCityName(s.name)).filter(Boolean);
+      if (dropNorm && stopNames.includes(dropNorm)) {
+        isDestinationCompatible = true;
+      }
+    }
+
+    if (!isDestinationCompatible) continue;
+
+    const revenue = shipment.fareEstimate?.totalFare || calculateFare(shipment.distanceKm, shipment.weightKg).totalFare;
+    const detourKm = Math.min(proximityRadiusKm, Math.round(distanceToPickupKm * 0.75 * 10) / 10);
+    const estimatedMinutesDelay = Math.round(detourKm * 2.2 + 8);
+    const newRemainingCapacityKg = Math.max(0, remainingCapacity - shipment.weightKg);
+    const newTotalLoadKg = (trip.currentLoadKg || 0) + shipment.weightKg;
+    const newUtilizationPercent = Math.min(100, Math.round((newTotalLoadKg / Math.max(1, trip.totalCapacityKg)) * 100));
+
+    opportunities.push({
+      shipmentId: shipment.id,
+      shipment,
+      proximityDistanceKm: Math.round(distanceToPickupKm * 10) / 10,
+      detourKm,
+      estimatedMinutesDelay,
+      revenue,
+      weightKg: shipment.weightKg,
+      packageType: shipment.packageType,
+      senderName: shipment.senderName,
+      senderPhone: shipment.senderPhone,
+      pickupLocation: shipment.pickupLocation,
+      dropLocation: shipment.dropLocation,
+      currentCapacityKg: remainingCapacity,
+      newRemainingCapacityKg,
+      newUtilizationPercent,
+      alertMessage: `🚨 En-Route Consignment detected ${Math.round(distanceToPickupKm * 10) / 10} km away in ${shipment.pickupLocation}!`,
+      urgency: distanceToPickupKm <= 5 ? 'IMMEDIATE' : 'APPROACHING'
+    });
+  }
+
+  opportunities.sort((a, b) => a.proximityDistanceKm - b.proximityDistanceKm);
+  return opportunities;
+}
+
 module.exports = {
   generateCandidateRoutes,
   matchTripRoutes,
   getCityCoords,
-  isShipmentAlongRoute
+  isShipmentAlongRoute,
+  scanEnRouteProximityConsignments,
+  haversineDistance
 };
+

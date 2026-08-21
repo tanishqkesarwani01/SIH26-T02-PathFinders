@@ -29,8 +29,13 @@ export const tripsAPI = {
   selectRoute: (id, routeId) => api.post(`/trips/${id}/select-route`, { routeId }),
   acceptShipment: (id, shipmentId) => api.post(`/trips/${id}/accept-shipment`, { shipmentId }),
   rejectShipment: (id, shipmentId) => api.post(`/trips/${id}/reject-shipment`, { shipmentId }),
-  updateTripStatus: (id, status) => api.post(`/trips/${id}/status`, { status })
+  updateTripStatus: (id, status) => api.post(`/trips/${id}/status`, { status }),
+  getProximityConsignments: (id, params) => api.get(`/trips/${id}/proximity-consignments`, { params }),
+  simulateEnRouteOpportunity: (id, data) => api.post(`/trips/${id}/simulate-enroute-opportunity`, data),
+  acceptEnRouteConsignment: (id, shipmentId) => api.post(`/trips/${id}/accept-enroute-consignment`, { shipmentId }),
+  declineEnRouteConsignment: (id, shipmentId, reason) => api.post(`/trips/${id}/decline-enroute-consignment`, { shipmentId, reason })
 };
+
 
 export const shipmentsAPI = {
   getShipments: (params) => api.get('/shipments', { params }),
