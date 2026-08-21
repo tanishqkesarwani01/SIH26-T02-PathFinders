@@ -249,64 +249,38 @@ router.get('/:id/proximity-consignments', (req, res) => {
   }
 });
 
-// Interactive Simulator: Simulate truck reaching an en-route stop (e.g. Sultanpur) and trigger 10km proximity consignment alert
+// Interactive Simulator: Simulate truck at ANY GPS coordinate or waypoint along the route and detect proximity consignments
 router.post('/:id/simulate-enroute-opportunity', (req, res) => {
   try {
     const trip = db.findTripById(req.params.id);
     if (!trip) return res.status(404).json({ error: 'Trip not found' });
 
-    const { enRouteLocation = 'Sultanpur' } = req.body;
-    const enRouteCoords = getCityCoords(enRouteLocation);
+    const { lat, lng, radiusKm = 10, locationName } = req.body;
+    let truckSimCoords;
 
-    // Find any existing pending shipment or create an instant en-route consignment on-the-fly
-    const allShipments = db.getShipments();
-    let opportunities = scanEnRouteProximityConsignments(trip, enRouteCoords, 10, allShipments);
-
-    if (opportunities.length === 0) {
-      // Create a realistic sample en-route consignment near Sultanpur heading to Varanasi
-      const newShipment = {
-        id: `shp_enroute_${Date.now().toString().slice(-4)}`,
-        senderId: 'usr_snd_enroute_anand',
-        senderName: 'Anand Kumar (Agri-Commodities)',
-        senderPhone: '+91 94520 11223',
-        pickupLocation: `${enRouteLocation} (NH31 Mandi Gate)`,
-        pickupCoords: { lat: enRouteCoords.lat + 0.02, lng: enRouteCoords.lng + 0.03 }, // ~4 km off highway
-        dropLocation: trip.destination,
-        dropCoords: getCityCoords(trip.destination),
-        distanceKm: 145,
-        weightKg: 500,
-        packageType: 'Perishables / Organic Produce',
-        packageDescription: '12 Crates of Fresh Organic Mangoes & Produce',
-        pickupTimeWindow: 'Immediate En-Route Handover (Next 20 mins)',
-        deliveryDeadline: 'Today Evening',
-        fareEstimate: {
-          baseFee: 50,
-          distanceFee: 290,
-          weightFee: 500,
-          packageMultiplier: 1.1,
-          totalFare: 924
-        },
-        status: 'PENDING',
-        assignedTripId: null,
-        driverId: null,
-        pickupOtp: Math.floor(1000 + Math.random() * 9000).toString(),
-        pickupOtpVerified: false,
-        pickupPhoto: null,
-        deliveryOtp: Math.floor(1000 + Math.random() * 9000).toString(),
-        deliveryOtpVerified: false,
-        deliveryPhoto: null,
-        paymentStatus: 'PENDING',
-        createdAt: new Date().toISOString()
+    if (lat !== undefined && lng !== undefined) {
+      truckSimCoords = { lat: Number(lat), lng: Number(lng) };
+    } else {
+      const activeRoute = (trip.routes || []).find(r => r.id === trip.selectedRouteId) || trip.routes?.[0];
+      const stops = activeRoute?.stops || [
+        { name: trip.source, ...getCityCoords(trip.source) },
+        { name: trip.destination, ...getCityCoords(trip.destination) }
+      ];
+      // Pick middle waypoint or first forward stop
+      const targetStop = stops[1] || stops[0];
+      truckSimCoords = {
+        lat: targetStop.lat + 0.03,
+        lng: targetStop.lng - 0.04
       };
-
-      db.createShipment(newShipment);
-      opportunities = scanEnRouteProximityConsignments(trip, enRouteCoords, 10, [newShipment]);
     }
 
+    const allShipments = db.getShipments();
+    const opportunities = scanEnRouteProximityConsignments(trip, truckSimCoords, Number(radiusKm) || 10, allShipments);
+
     res.json({
-      message: `En-Route 10km proximity trigger simulated successfully near ${enRouteLocation}!`,
-      truckCurrentLocation: enRouteLocation,
-      truckCoords: enRouteCoords,
+      message: `🚚 Dynamic 10km Proximity Detection Active at (${truckSimCoords.lat.toFixed(4)}, ${truckSimCoords.lng.toFixed(4)})`,
+      truckCurrentLocation: locationName || 'Forward Corridor',
+      truckCoords: truckSimCoords,
       proximityOpportunities: opportunities
     });
   } catch (err) {
@@ -345,10 +319,42 @@ router.post('/:id/accept-enroute-consignment', (req, res) => {
     const newAvail = Math.max(0, trip.totalCapacityKg - newCurrentLoad);
     const acceptedIds = Array.from(new Set([...(trip.acceptedShipmentIds || []), shipment.id]));
 
+    // 3. Dynamically insert pickup & drop waypoints into active route if not present
+    const updatedRoutes = (trip.routes || []).map(r => {
+      if (r.id !== trip.selectedRouteId && trip.selectedRouteId) return r;
+      const currentStops = [...(r.stops || [])];
+      const pCoords = shipment.pickupCoords || (shipment.pickup?.lat ? shipment.pickup : getCityCoords(shipment.pickupLocation));
+      const dCoords = shipment.dropCoords || (shipment.drop?.lat ? shipment.drop : getCityCoords(shipment.dropLocation));
+
+      const hasPickup = currentStops.some(s => haversineDistance(s.lat, s.lng, pCoords.lat, pCoords.lng) < 3);
+      if (!hasPickup && pCoords) {
+        // Insert before destination
+        currentStops.splice(Math.max(1, currentStops.length - 1), 0, {
+          name: shipment.pickupLocation || shipment.pickup?.name || 'En-Route Pickup',
+          lat: pCoords.lat,
+          lng: pCoords.lng,
+          type: 'enroute_pickup'
+        });
+      }
+
+      const hasDrop = currentStops.some(s => haversineDistance(s.lat, s.lng, dCoords.lat, dCoords.lng) < 3);
+      if (!hasDrop && dCoords) {
+        currentStops.splice(Math.max(1, currentStops.length - 1), 0, {
+          name: shipment.dropLocation || shipment.drop?.name || 'En-Route Drop',
+          lat: dCoords.lat,
+          lng: dCoords.lng,
+          type: 'enroute_drop'
+        });
+      }
+
+      return { ...r, stops: currentStops };
+    });
+
     const updatedTrip = db.updateTrip(trip.id, {
       currentLoadKg: newCurrentLoad,
       availableCapacityKg: newAvail,
-      acceptedShipmentIds: acceptedIds
+      acceptedShipmentIds: acceptedIds,
+      routes: updatedRoutes
     });
 
     // 3. Create Assignment

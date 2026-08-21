@@ -15,7 +15,10 @@ import {
   DollarSign, 
   AlertCircle,
   FileText,
-  Eye
+  Eye,
+  Navigation,
+  CheckCircle,
+  Play
 } from 'lucide-react';
 import MapView from '../components/MapView';
 
@@ -23,54 +26,76 @@ export default function TrackerDashboard({
   shipments = [],
   trips = [],
   activeShipmentId = null,
+  onSelectShipment = null,
   onOpenPickupVerification,
   onOpenDeliveryVerification,
-  onOpenRatingModal
+  onOpenRatingModal,
+  onUpdateShipmentStatus
 }) {
   const [selectedShipmentId, setSelectedShipmentId] = useState(activeShipmentId || shipments[0]?.id || null);
 
+  // Sync when activeShipmentId changes externally
   useEffect(() => {
     if (activeShipmentId) {
       setSelectedShipmentId(activeShipmentId);
     } else if (shipments.length > 0 && !selectedShipmentId) {
       setSelectedShipmentId(shipments[0].id);
     }
-  }, [activeShipmentId, shipments, selectedShipmentId]);
+  }, [activeShipmentId, shipments]);
 
   const currentShipment = shipments.find(s => s.id === selectedShipmentId) || shipments[0];
-  const assignedTrip = currentShipment?.assignedTripId ? trips.find(t => t.id === currentShipment.assignedTripId) : null;
+  const assignedTrip = currentShipment?.assignedTripId ? trips.find(t => t.id === currentShipment.assignedTripId) : trips[0];
+
+  const handleShipmentChange = (newId) => {
+    setSelectedShipmentId(newId);
+    if (onSelectShipment) onSelectShipment(newId);
+  };
 
   // Workflow Stages
+  const isBooked = !!currentShipment && currentShipment.status !== 'PENDING';
+  const isPickedUp = !!currentShipment && (currentShipment.status === 'PICKED_UP' || currentShipment.status === 'IN_TRANSIT' || currentShipment.status === 'DELIVERED' || currentShipment.pickupOtpVerified);
+  const isInTransit = !!currentShipment && (currentShipment.status === 'IN_TRANSIT' || currentShipment.status === 'DELIVERED');
+  const isDelivered = !!currentShipment && (currentShipment.status === 'DELIVERED' || currentShipment.deliveryOtpVerified);
+
   const stages = [
     {
       id: 'BOOKED',
       label: '1. Booking & Escrow',
-      desc: 'Cargo space reserved. Payment held securely in Escrow.',
-      isDone: !!currentShipment && currentShipment.status !== 'PENDING',
+      desc: `Cargo space reserved on Truck ${assignedTrip?.vehicleNumber || 'UP-32-BZ-7890'}. ₹${currentShipment?.fareEstimate?.totalFare || 980} held securely in Escrow.`,
+      isDone: isBooked,
       isActive: currentShipment?.status === 'BOOKED'
     },
     {
       id: 'PICKED_UP',
       label: '2. Pickup & Handshake',
-      desc: 'Driver verified pickup OTP & uploaded parcel proof photo.',
-      isDone: !!currentShipment && (currentShipment.status === 'PICKED_UP' || currentShipment.status === 'IN_TRANSIT' || currentShipment.status === 'DELIVERED'),
+      desc: currentShipment?.pickupOtpVerified
+        ? `Driver verified pickup with OTP (${currentShipment.pickupOtp}) & photo proof.`
+        : 'Driver verifies pickup OTP & uploads parcel condition proof photo.',
+      isDone: isPickedUp,
       isActive: currentShipment?.status === 'PICKED_UP'
     },
     {
       id: 'IN_TRANSIT',
       label: '3. Highway Corridor Transit',
-      desc: 'Truck moving on designated route with live GPS sync.',
-      isDone: !!currentShipment && (currentShipment.status === 'IN_TRANSIT' || currentShipment.status === 'DELIVERED'),
+      desc: 'Truck in-transit on designated highway route with active GPS sync.',
+      isDone: isInTransit,
       isActive: currentShipment?.status === 'IN_TRANSIT'
     },
     {
       id: 'DELIVERED',
       label: '4. Delivery & Escrow Release',
-      desc: 'Recipient confirmed delivery OTP. Payment released to Driver.',
-      isDone: currentShipment?.status === 'DELIVERED',
+      desc: currentShipment?.deliveryOtpVerified
+        ? `Recipient confirmed delivery OTP (${currentShipment.deliveryOtp}). ₹${currentShipment?.fareEstimate?.totalFare || 980} payout released to Driver.`
+        : 'Recipient confirms parcel receipt with delivery OTP. Payment automatically released to Driver.',
+      isDone: isDelivered,
       isActive: currentShipment?.status === 'DELIVERED'
     }
   ];
+
+  const driverName = currentShipment?.driverName || assignedTrip?.driverName || 'Ramesh Verma';
+  const driverPhone = currentShipment?.driverPhone || assignedTrip?.driverPhone || '+91 98390 12345';
+  const vehicleNumber = assignedTrip?.vehicleNumber || 'UP-32-BZ-7890';
+  const vehicleType = assignedTrip?.vehicleType || 'Medium LCV (14ft Container)';
 
   return (
     <div className="space-y-6">
@@ -94,18 +119,18 @@ export default function TrackerDashboard({
           </div>
         </div>
 
-        {/* Quick Selection Selector if multiple shipments */}
-        {shipments.length > 1 && (
+        {/* Quick Selection Selector */}
+        {shipments.length > 0 && (
           <div className="flex items-center gap-2 w-full md:w-auto">
-            <span className="text-xs text-slate-400">Track:</span>
+            <span className="text-xs font-semibold text-slate-300">Track Shipment:</span>
             <select
-              value={selectedShipmentId || ''}
-              onChange={(e) => setSelectedShipmentId(e.target.value)}
-              className="px-3 py-2 bg-slate-950 border border-slate-700 rounded-xl text-white text-xs focus:outline-none focus:border-amber-500"
+              value={currentShipment?.id || ''}
+              onChange={(e) => handleShipmentChange(e.target.value)}
+              className="px-3.5 py-2 bg-slate-950 border border-slate-700 rounded-xl text-white text-xs font-semibold focus:outline-none focus:border-amber-500 shadow-inner"
             >
               {shipments.map((s) => (
                 <option key={s.id} value={s.id}>
-                  {s.pickupLocation.split(' ')[0]} → {s.dropLocation.split(' ')[0]} ({s.id})
+                  {s.pickupLocation.split(' ')[0]} → {s.dropLocation.split(' ')[0]} ({s.id}) • {s.status}
                 </option>
               ))}
             </select>
@@ -121,22 +146,37 @@ export default function TrackerDashboard({
           </div>
           <h3 className="text-lg font-bold text-white mb-2">No Active Shipments to Track</h3>
           <p className="text-xs text-slate-400 max-w-md mx-auto mb-6">
-            Create a shipment in Sender Mode or click "Load SIH Demo" in the top bar to simulate the live Lucknow-Varanasi parcel tracking pipeline.
+            Create a shipment in Sender Mode or click "Load SIH Demo" in the top bar to simulate the live parcel tracking pipeline.
           </p>
         </div>
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           
-          {/* Left Column: Interactive Map & Live Corridor Waypoints (7 Cols) */}
+          {/* Left Column: Interactive Map & Live Truck Specs (7 Cols) */}
           <div className="lg:col-span-7 space-y-5">
             <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
+              
+              {/* Shipment Header Banner */}
               <div className="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-slate-800">
                 <div>
-                  <h2 className="text-base font-bold text-white">
-                    {currentShipment.pickupLocation} <span className="text-emerald-400">→</span> {currentShipment.dropLocation}
-                  </h2>
+                  <div className="flex items-center gap-2">
+                    <h2 className="text-base font-bold text-white">
+                      {currentShipment.pickupLocation} <span className="text-emerald-400">→</span> {currentShipment.dropLocation}
+                    </h2>
+                    <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider ${
+                      currentShipment.status === 'DELIVERED'
+                        ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
+                        : currentShipment.status === 'IN_TRANSIT'
+                        ? 'bg-purple-500/20 text-purple-300 border border-purple-500/30 animate-pulse'
+                        : currentShipment.status === 'PICKED_UP'
+                        ? 'bg-sky-500/20 text-sky-300 border border-sky-500/30'
+                        : 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
+                    }`}>
+                      {currentShipment.status}
+                    </span>
+                  </div>
                   <p className="text-xs text-slate-400 mt-0.5">
-                    Cargo: <strong className="text-slate-200">{currentShipment.packageDescription}</strong> ({currentShipment.weightKg} kg)
+                    Cargo: <strong className="text-slate-200">{currentShipment.packageDescription || currentShipment.packageType}</strong> ({currentShipment.weightKg} kg)
                   </p>
                 </div>
 
@@ -146,20 +186,27 @@ export default function TrackerDashboard({
                 </div>
               </div>
 
-              {/* Map Rendering */}
+              {/* Map Rendering with dynamic route specifically for this shipment and truck */}
               <MapView
                 routes={assignedTrip?.routes || []}
                 selectedRouteId={assignedTrip?.selectedRouteId || 'route_A'}
+                activeShipment={currentShipment}
                 candidateShipments={[currentShipment]}
                 height="340px"
               />
 
-              {/* Escrow Value & Driver Info Footer */}
+              {/* Assigned Truck & Driver Specs Grid */}
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
                 <div className="bg-slate-950 p-3 rounded-xl border border-slate-800">
+                  <p className="text-[11px] text-slate-400 font-medium">Assigned Vehicle</p>
+                  <p className="text-xs font-bold text-white mt-0.5 font-mono">{vehicleNumber}</p>
+                  <p className="text-[10px] text-slate-400 truncate">{vehicleType}</p>
+                </div>
+
+                <div className="bg-slate-950 p-3 rounded-xl border border-slate-800">
                   <p className="text-[11px] text-slate-400 font-medium">Assigned Driver</p>
-                  <p className="text-xs font-bold text-white mt-0.5">{currentShipment.driverName || 'Matching Driver...'}</p>
-                  <p className="text-[10px] text-slate-500 font-mono">{currentShipment.driverPhone || 'En route'}</p>
+                  <p className="text-xs font-bold text-white mt-0.5">{driverName}</p>
+                  <p className="text-[10px] text-emerald-400 font-mono">{driverPhone}</p>
                 </div>
 
                 <div className="bg-slate-950 p-3 rounded-xl border border-slate-800">
@@ -171,15 +218,13 @@ export default function TrackerDashboard({
                       </>
                     ) : (
                       <>
-                        <Lock className="w-3.5 h-3.5" /> ₹{currentShipment.fareEstimate?.totalFare || 980} Held in Escrow
+                        <Lock className="w-3.5 h-3.5" /> ₹{currentShipment.fareEstimate?.totalFare || 980} in Escrow
                       </>
                     )}
                   </p>
-                </div>
-
-                <div className="bg-slate-950 p-3 rounded-xl border border-slate-800">
-                  <p className="text-[11px] text-slate-400 font-medium">Delivery Deadline</p>
-                  <p className="text-xs font-bold text-white mt-0.5">{currentShipment.deliveryDeadline}</p>
+                  <p className="text-[10px] text-slate-400">
+                    {currentShipment.paymentStatus === 'COMPLETED' ? 'Handover Confirmed' : 'Protected until OTP release'}
+                  </p>
                 </div>
               </div>
             </div>
@@ -230,22 +275,22 @@ export default function TrackerDashboard({
               <div className="mt-5 pt-4 border-t border-slate-800 space-y-2.5">
                 
                 {/* 1. Pickup Verification Button (Driver Side) */}
-                {currentShipment.status === 'BOOKED' && (
-                  <div className="p-3 bg-amber-500/10 border border-amber-500/30 rounded-xl space-y-2">
+                {currentShipment.status === 'BOOKED' && !currentShipment.pickupOtpVerified && (
+                  <div className="p-3.5 bg-amber-500/10 border border-amber-500/30 rounded-xl space-y-2.5 animate-fadeIn">
                     <div className="flex items-center justify-between">
                       <span className="text-xs font-bold text-amber-300 flex items-center gap-1.5">
                         <KeyRound className="w-3.5 h-3.5" /> Pickup Verification Needed
                       </span>
-                      <span className="text-[11px] font-mono text-amber-400 font-bold">
+                      <span className="text-xs font-mono text-amber-400 font-extrabold bg-amber-500/20 px-2 py-0.5 rounded border border-amber-500/40">
                         OTP: {currentShipment.pickupOtp}
                       </span>
                     </div>
                     <p className="text-[11px] text-slate-300">
-                      Driver must enter the sender's 4-digit pickup code and upload a photo of the loaded cargo.
+                      Driver must enter the sender's 4-digit pickup code (<strong className="text-amber-400 font-mono">{currentShipment.pickupOtp}</strong>) and upload a photo of the loaded cargo.
                     </p>
                     <button
                       onClick={() => onOpenPickupVerification(currentShipment)}
-                      className="w-full py-2 px-3 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs flex items-center justify-center gap-2 shadow-md transition-all"
+                      className="w-full py-2.5 px-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs flex items-center justify-center gap-2 shadow-md transition-all active:scale-95"
                     >
                       <Camera className="w-3.5 h-3.5" />
                       <span>Verify Pickup OTP & Photo Proof</span>
@@ -253,23 +298,47 @@ export default function TrackerDashboard({
                   </div>
                 )}
 
-                {/* 2. Delivery Verification Button (Sender / Receiver Side) */}
-                {(currentShipment.status === 'PICKED_UP' || currentShipment.status === 'IN_TRANSIT') && (
-                  <div className="p-3 bg-emerald-500/10 border border-emerald-500/30 rounded-xl space-y-2">
+                {/* 2. Start Highway Transit (when cargo is loaded) */}
+                {currentShipment.status === 'PICKED_UP' && (
+                  <div className="p-3.5 bg-sky-500/10 border border-sky-500/30 rounded-xl space-y-2.5 animate-fadeIn">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold text-sky-300 flex items-center gap-1.5">
+                        <CheckCircle className="w-3.5 h-3.5 text-emerald-400" /> Pickup Handshake Complete
+                      </span>
+                      <span className="text-[10px] text-emerald-400 font-mono font-bold bg-emerald-500/10 px-2 py-0.5 rounded">
+                        OTP {currentShipment.pickupOtp} VERIFIED
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-slate-300">
+                      Parcel is safely loaded on truck {vehicleNumber}. Ready to transition to highway corridor transit.
+                    </p>
+                    <button
+                      onClick={() => onUpdateShipmentStatus && onUpdateShipmentStatus(currentShipment.id, 'IN_TRANSIT')}
+                      className="w-full py-2.5 px-3 rounded-xl bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold text-xs flex items-center justify-center gap-2 shadow-md transition-all active:scale-95"
+                    >
+                      <Play className="w-3.5 h-3.5 fill-slate-950" />
+                      <span>Start Highway Corridor Transit</span>
+                    </button>
+                  </div>
+                )}
+
+                {/* 3. Delivery Verification Button (Sender / Receiver Side) */}
+                {(currentShipment.status === 'PICKED_UP' || currentShipment.status === 'IN_TRANSIT') && !currentShipment.deliveryOtpVerified && (
+                  <div className="p-3.5 bg-emerald-500/10 border border-emerald-500/30 rounded-xl space-y-2.5 animate-fadeIn">
                     <div className="flex items-center justify-between">
                       <span className="text-xs font-bold text-emerald-300 flex items-center gap-1.5">
                         <ShieldCheck className="w-3.5 h-3.5" /> Ready for Delivery Handover
                       </span>
-                      <span className="text-[11px] font-mono text-emerald-400 font-bold">
+                      <span className="text-xs font-mono text-emerald-400 font-extrabold bg-emerald-500/20 px-2 py-0.5 rounded border border-emerald-500/40">
                         Delivery OTP: {currentShipment.deliveryOtp}
                       </span>
                     </div>
                     <p className="text-[11px] text-slate-300">
-                      Receiver confirms parcel condition with delivery OTP. Verifying instantly releases escrow payment.
+                      Receiver confirms parcel condition with delivery OTP (<strong className="text-emerald-400 font-mono">{currentShipment.deliveryOtp}</strong>). Verifying instantly releases escrow payment.
                     </p>
                     <button
                       onClick={() => onOpenDeliveryVerification(currentShipment)}
-                      className="w-full py-2 px-3 rounded-lg bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20 transition-all"
+                      className="w-full py-2.5 px-3 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20 transition-all active:scale-95"
                     >
                       <CheckCircle2 className="w-3.5 h-3.5" />
                       <span>Verify Delivery OTP & Release Escrow</span>
@@ -277,9 +346,9 @@ export default function TrackerDashboard({
                   </div>
                 )}
 
-                {/* 3. Post-Delivery Feedback / Rating Button */}
+                {/* 4. Post-Delivery Feedback / Rating Button */}
                 {currentShipment.status === 'DELIVERED' && (
-                  <div className="p-3 bg-purple-500/10 border border-purple-500/30 rounded-xl space-y-2">
+                  <div className="p-3.5 bg-purple-500/10 border border-purple-500/30 rounded-xl space-y-2.5 animate-fadeIn">
                     <div className="flex items-center justify-between">
                       <span className="text-xs font-bold text-purple-300 flex items-center gap-1.5">
                         <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" /> Delivery Complete & Escrow Released
@@ -289,11 +358,11 @@ export default function TrackerDashboard({
                       </span>
                     </div>
                     <p className="text-[11px] text-slate-300">
-                      Please rate Driver {currentShipment.driverName || 'Partner'} to build community trust scores.
+                      Delivery confirmed with OTP {currentShipment.deliveryOtp}. Rate Driver {driverName} to update community trust score.
                     </p>
                     <button
                       onClick={() => onOpenRatingModal(currentShipment)}
-                      className="w-full py-2 px-3 rounded-lg bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold text-xs flex items-center justify-center gap-2 shadow-md transition-all"
+                      className="w-full py-2.5 px-3 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold text-xs flex items-center justify-center gap-2 shadow-md transition-all active:scale-95"
                     >
                       <Star className="w-3.5 h-3.5 fill-slate-950" />
                       <span>Rate Driver Experience (1 - 5 Stars)</span>
@@ -305,9 +374,9 @@ export default function TrackerDashboard({
 
             </div>
 
-            {/* Security Proof Photo Thumbnails if available */}
+            {/* Security Proof Photo Thumbnails */}
             {(currentShipment.pickupPhoto || currentShipment.deliveryPhoto) && (
-              <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-3">
+              <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-3 animate-fadeIn">
                 <h4 className="text-xs font-bold text-white flex items-center gap-1.5">
                   <Camera className="w-3.5 h-3.5 text-sky-400" />
                   <span>Immutable Proof of Handover Photos</span>
@@ -315,24 +384,28 @@ export default function TrackerDashboard({
 
                 <div className="grid grid-cols-2 gap-3">
                   {currentShipment.pickupPhoto && (
-                    <div className="bg-slate-950 rounded-xl p-2 border border-slate-800 text-center">
+                    <div className="bg-slate-950 rounded-xl p-2.5 border border-slate-800 text-center">
                       <img
                         src={currentShipment.pickupPhoto}
                         alt="Pickup proof"
                         className="w-full h-24 object-cover rounded-lg mb-1.5 border border-slate-800"
                       />
-                      <span className="text-[10px] text-slate-400 font-medium">Pickup Proof</span>
+                      <span className="text-[10px] text-amber-400 font-bold flex items-center justify-center gap-1">
+                        <CheckCircle className="w-3 h-3" /> Pickup Proof (OTP: {currentShipment.pickupOtp})
+                      </span>
                     </div>
                   )}
 
                   {currentShipment.deliveryPhoto && (
-                    <div className="bg-slate-950 rounded-xl p-2 border border-slate-800 text-center">
+                    <div className="bg-slate-950 rounded-xl p-2.5 border border-slate-800 text-center">
                       <img
                         src={currentShipment.deliveryPhoto}
                         alt="Delivery proof"
                         className="w-full h-24 object-cover rounded-lg mb-1.5 border border-slate-800"
                       />
-                      <span className="text-[10px] text-emerald-400 font-medium">Delivery Proof</span>
+                      <span className="text-[10px] text-emerald-400 font-bold flex items-center justify-center gap-1">
+                        <CheckCircle className="w-3 h-3" /> Delivery Proof (OTP: {currentShipment.deliveryOtp})
+                      </span>
                     </div>
                   )}
                 </div>

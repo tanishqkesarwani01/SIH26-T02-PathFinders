@@ -13,7 +13,9 @@ import {
   TrendingUp, 
   Sparkles,
   ArrowRight,
-  AlertTriangle
+  AlertTriangle,
+  Zap,
+  Gauge
 } from "lucide-react";
 
 export default function EnRouteAlertModal({
@@ -26,112 +28,122 @@ export default function EnRouteAlertModal({
 }) {
   if (!isOpen || !opportunity) return null;
 
-  const currentLoad = trip?.currentLoadKg || 1800;
+  const currentAvailable = trip?.availableCapacityKg !== undefined ? trip.availableCapacityKg : 2780;
   const totalCapacity = trip?.totalCapacityKg || 5000;
-  const cargoWeight = opportunity.weightKg || 500;
-  const newLoad = currentLoad + cargoWeight;
+  const currentLoad = totalCapacity - currentAvailable;
+  const cargoWeight = opportunity.weightKg || 450;
+  const afterAvailable = Math.max(0, currentAvailable - cargoWeight);
+  const afterLoad = currentLoad + cargoWeight;
+
   const currentUtil = Math.round((currentLoad / totalCapacity) * 100);
-  const newUtil = Math.min(100, Math.round((newLoad / totalCapacity) * 100));
+  const newUtil = Math.min(100, Math.round((afterLoad / totalCapacity) * 100));
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-fade-in">
-      <div className="bg-slate-900 border-2 border-emerald-500/60 rounded-3xl max-w-xl w-full p-6 sm:p-7 shadow-2xl shadow-emerald-500/20 relative overflow-hidden">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-md animate-fadeIn">
+      <div className="bg-slate-900 border-2 border-emerald-500/70 rounded-3xl max-w-xl w-full p-6 sm:p-7 shadow-2xl shadow-emerald-500/20 relative overflow-hidden">
         
-        {/* Glowing Radar Background Effect */}
-        <div className="absolute top-0 right-0 -mt-8 -mr-8 w-40 h-40 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none" />
-        <div className="absolute bottom-0 left-0 -mb-8 -ml-8 w-40 h-40 bg-indigo-500/10 rounded-full blur-2xl pointer-events-none" />
+        {/* Radar Ambient Glow */}
+        <div className="absolute top-0 right-0 -mt-10 -mr-10 w-44 h-44 bg-emerald-500/15 rounded-full blur-3xl pointer-events-none animate-pulse" />
+        <div className="absolute bottom-0 left-0 -mb-10 -ml-10 w-44 h-44 bg-indigo-500/15 rounded-full blur-3xl pointer-events-none" />
 
-        {/* Top Header Badge */}
+        {/* Top Header Badge & Radar Active Indicator */}
         <div className="flex items-center justify-between gap-3 mb-4">
           <div className="flex items-center gap-2">
-            <span className="relative flex h-3.5 w-3.5">
+            <span className="relative flex h-3 w-3">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-3.5 w-3.5 bg-emerald-500"></span>
+              <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
             </span>
-            <span className="text-xs font-extrabold uppercase tracking-widest text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/30 flex items-center gap-1.5">
-              <Radio className="w-3.5 h-3.5" /> 10 KM Proximity Detection
+            <span className="text-xs font-extrabold uppercase tracking-wider text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/30 flex items-center gap-1.5">
+              <Radio className="w-3.5 h-3.5 animate-pulse" /> 10 km Corridor Proximity Alert
             </span>
           </div>
 
-          <div className="text-right">
-            <span className="text-xs font-bold text-slate-300 bg-slate-800 px-2.5 py-1 rounded-lg border border-slate-700">
-              ?? {opportunity.proximityDistanceKm || 4.2} km ahead
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-extrabold text-amber-400 bg-amber-500/10 px-3 py-1 rounded-lg border border-amber-500/30 flex items-center gap-1">
+              <Sparkles className="w-3.5 h-3.5 fill-amber-400" />
+              {opportunity.compatibilityScore || 92}% Route Compatible
             </span>
           </div>
         </div>
 
         {/* Modal Title */}
-        <div className="mb-5">
+        <div className="mb-4">
           <h2 className="text-xl sm:text-2xl font-black text-white flex items-center gap-2">
-            En-Route Pickup Opportunity Available!
+            🚚 En-Route Cargo Opportunity
           </h2>
-          <p className="text-xs text-slate-300 mt-1">
-            A sender within your 10km highway proximity radius is requesting delivery along your active destination corridor.
+          <p className="text-xs text-slate-300 mt-0.5">
+            A compatible shipment has been detected along your forward highway corridor within 10 km.
           </p>
         </div>
 
         {/* Consignment Highlight Card */}
-        <div className="bg-slate-950/80 rounded-2xl border border-slate-800 p-4 space-y-3.5 mb-5">
+        <div className="bg-slate-950/90 rounded-2xl border border-slate-800 p-4 space-y-3.5 mb-5 shadow-inner">
           
-          {/* Sender & Cargo Header */}
-          <div className="flex items-start justify-between border-b border-slate-800/80 pb-3">
+          {/* Header Specs */}
+          <div className="flex items-start justify-between border-b border-slate-800 pb-3">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-400 font-bold">
+              <div className="w-11 h-11 rounded-xl bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-400 font-bold">
                 <Package className="w-5 h-5" />
               </div>
               <div>
-                <div className="text-sm font-bold text-white">{opportunity.senderName || 'En-Route Shipper'}</div>
-                <div className="text-xs text-slate-400">{opportunity.packageType || 'Commercial Freight'} ? {opportunity.weightKg} kg</div>
+                <div className="text-sm font-extrabold text-white flex items-center gap-2">
+                  <span>{opportunity.shipmentId || 'SHIPMENT'}</span>
+                  <span className="text-xs font-normal text-slate-400">• {opportunity.senderName || 'Consignor'}</span>
+                </div>
+                <div className="text-xs text-slate-400 mt-0.5">
+                  Weight: <strong className="text-white">{opportunity.weightKg} kg</strong> • {opportunity.packageType || 'General Cargo'}
+                </div>
               </div>
             </div>
 
             <div className="text-right">
-              <div className="text-lg font-black text-emerald-400">
-                +?{opportunity.revenue || 920}
+              <div className="text-xl font-black text-emerald-400">
+                +₹{opportunity.revenue}
               </div>
-              <div className="text-[10px] text-emerald-400/80 flex items-center gap-1 justify-end font-semibold">
-                <ShieldCheck className="w-3 h-3" /> Escrow Guaranteed
+              <div className="text-[10px] text-emerald-400/90 flex items-center gap-1 justify-end font-semibold">
+                <ShieldCheck className="w-3 h-3" /> Extra Earning
               </div>
             </div>
           </div>
 
-          {/* Route Trajectory */}
+          {/* Dynamic Pickup & Drop Nodes */}
           <div className="grid grid-cols-2 gap-3 text-xs">
-            <div className="bg-slate-900/90 p-2.5 rounded-xl border border-slate-800">
-              <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block mb-0.5">
-                Pickup (En-Route Stop)
+            <div className="bg-slate-900/90 p-3 rounded-xl border border-slate-800">
+              <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block mb-1">
+                📍 Pickup Location
               </span>
-              <div className="font-bold text-white flex items-center gap-1 truncate">
-                <MapPin className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" />
-                <span className="truncate">{opportunity.pickupLocation}</span>
+              <div className="font-bold text-white text-sm truncate flex items-center gap-1.5">
+                <span className="text-emerald-400">●</span> {opportunity.pickupLocation}
               </div>
-              <div className="text-[10px] text-slate-400 mt-1">
-                Detour: <span className="text-emerald-400 font-semibold">+{opportunity.detourKm || 3.5} km (~{opportunity.estimatedMinutesDelay || 12} mins)</span>
+              <div className="text-xs text-emerald-400 font-bold mt-1.5 flex items-center gap-1">
+                <Zap className="w-3 h-3" /> Distance: {opportunity.proximityDistanceKm} km from truck
               </div>
             </div>
 
-            <div className="bg-slate-900/90 p-2.5 rounded-xl border border-slate-800">
-              <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block mb-0.5">
-                Drop-off (Matches Corridor)
+            <div className="bg-slate-900/90 p-3 rounded-xl border border-slate-800">
+              <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block mb-1">
+                🏁 Drop-off Destination
               </span>
-              <div className="font-bold text-white flex items-center gap-1 truncate">
-                <Navigation className="w-3.5 h-3.5 text-indigo-400 flex-shrink-0" />
-                <span className="truncate">{opportunity.dropLocation}</span>
+              <div className="font-bold text-white text-sm truncate flex items-center gap-1.5">
+                <span className="text-indigo-400">●</span> {opportunity.dropLocation}
               </div>
-              <div className="text-[10px] text-slate-400 mt-1">
-                Aligned with <span className="text-indigo-400 font-semibold">{trip?.destination || 'Final Destination'}</span>
+              <div className="text-xs text-slate-400 mt-1.5">
+                Extra Distance: <strong className="text-slate-200">+{opportunity.detourKm} km</strong>
               </div>
             </div>
           </div>
 
           {/* Space Availability & Utilization Meter */}
-          <div className="pt-1">
+          <div className="bg-slate-900/60 p-3 rounded-xl border border-slate-800/80">
             <div className="flex justify-between text-xs mb-1.5">
-              <span className="text-slate-400 font-medium flex items-center gap-1">
-                <Truck className="w-3.5 h-3.5 text-slate-400" /> Space Impact:
+              <span className="text-slate-300 font-semibold flex items-center gap-1.5">
+                <Truck className="w-3.5 h-3.5 text-emerald-400" />
+                Available Space: <span className="text-white font-bold">{currentAvailable.toLocaleString()} kg</span>
+                <ArrowRight className="w-3 h-3 text-slate-500 inline" />
+                <span className="text-emerald-400 font-bold">{afterAvailable.toLocaleString()} kg</span>
               </span>
-              <span className="text-white font-bold">
-                {currentLoad} kg ? <span className="text-emerald-400">{newLoad} kg</span> / {totalCapacity} kg ({newUtil}%)
+              <span className="text-xs text-slate-400 font-mono">
+                {newUtil}% Truck Utilized
               </span>
             </div>
             
@@ -139,7 +151,7 @@ export default function EnRouteAlertModal({
               <div 
                 className="bg-indigo-500 h-full transition-all duration-500" 
                 style={{ width: `${currentUtil}%` }} 
-                title={`Current Load: ${currentLoad} kg`}
+                title={`Current Loaded: ${currentLoad} kg`}
               />
               <div 
                 className="bg-emerald-400 h-full animate-pulse transition-all duration-500" 
@@ -148,22 +160,22 @@ export default function EnRouteAlertModal({
               />
             </div>
             
-            <div className="flex justify-between text-[10px] text-slate-400 mt-1">
-              <span>Current: {trip?.availableCapacityKg} kg free</span>
-              <span className="text-emerald-400 font-semibold">{totalCapacity - newLoad} kg remaining after pickup</span>
+            <div className="flex justify-between text-[11px] text-slate-400 mt-1.5">
+              <span>Current Load: {currentLoad.toLocaleString()} kg</span>
+              <span className="text-emerald-400 font-semibold">Sufficient Space for {cargoWeight} kg Cargo</span>
             </div>
           </div>
         </div>
 
-        {/* Driver Choice Notice */}
-        <div className="bg-amber-500/10 border border-amber-500/20 rounded-xl p-3 mb-6 flex items-start gap-2.5 text-xs text-amber-300">
+        {/* Driver Option Notice */}
+        <div className="bg-amber-500/10 border border-amber-500/25 rounded-xl p-3 mb-5 flex items-start gap-2.5 text-xs text-amber-300">
           <AlertTriangle className="w-4 h-4 flex-shrink-0 mt-0.5 text-amber-400" />
           <div>
-            <span className="font-bold">Driver's Choice:</span> You are under no obligation to take this en-route load. If you decline, your route and schedule continue without any penalty.
+            <span className="font-bold">Driver Option:</span> You can take this en-route load if convenient, or dismiss it freely without impacting your schedule or rating.
           </div>
         </div>
 
-        {/* Decision Action Buttons */}
+        {/* Action Buttons */}
         <div className="grid grid-cols-2 gap-3">
           <button
             type="button"
@@ -171,7 +183,7 @@ export default function EnRouteAlertModal({
             disabled={isLoading}
             className="w-full py-3 px-4 rounded-xl border border-slate-700 bg-slate-800/80 hover:bg-slate-800 text-slate-300 hover:text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all active:scale-95 disabled:opacity-50"
           >
-            <XCircle className="w-4 h-4 text-slate-400" /> Decline / Leave Load
+            <XCircle className="w-4 h-4 text-slate-400" /> Dismiss
           </button>
 
           <button
@@ -181,7 +193,7 @@ export default function EnRouteAlertModal({
             className="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-black text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/30 hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-50"
           >
             <CheckCircle className="w-4 h-4 text-white" />
-            {isLoading ? "Locking Space..." : "Accept & Add to Route"}
+            {isLoading ? "Updating Space..." : "Accept Cargo"}
           </button>
         </div>
 

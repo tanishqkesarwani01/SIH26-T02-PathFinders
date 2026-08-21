@@ -8,6 +8,7 @@ const { calculateFare } = require('./pricingEngine');
 // City Coordinates for Geocoding & Distance Calculation in North India / Uttar Pradesh corridor
 const CITY_COORDINATES = {
   'lucknow': { lat: 26.8467, lng: 80.9462, name: 'Lucknow' },
+  'nihalgarh': { lat: 26.6025, lng: 81.6520, name: 'Nihalgarh' },
   'varanasi': { lat: 25.3176, lng: 82.9739, name: 'Varanasi' },
   'sultanpur': { lat: 26.2648, lng: 82.0727, name: 'Sultanpur' },
   'jaunpur': { lat: 25.7464, lng: 82.6837, name: 'Jaunpur' },
@@ -66,19 +67,21 @@ function generateCandidateRoutes(origin, destination) {
     return [
       {
         id: 'route_A',
-        name: 'Route A: Direct NH31 / Purvanchal Corridor',
-        corridor: 'Lucknow → Sultanpur → Jaunpur → Varanasi',
+        name: 'Route A: Direct NH731 / Purvanchal Corridor',
+        corridor: 'Lucknow → Nihalgarh → Sultanpur → Jaunpur → Varanasi',
         distanceKm: 310,
         estimatedDurationHours: 6.0,
-        hubs: ['Lucknow', 'Sultanpur', 'Jaunpur', 'Varanasi'],
+        hubs: ['Lucknow', 'Nihalgarh', 'Sultanpur', 'Jaunpur', 'Varanasi'],
         stops: [
           { name: 'Lucknow', lat: 26.8467, lng: 80.9462, type: 'source' },
+          { name: 'Nihalgarh', lat: 26.6025, lng: 81.6520, type: 'hub' },
           { name: 'Sultanpur', lat: 26.2648, lng: 82.0727, type: 'hub' },
           { name: 'Jaunpur', lat: 25.7464, lng: 82.6837, type: 'hub' },
           { name: 'Varanasi', lat: 25.3176, lng: 82.9739, type: 'destination' }
         ],
         color: '#10b981'
       },
+
       {
         id: 'route_B',
         name: 'Route B: Southern Highway via Raebareli & Prayagraj',
@@ -268,8 +271,12 @@ function matchTripRoutes(trip, availableShipments) {
       });
     }
 
-    // 2. Sort by match score descending (Knapsack greedy approach)
-    compatibleShipments.sort((a, b) => b.metrics.score - a.metrics.score);
+    // 2. Sort by route order (who comes FIRST along the route progression)
+    compatibleShipments.sort((a, b) => {
+      const pA = distancePointToPolyline(a.shipment.pickupCoords?.lat || 0, a.shipment.pickupCoords?.lng || 0, route.stops).progress;
+      const pB = distancePointToPolyline(b.shipment.pickupCoords?.lat || 0, b.shipment.pickupCoords?.lng || 0, route.stops).progress;
+      return pA - pB;
+    });
 
     // 3. Greedily select shipments until available capacity is reached
     let accumulatedWeight = 0;
@@ -328,8 +335,96 @@ function matchTripRoutes(trip, availableShipments) {
 }
 
 /**
- * Real-time En-Route Proximity Matching Algorithm:
- * Detects if a truck on its chosen route is within 10 km radius of any pending consignment's pickup address.
+ * Calculates perpendicular/minimum distance from a point P to a line segment AB in km,
+ * and the projection scalar t in [0, 1].
+ */
+function distancePointToSegment(pLat, pLng, aLat, aLng, bLat, bLng) {
+  const midLat = (aLat + bLat) / 2;
+  const kx = Math.cos((midLat * Math.PI) / 180) * 111.32; // km per deg lon
+  const ky = 110.57; // km per deg lat
+
+  const bx = (bLng - aLng) * kx, by = (bLat - aLat) * ky;
+  const px = (pLng - aLng) * kx, py = (pLat - aLat) * ky;
+
+  const segLenSq = bx * bx + by * by;
+  if (segLenSq === 0) {
+    const dist = Math.sqrt(px * px + py * py);
+    return { distanceKm: dist, t: 0, closestLat: aLat, closestLng: aLng };
+  }
+
+  let t = (px * bx + py * by) / segLenSq;
+  t = Math.max(0, Math.min(1, t));
+
+  const closestX = t * bx;
+  const closestY = t * by;
+  const dx = px - closestX;
+  const dy = py - closestY;
+  const dist = Math.sqrt(dx * dx + dy * dy);
+
+  const closestLat = aLat + t * (bLat - aLat);
+  const closestLng = aLng + t * (bLng - aLng);
+
+  return { distanceKm: dist, t, closestLat, closestLng };
+}
+
+/**
+ * Calculates minimum distance from point P to an entire polyline of stops/waypoints,
+ * and cumulative relative progress (0.0 to 1.0) along the route polyline.
+ */
+function distancePointToPolyline(pLat, pLng, polylineStops = []) {
+  if (!polylineStops || polylineStops.length === 0) {
+    return { minDistanceKm: 9999, progress: 0, closestStopIndex: 0 };
+  }
+  if (polylineStops.length === 1) {
+    return {
+      minDistanceKm: haversineDistance(pLat, pLng, polylineStops[0].lat, polylineStops[0].lng),
+      progress: 0,
+      closestStopIndex: 0
+    };
+  }
+
+  const segmentLengths = [];
+  let totalLength = 0;
+  for (let i = 0; i < polylineStops.length - 1; i++) {
+    const d = haversineDistance(
+      polylineStops[i].lat, polylineStops[i].lng,
+      polylineStops[i + 1].lat, polylineStops[i + 1].lng
+    );
+    segmentLengths.push(d);
+    totalLength += d;
+  }
+
+  let minDistanceKm = Infinity;
+  let bestProgress = 0;
+  let bestStopIndex = 0;
+  let accumLength = 0;
+
+  for (let i = 0; i < polylineStops.length - 1; i++) {
+    const segRes = distancePointToSegment(
+      pLat, pLng,
+      polylineStops[i].lat, polylineStops[i].lng,
+      polylineStops[i + 1].lat, polylineStops[i + 1].lng
+    );
+
+    if (segRes.distanceKm < minDistanceKm) {
+      minDistanceKm = segRes.distanceKm;
+      bestStopIndex = i;
+      const progressKm = accumLength + segRes.t * segmentLengths[i];
+      bestProgress = totalLength > 0 ? progressKm / totalLength : 0;
+    }
+    accumLength += segmentLengths[i];
+  }
+
+  return {
+    minDistanceKm: Math.round(minDistanceKm * 10) / 10,
+    progress: bestProgress,
+    closestStopIndex: bestStopIndex
+  };
+}
+
+/**
+ * Purely geometric, location-agnostic en-route proximity & 10 km corridor matching algorithm.
+ * Evaluates ANY shipment coordinates against ANY truck route geometry and live GPS location.
  */
 function scanEnRouteProximityConsignments(trip, currentCoords, proximityRadiusKm = 10, allShipments = []) {
   if (!trip) return [];
@@ -341,71 +436,115 @@ function scanEnRouteProximityConsignments(trip, currentCoords, proximityRadiusKm
     ]
   };
 
-  const truckLat = currentCoords?.lat || getCityCoords(trip.source).lat;
-  const truckLng = currentCoords?.lng || getCityCoords(trip.source).lng;
-  const remainingCapacity = trip.availableCapacityKg || (trip.totalCapacityKg - (trip.currentLoadKg || 0));
+  const polylineStops = (activeRoute.stops && activeRoute.stops.length > 0)
+    ? activeRoute.stops
+    : [
+        { name: trip.source, ...getCityCoords(trip.source) },
+        { name: trip.destination, ...getCityCoords(trip.destination) }
+      ];
+
+  const truckLat = currentCoords?.lat !== undefined ? currentCoords.lat : polylineStops[0].lat;
+  const truckLng = currentCoords?.lng !== undefined ? currentCoords.lng : polylineStops[0].lng;
+
+  // 1. Calculate truck's current progress along the route polyline (0.0 to 1.0)
+  const truckProgRes = distancePointToPolyline(truckLat, truckLng, polylineStops);
+  const truckProgress = truckProgRes.progress;
+
+  const remainingCapacity = trip.availableCapacityKg !== undefined
+    ? trip.availableCapacityKg
+    : ((trip.totalCapacityKg || 5000) - (trip.currentLoadKg || 0));
 
   const opportunities = [];
 
   for (const shipment of allShipments) {
-    // Only check open/pending shipments not yet accepted on this trip
     if (shipment.status !== 'PENDING' && shipment.status !== 'MATCHED') continue;
     if (shipment.assignedTripId === trip.id) continue;
 
-    // Hard Constraint 1: Space Availability
+    // Constraint 1: Available Capacity
     if (shipment.weightKg > remainingCapacity) continue;
 
-    const pCoords = shipment.pickupCoords || getCityCoords(shipment.pickupLocation);
-    const dCoords = shipment.dropCoords || getCityCoords(shipment.dropLocation);
+    // Extract pickup & drop coordinates dynamically
+    const pCoords = shipment.pickupCoords || (shipment.pickup?.lat ? shipment.pickup : getCityCoords(shipment.pickupLocation));
+    const dCoords = shipment.dropCoords || (shipment.drop?.lat ? shipment.drop : getCityCoords(shipment.dropLocation));
 
-    // Hard Constraint 2: Proximity Radius (<= 10 km)
-    const distanceToPickupKm = haversineDistance(truckLat, truckLng, pCoords.lat, pCoords.lng);
-    if (distanceToPickupKm > proximityRadiusKm) continue;
+    if (!pCoords || pCoords.lat === undefined || !dCoords || dCoords.lat === undefined) continue;
 
-    // Hard Constraint 3: Destination Alignment
-    const tripDestNorm = normalizeCityName(trip.destination);
-    const dropNorm = normalizeCityName(shipment.dropLocation);
+    // Step 1 — Pickup Proximity (Pure Geometry)
+    // Distance from truck's current GPS position to pickup point
+    const distTruckToPickup = haversineDistance(truckLat, truckLng, pCoords.lat, pCoords.lng);
+    // Minimum distance from pickup to route polyline
+    const pickPolyRes = distancePointToPolyline(pCoords.lat, pCoords.lng, polylineStops);
+    const distPickupToRoute = pickPolyRes.minDistanceKm;
+    const pickupProgress = pickPolyRes.progress;
 
-    let isDestinationCompatible = false;
-    if (tripDestNorm && dropNorm && tripDestNorm === dropNorm) {
-      isDestinationCompatible = true;
-    } else if (activeRoute.stops && activeRoute.stops.length > 0) {
-      const stopNames = activeRoute.stops.map(s => normalizeCityName(s.name)).filter(Boolean);
-      if (dropNorm && stopNames.includes(dropNorm)) {
-        isDestinationCompatible = true;
-      }
-    }
+    // Proximity sensor rule: Truck MUST be physically within proximityRadiusKm (10 km) of pickup
+    if (distTruckToPickup > proximityRadiusKm) continue;
 
-    if (!isDestinationCompatible) continue;
+    // Prevent recommending shipments that were already passed behind the truck
+    if (pickupProgress < (truckProgress - 0.04)) continue;
 
-    const revenue = shipment.fareEstimate?.totalFare || calculateFare(shipment.distanceKm, shipment.weightKg).totalFare;
-    const detourKm = Math.min(proximityRadiusKm, Math.round(distanceToPickupKm * 0.75 * 10) / 10);
-    const estimatedMinutesDelay = Math.round(detourKm * 2.2 + 8);
+    // Step 2 — Destination Compatibility (Pure Geometry)
+    const dropPolyRes = distancePointToPolyline(dCoords.lat, dCoords.lng, polylineStops);
+    const distDropToRoute = dropPolyRes.minDistanceKm;
+    const dropProgress = dropPolyRes.progress;
+
+    // Destination must be ahead of pickup in forward direction of travel
+    const isForwardDirection = dropProgress >= (pickupProgress - 0.04);
+    if (!isForwardDirection) continue; // Opposite direction -> filter out
+
+    // Destination must not exceed acceptable route corridor detour
+    if (distDropToRoute > 45) continue; // Out of corridor -> filter out
+
+    // Step 3 — Dynamic Detour Calculation
+    const detourKm = Math.round((distPickupToRoute + distDropToRoute) * 10) / 10;
+    const estimatedMinutesDelay = Math.round(detourKm * 1.8 + 6);
+
+    // Step 4 — Dynamic Compatibility Score (0 to 100%)
+    const effectiveProximity = Math.min(distTruckToPickup, distPickupToRoute);
+    const proximityScore = Math.max(0, ((proximityRadiusKm - effectiveProximity) / proximityRadiusKm) * 30);
+    const destScore = Math.max(0, ((45 - distDropToRoute) / 45) * 35);
+    const capacityRatio = Math.min(1, shipment.weightKg / Math.max(1, remainingCapacity));
+    const capacityScore = 15 + capacityRatio * 10;
+    const detourPenalty = Math.min(10, detourKm * 0.35);
+
+    const compatibilityScore = Math.min(99, Math.max(65, Math.round(proximityScore + destScore + capacityScore - detourPenalty)));
+
+    const fare = shipment.fareEstimate?.totalFare || calculateFare(shipment.distanceKm || Math.round(haversineDistance(pCoords.lat, pCoords.lng, dCoords.lat, dCoords.lng)), shipment.weightKg).totalFare;
+
     const newRemainingCapacityKg = Math.max(0, remainingCapacity - shipment.weightKg);
     const newTotalLoadKg = (trip.currentLoadKg || 0) + shipment.weightKg;
-    const newUtilizationPercent = Math.min(100, Math.round((newTotalLoadKg / Math.max(1, trip.totalCapacityKg)) * 100));
+    const newUtilizationPercent = Math.min(100, Math.round((newTotalLoadKg / Math.max(1, trip.totalCapacityKg || 5000)) * 100));
+
+    const pName = shipment.pickupLocation || shipment.pickup?.name || 'Pickup Point';
+    const dName = shipment.dropLocation || shipment.drop?.name || 'Dropoff Point';
 
     opportunities.push({
       shipmentId: shipment.id,
       shipment,
-      proximityDistanceKm: Math.round(distanceToPickupKm * 10) / 10,
+      proximityDistanceKm: Math.round(distTruckToPickup * 10) / 10,
+      distanceFromRouteKm: distPickupToRoute,
       detourKm,
       estimatedMinutesDelay,
-      revenue,
+      revenue: fare,
       weightKg: shipment.weightKg,
-      packageType: shipment.packageType,
-      senderName: shipment.senderName,
-      senderPhone: shipment.senderPhone,
-      pickupLocation: shipment.pickupLocation,
-      dropLocation: shipment.dropLocation,
+      packageType: shipment.packageType || 'Commercial Freight',
+      packageDescription: shipment.packageDescription || 'General Cargo',
+      senderName: shipment.senderName || 'Verified Consignor',
+      senderPhone: shipment.senderPhone || '+91 98000 12345',
+      pickupLocation: pName,
+      dropLocation: dName,
+      pickupCoords: pCoords,
+      dropCoords: dCoords,
       currentCapacityKg: remainingCapacity,
       newRemainingCapacityKg,
       newUtilizationPercent,
-      alertMessage: `🚨 En-Route Consignment detected ${Math.round(distanceToPickupKm * 10) / 10} km away in ${shipment.pickupLocation}!`,
-      urgency: distanceToPickupKm <= 5 ? 'IMMEDIATE' : 'APPROACHING'
+      compatibilityScore,
+      alertMessage: `🚚 En-Route Cargo Opportunity: ${pName} → ${dName} (${Math.round(distTruckToPickup * 10) / 10} km away, ${compatibilityScore}% Match)`,
+      urgency: distTruckToPickup <= 6 ? 'IMMEDIATE' : 'APPROACHING'
     });
   }
 
+  // Sort opportunities strictly by distance from truck (closest upcoming on route comes first!)
   opportunities.sort((a, b) => a.proximityDistanceKm - b.proximityDistanceKm);
   return opportunities;
 }
@@ -416,6 +555,9 @@ module.exports = {
   getCityCoords,
   isShipmentAlongRoute,
   scanEnRouteProximityConsignments,
+  distancePointToSegment,
+  distancePointToPolyline,
   haversineDistance
 };
+
 

@@ -260,6 +260,7 @@ export default function App() {
               shipments={shipments}
               trips={trips}
               activeShipmentId={activeTrackerShipmentId}
+              onSelectShipment={(shpId) => setActiveTrackerShipmentId(shpId)}
               onOpenPickupVerification={(shp) =>
                 setVerificationModal({ isOpen: true, type: 'pickup', shipment: shp })
               }
@@ -269,8 +270,17 @@ export default function App() {
               onOpenRatingModal={(shp) =>
                 setRatingModal({ isOpen: true, shipment: shp })
               }
+              onUpdateShipmentStatus={async (shpId, status) => {
+                try {
+                  await shipmentsAPI.updateStatus(shpId, status);
+                  await refreshAllData();
+                } catch (err) {
+                  console.error(err);
+                }
+              }}
             />
           )}
+
 
           {activeMode === 'admin' && (
             <AdminDashboard

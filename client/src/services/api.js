@@ -44,8 +44,10 @@ export const shipmentsAPI = {
   getFareEstimate: (params) => api.get('/shipments/fare-estimate', { params }),
   bookTrip: (id, tripId) => api.post(`/shipments/${id}/book-trip`, { tripId }),
   verifyPickup: (id, enteredOtp, photoData) => api.post(`/shipments/${id}/verify-pickup`, { enteredOtp, photoData }),
-  verifyDelivery: (id, enteredOtp, photoData) => api.post(`/shipments/${id}/verify-delivery`, { enteredOtp, photoData })
+  verifyDelivery: (id, enteredOtp, photoData) => api.post(`/shipments/${id}/verify-delivery`, { enteredOtp, photoData }),
+  updateStatus: (id, status) => api.patch(`/shipments/${id}/status`, { status })
 };
+
 
 export const ratingsAPI = {
   submitRating: (data) => api.post('/ratings', data),

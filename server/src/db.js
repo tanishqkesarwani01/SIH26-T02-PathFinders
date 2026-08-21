@@ -365,15 +365,16 @@ class Database {
       createdAt: new Date().toISOString()
     };
 
+    // 1. Initial Booked Baseline Shipment
     const shipment1 = {
       id: 'shp_demo_101',
       senderId: 'usr_snd_priya',
       senderName: 'Priya Sharma (Retail Goods)',
       senderPhone: '+91 9415098765',
       pickupLocation: 'Lucknow (Transport Nagar)',
-      pickupCoords: { lat: 26.7794, lng: 80.8872 },
+      pickupCoords: { lat: 26.7794, lng: 80.8872, name: 'Lucknow' },
       dropLocation: 'Sultanpur (Civil Lines)',
-      dropCoords: { lat: 26.2648, lng: 82.0727 },
+      dropCoords: { lat: 26.2648, lng: 82.0727, name: 'Sultanpur' },
       distanceKm: 140,
       weightKg: 650,
       packageType: 'Clothing & Textiles',
@@ -382,8 +383,8 @@ class Database {
       deliveryDeadline: 'Today 06:00 PM',
       fareEstimate: {
         baseFee: 50,
-        distanceFee: 280, // 140km * 2
-        weightFee: 650,   // 650kg * 1
+        distanceFee: 280,
+        weightFee: 650,
         packageMultiplier: 1.0,
         totalFare: 980
       },
@@ -402,27 +403,100 @@ class Database {
       createdAt: new Date().toISOString()
     };
 
-    const shipment2 = {
-      id: 'shp_demo_102',
-      senderId: 'usr_snd_vikram',
-      senderName: 'Vikram Singh (ElectroHub)',
-      senderPhone: '+91 9792044321',
-      pickupLocation: 'Sultanpur (Amhat Bypass)',
-      pickupCoords: { lat: 26.2550, lng: 82.0810 },
-      dropLocation: 'Varanasi (Lanka Gate)',
-      dropCoords: { lat: 25.2818, lng: 82.9995 },
-      distanceKm: 170,
-      weightKg: 420,
-      packageType: 'Electronics',
-      packageDescription: '8 Crates of Inverters & Solar Controllers',
-      pickupTimeWindow: 'Today 02:00 PM - 04:00 PM',
-      deliveryDeadline: 'Today 09:00 PM',
+    // 2. Shipment near Haidergarh
+    const shipmentA = {
+      id: 'SHIP-A-HAIDERGARH',
+      senderId: 'usr_snd_haidergarh',
+      senderName: 'Manoj Tiwari (Agro Supplies)',
+      senderPhone: '+91 98380 44551',
+      pickupLocation: 'Haidergarh (Toll Plaza Hub)',
+      pickupCoords: { lat: 26.6980, lng: 81.3340, name: 'Haidergarh' },
+      dropLocation: 'Sultanpur (Gole Market)',
+      dropCoords: { lat: 26.2648, lng: 82.0727, name: 'Sultanpur' },
+      distanceKm: 92,
+      weightKg: 300,
+      packageType: 'Agricultural Produce & Seeds',
+      packageDescription: '8 Sacks of Certified Organic Wheat Seeds',
+      pickupTimeWindow: 'Today 11:00 AM - 01:00 PM',
+      deliveryDeadline: 'Today 05:00 PM',
       fareEstimate: {
         baseFee: 50,
-        distanceFee: 340, // 170km * 2
-        weightFee: 420,   // 420kg * 1
+        distanceFee: 184,
+        weightFee: 300,
+        packageMultiplier: 1.1,
+        totalFare: 640
+      },
+      status: 'PENDING',
+      assignedTripId: null,
+      driverId: null,
+      pickupOtp: '2941',
+      pickupOtpVerified: false,
+      pickupPhoto: null,
+      deliveryOtp: '8103',
+      deliveryOtpVerified: false,
+      deliveryPhoto: null,
+      paymentStatus: 'PENDING',
+      createdAt: new Date().toISOString()
+    };
+
+    // 3. Shipment near Nihalgarh
+    const shipmentB = {
+      id: 'SHIP-B-NIHALGARH',
+      senderId: 'usr_snd_nihalgarh_mishra',
+      senderName: 'Rajesh Mishra (Auto Spares)',
+      senderPhone: '+91 94150 77890',
+      pickupLocation: 'Nihalgarh (Highway Bypass)',
+      pickupCoords: { lat: 26.6025, lng: 81.6520, name: 'Nihalgarh' },
+      dropLocation: 'Sultanpur (Civil Lines Hub)',
+      dropCoords: { lat: 26.2648, lng: 82.0727, name: 'Sultanpur' },
+      distanceKm: 58,
+      weightKg: 450,
+      packageType: 'Industrial Hardware & Spares',
+      packageDescription: '10 Cartons of Precision Auto Components',
+      pickupTimeWindow: 'Today 11:30 AM - 01:00 PM',
+      deliveryDeadline: 'Today 06:00 PM',
+      fareEstimate: {
+        baseFee: 50,
+        distanceFee: 116,
+        weightFee: 450,
+        packageMultiplier: 1.25,
+        totalFare: 823
+      },
+      status: 'PENDING',
+      assignedTripId: null,
+      driverId: null,
+      pickupOtp: '5812',
+      pickupOtpVerified: false,
+      pickupPhoto: null,
+      deliveryOtp: '7490',
+      deliveryOtpVerified: false,
+      deliveryPhoto: null,
+      paymentStatus: 'PENDING',
+      createdAt: new Date().toISOString()
+    };
+
+    // 4. Shipment near Sultanpur
+    const shipmentC = {
+      id: 'SHIP-C-SULTANPUR',
+      senderId: 'usr_snd_vikram',
+      senderName: 'Vikram Singh (ElectroHub)',
+      senderPhone: '+91 97920 44321',
+      pickupLocation: 'Sultanpur (Amhat Bypass)',
+      pickupCoords: { lat: 26.2550, lng: 82.0810, name: 'Sultanpur' },
+      dropLocation: 'Jaunpur (Mandi Complex)',
+      dropCoords: { lat: 25.7464, lng: 82.6837, name: 'Jaunpur' },
+      distanceKm: 75,
+      weightKg: 600,
+      packageType: 'Electronics & Appliances',
+      packageDescription: '12 Solar Inverters & Batteries',
+      pickupTimeWindow: 'Today 02:00 PM - 04:00 PM',
+      deliveryDeadline: 'Today 08:00 PM',
+      fareEstimate: {
+        baseFee: 50,
+        distanceFee: 150,
+        weightFee: 600,
         packageMultiplier: 1.15,
-        totalFare: 931
+        totalFare: 780
       },
       status: 'PENDING',
       assignedTripId: null,
@@ -437,40 +511,78 @@ class Database {
       createdAt: new Date().toISOString()
     };
 
-    const shipment3 = {
-      id: 'shp_demo_103',
-      senderId: 'usr_snd_priya',
-      senderName: 'Priya Sharma (Retail Goods)',
-      senderPhone: '+91 9415098765',
-      pickupLocation: 'Raebareli (Industrial Area)',
-      pickupCoords: { lat: 26.2300, lng: 81.2350 },
-      dropLocation: 'Prayagraj (Civil Lines)',
-      dropCoords: { lat: 25.4520, lng: 81.8350 },
-      distanceKm: 120,
-      weightKg: 800,
-      packageType: 'General Freight',
-      packageDescription: '20 Cartons of Hardware Supplies',
-      pickupTimeWindow: 'Today 11:00 AM - 01:00 PM',
-      deliveryDeadline: 'Today 07:00 PM',
+    // 5. Shipment near Jaunpur
+    const shipmentD = {
+      id: 'SHIP-D-JAUNPUR',
+      senderId: 'usr_snd_jaunpur',
+      senderName: 'Alok Gupta (Textile Exporters)',
+      senderPhone: '+91 94500 88219',
+      pickupLocation: 'Jaunpur (Polytechnic Chauraha)',
+      pickupCoords: { lat: 25.7464, lng: 82.6837, name: 'Jaunpur' },
+      dropLocation: 'Varanasi (Lanka Gate)',
+      dropCoords: { lat: 25.2818, lng: 82.9995, name: 'Varanasi' },
+      distanceKm: 62,
+      weightKg: 200,
+      packageType: 'Handloom & Carpets',
+      packageDescription: '5 Bundles of Handloom Fabrics',
+      pickupTimeWindow: 'Today 04:00 PM - 06:00 PM',
+      deliveryDeadline: 'Today 09:30 PM',
       fareEstimate: {
         baseFee: 50,
-        distanceFee: 240,
-        weightFee: 800,
-        packageMultiplier: 1.0,
-        totalFare: 1090
+        distanceFee: 124,
+        weightFee: 200,
+        packageMultiplier: 1.1,
+        totalFare: 560
       },
       status: 'PENDING',
       assignedTripId: null,
       driverId: null,
-      pickupOtp: '3187',
+      pickupOtp: '3381',
       pickupOtpVerified: false,
       pickupPhoto: null,
-      deliveryOtp: '9045',
+      deliveryOtp: '9120',
       deliveryOtpVerified: false,
       deliveryPhoto: null,
       paymentStatus: 'PENDING',
       createdAt: new Date().toISOString()
     };
+
+    // 6. Non-Compatible Shipment (Towards Delhi - opposite direction/huge detour)
+    const shipmentOutOfCorridor = {
+      id: 'SHIP-X-DELHI',
+      senderId: 'usr_snd_delhi_bound',
+      senderName: 'Amit Saxena (Machinery)',
+      senderPhone: '+91 98110 33442',
+      pickupLocation: 'Haidergarh (Bypass)',
+      pickupCoords: { lat: 26.6980, lng: 81.3340, name: 'Haidergarh' },
+      dropLocation: 'Delhi (Connaught Place)',
+      dropCoords: { lat: 28.6139, lng: 77.2090, name: 'Delhi' },
+      distanceKm: 560,
+      weightKg: 400,
+      packageType: 'Heavy Machinery Part',
+      packageDescription: '1 Metal Lathe Assembly',
+      pickupTimeWindow: 'Today',
+      deliveryDeadline: 'Tomorrow',
+      fareEstimate: {
+        baseFee: 50,
+        distanceFee: 1120,
+        weightFee: 400,
+        packageMultiplier: 1.0,
+        totalFare: 1570
+      },
+      status: 'PENDING',
+      assignedTripId: null,
+      driverId: null,
+      pickupOtp: '9901',
+      pickupOtpVerified: false,
+      pickupPhoto: null,
+      deliveryOtp: '1102',
+      deliveryOtpVerified: false,
+      deliveryPhoto: null,
+      paymentStatus: 'PENDING',
+      createdAt: new Date().toISOString()
+    };
+
 
     const payment1 = {
       id: 'pay_demo_01',
@@ -505,10 +617,11 @@ class Database {
       drivers: [driverRecord],
       vehicles: [vehicle],
       trips: [tripLucknowVaranasi],
-      shipments: [shipment1, shipment2, shipment3],
+      shipments: [shipment1, shipmentA, shipmentB, shipmentC, shipmentD, shipmentOutOfCorridor],
       assignments: [assignment1],
       shipment_status_logs: [statusLog1],
       payments: [payment1],
+
       ratings: [
         {
           id: 'rat_sample_01',

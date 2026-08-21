@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, Polyline, Tooltip, useMap } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, Polyline, Tooltip, Circle, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import { Navigation, MapPin, Truck, Box, CheckCircle } from 'lucide-react';
+import { Navigation, MapPin, Truck, Box, CheckCircle, Radio } from 'lucide-react';
 
 // Fix standard Leaflet icon paths
 delete L.Icon.Default.prototype._getIconUrl;
@@ -69,8 +69,11 @@ function FitBoundsToStops({ stops = [] }) {
   const map = useMap();
   useEffect(() => {
     if (stops && stops.length > 0) {
-      const bounds = L.latLngBounds(stops.map(s => [s.lat, s.lng]));
-      map.fitBounds(bounds, { padding: [40, 40] });
+      const validStops = stops.filter(s => s && typeof s.lat === 'number' && typeof s.lng === 'number');
+      if (validStops.length > 0) {
+        const bounds = L.latLngBounds(validStops.map(s => [s.lat, s.lng]));
+        map.fitBounds(bounds, { padding: [50, 50], maxZoom: 12 });
+      }
     }
   }, [stops, map]);
   return null;
@@ -82,32 +85,93 @@ export default function MapView({
   onSelectRoute = null,
   activeShipment = null,
   candidateShipments = [],
+  liveTruckLocation = null,
+  enRouteOpportunity = null,
   height = '420px',
   center = [26.4, 81.8],
   zoom = 8
 }) {
   const [selectedRoute, setSelectedRoute] = useState(null);
 
-  useEffect(() => {
+  // Dynamic route calculation for single active shipment when trip routes are empty
+  const getEffectiveRoutes = () => {
     if (routes && routes.length > 0) {
-      const found = routes.find(r => r.id === selectedRouteId) || routes[0];
+      return routes;
+    }
+    const shp = activeShipment || candidateShipments?.[0];
+    if (shp && shp.pickupCoords && shp.dropCoords) {
+      return [
+        {
+          id: 'route_shp_direct',
+          name: `Route: ${shp.pickupLocation} → ${shp.dropLocation}`,
+          corridor: `${shp.pickupLocation} → Highway Corridor → ${shp.dropLocation}`,
+          distanceKm: shp.distanceKm || 80,
+          estimatedDurationHours: ((shp.distanceKm || 80) / 50).toFixed(1),
+          color: '#10b981',
+          stops: [
+            {
+              name: shp.pickupLocation,
+              lat: shp.pickupCoords.lat,
+              lng: shp.pickupCoords.lng,
+              type: 'source'
+            },
+            {
+              name: shp.dropLocation,
+              lat: shp.dropCoords.lat,
+              lng: shp.dropCoords.lng,
+              type: 'destination'
+            }
+          ]
+        }
+      ];
+    }
+    return [
+      {
+        id: 'route_default',
+        name: 'Default Freight Corridor',
+        corridor: 'Lucknow → Varanasi',
+        distanceKm: 310,
+        estimatedDurationHours: 6.0,
+        color: '#10b981',
+        stops: [
+          { name: 'Lucknow', lat: 26.8467, lng: 80.9462, type: 'source' },
+          { name: 'Varanasi', lat: 25.3176, lng: 82.9739, type: 'destination' }
+        ]
+      }
+    ];
+  };
+
+  const effectiveRoutes = getEffectiveRoutes();
+
+  useEffect(() => {
+    if (effectiveRoutes.length > 0) {
+      const found = effectiveRoutes.find(r => r.id === selectedRouteId) || effectiveRoutes[0];
       setSelectedRoute(found);
     }
-  }, [routes, selectedRouteId]);
+  }, [routes, selectedRouteId, activeShipment]);
 
   // Aggregate all stops for boundary calculations
-  const allStops = selectedRoute?.stops || (routes[0]?.stops) || [
-    { name: 'Lucknow', lat: 26.8467, lng: 80.9462 },
-    { name: 'Varanasi', lat: 25.3176, lng: 82.9739 }
+  const allStops = selectedRoute?.stops || effectiveRoutes[0]?.stops || [
+    { name: 'Origin', lat: 26.8467, lng: 80.9462 },
+    { name: 'Destination', lat: 25.3176, lng: 82.9739 }
   ];
+
+  const truckPos = liveTruckLocation?.lat && liveTruckLocation?.lng
+    ? [liveTruckLocation.lat, liveTruckLocation.lng]
+    : selectedRoute?.stops?.[0]
+    ? [
+        selectedRoute.stops[0].lat + ((selectedRoute.stops[1]?.lat || selectedRoute.stops[0].lat) - selectedRoute.stops[0].lat) * 0.35,
+        selectedRoute.stops[0].lng + ((selectedRoute.stops[1]?.lng || selectedRoute.stops[0].lng) - selectedRoute.stops[0].lng) * 0.35
+      ]
+    : [26.8467, 80.9462];
 
   return (
     <div className="relative rounded-2xl overflow-hidden border border-slate-700/80 shadow-2xl bg-slate-900">
       
       {/* Route Selector Badges on top of map */}
-      {routes.length > 0 && (
+      {effectiveRoutes.length > 1 && (
         <div className="absolute top-3 left-3 z-[1000] flex flex-wrap gap-2 bg-slate-900/90 backdrop-blur-md p-2 rounded-xl border border-slate-700 shadow-xl max-w-[90%]">
-          {routes.map((route, idx) => {
+          {effectiveRoutes.map((route, idx) => {
             const isSelected = (selectedRoute?.id === route.id);
             return (
               <button
@@ -128,11 +192,6 @@ export default function MapView({
                 />
                 <span>{route.name?.split(':')[0] || `Route ${idx + 1}`}</span>
                 <span className="text-[10px] opacity-75">({route.distanceKm} km)</span>
-                {route.isRecommended && (
-                  <span className="ml-1 bg-amber-500/20 text-amber-300 text-[9px] px-1.5 py-0.2 rounded border border-amber-500/40">
-                    ★ Best
-                  </span>
-                )}
               </button>
             );
           })}
@@ -153,29 +212,46 @@ export default function MapView({
 
         <FitBoundsToStops stops={allStops} />
 
-        {/* Draw Polylines for all routes (selected highlighted, others dimmed) */}
-        {routes.map((route) => {
+        {/* Draw Polylines for routes */}
+        {effectiveRoutes.map((route) => {
           if (!route.stops || route.stops.length < 2) return null;
-          const isSelected = selectedRoute?.id === route.id;
+          const isSelected = (selectedRoute?.id === route.id) || effectiveRoutes.length === 1;
           const positions = route.stops.map(s => [s.lat, s.lng]);
 
           return (
-            <Polyline
-              key={`line_${route.id}`}
-              positions={positions}
-              pathOptions={{
-                color: isSelected ? (route.color || '#10b981') : '#64748b',
-                weight: isSelected ? 6 : 3,
-                opacity: isSelected ? 0.95 : 0.45,
-                dashArray: isSelected ? null : '6, 6'
-              }}
-            >
-              <Tooltip sticky>
-                <div className="text-xs font-semibold text-slate-900">
-                  {route.name} • {route.distanceKm} km ({route.estimatedDurationHours} hrs)
-                </div>
-              </Tooltip>
-            </Polyline>
+            <React.Fragment key={`frag_line_${route.id}`}>
+              {/* 10 km Corridor Buffer Ribbon */}
+              {isSelected && (
+                <Polyline
+                  key={`corridor_ribbon_${route.id}`}
+                  positions={positions}
+                  pathOptions={{
+                    color: '#10b981',
+                    weight: 34,
+                    opacity: 0.14,
+                    lineCap: 'round',
+                    lineJoin: 'round'
+                  }}
+                />
+              )}
+
+              <Polyline
+                key={`line_${route.id}`}
+                positions={positions}
+                pathOptions={{
+                  color: isSelected ? (route.color || '#10b981') : '#64748b',
+                  weight: isSelected ? 6 : 3,
+                  opacity: isSelected ? 0.95 : 0.45,
+                  dashArray: isSelected ? null : '6, 6'
+                }}
+              >
+                <Tooltip sticky>
+                  <div className="text-xs font-semibold text-slate-900">
+                    {route.name} • {route.distanceKm} km ({route.estimatedDurationHours || 5} hrs)
+                  </div>
+                </Tooltip>
+              </Polyline>
+            </React.Fragment>
           );
         })}
 
@@ -196,7 +272,7 @@ export default function MapView({
                 <div className="p-1 text-slate-900 text-xs">
                   <p className="font-bold text-sm text-slate-900 mb-0.5">{stop.name}</p>
                   <p className="text-slate-600">
-                    {isSource ? 'Trip Starting Point' : isDest ? 'Trip Destination Hub' : 'Corridor Waypoint & Pickup Node'}
+                    {isSource ? 'Origin Pickup Location' : isDest ? 'Destination Handover Hub' : 'Corridor Waypoint & Pickup Node'}
                   </p>
                 </div>
               </Popup>
@@ -204,8 +280,8 @@ export default function MapView({
           );
         })}
 
-        {/* If there are candidate / bundled shipments, render their pickup/drop markers */}
-        {(selectedRoute?.bundledShipments || candidateShipments || []).map((shp, idx) => {
+        {/* If candidate/bundled shipments exist, render them */}
+        {(candidateShipments || []).map((shp, idx) => {
           if (!shp.pickupCoords || !shp.dropCoords) return null;
           return (
             <React.Fragment key={`shp_frag_${shp.id || idx}`}>
@@ -237,10 +313,31 @@ export default function MapView({
           );
         })}
 
-        {/* Live Truck Simulation Marker at the first stop or current point */}
-        {selectedRoute?.stops?.[0] && (
+        {/* 10 km Proximity Corridor Zone around truck */}
+        {truckPos && (
+          <Circle
+            center={truckPos}
+            radius={10000}
+            pathOptions={{
+              color: '#10b981',
+              fillColor: '#10b981',
+              fillOpacity: 0.12,
+              weight: 2,
+              dashArray: '5, 5'
+            }}
+          >
+            <Tooltip sticky>
+              <div className="text-[11px] font-bold text-slate-900">
+                🛰️ 10 km En-Route Proximity Corridor Zone
+              </div>
+            </Tooltip>
+          </Circle>
+        )}
+
+        {/* Live Truck Marker */}
+        {truckPos && (
           <Marker
-            position={[selectedRoute.stops[0].lat + 0.05, selectedRoute.stops[0].lng + 0.08]}
+            position={truckPos}
             icon={truckIcon}
           >
             <Popup>
@@ -248,25 +345,41 @@ export default function MapView({
                 <p className="font-bold text-emerald-700 flex items-center gap-1">
                   🚚 Live Truck In-Transit
                 </p>
-                <p className="text-slate-600">En-route via {selectedRoute.name}</p>
+                <p className="text-slate-700 mt-0.5">
+                  {liveTruckLocation?.statusText || 'Active GPS Telemetry Synced'}
+                </p>
               </div>
             </Popup>
           </Marker>
         )}
+
       </MapContainer>
 
-      {/* Legend Footer */}
-      <div className="px-4 py-2 bg-slate-950/95 border-t border-slate-800 text-[11px] text-slate-400 flex flex-wrap items-center justify-between gap-3">
+      {/* Map Legend Footer */}
+      <div className="bg-slate-950 px-4 py-2.5 border-t border-slate-800 flex flex-wrap items-center justify-between gap-3 text-xs text-slate-300">
         <div className="flex items-center gap-4 flex-wrap">
-          <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> Origin / Active Path</span>
-          <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-amber-500"></span> Parcel Pickup</span>
-          <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-purple-500"></span> Parcel Dropoff</span>
-          <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-rose-500"></span> Destination</span>
+          <span className="flex items-center gap-1.5">
+            <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block" />
+            <span>Origin / Active Path</span>
+          </span>
+          <span className="flex items-center gap-1.5">
+            <span className="w-2.5 h-2.5 rounded-full bg-amber-500 inline-block" />
+            <span>Parcel Pickup</span>
+          </span>
+          <span className="flex items-center gap-1.5">
+            <span className="w-2.5 h-2.5 rounded-full bg-purple-500 inline-block" />
+            <span>Parcel Dropoff</span>
+          </span>
+          <span className="flex items-center gap-1.5">
+            <span className="w-2.5 h-2.5 rounded-full bg-rose-500 inline-block" />
+            <span>Destination</span>
+          </span>
         </div>
-        <div className="text-slate-300 font-medium">
+        <div className="text-slate-500 font-mono text-[11px]">
           OpenStreetMap & Routing Engine
         </div>
       </div>
+
     </div>
   );
 }

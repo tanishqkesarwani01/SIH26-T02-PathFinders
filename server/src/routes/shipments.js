@@ -302,4 +302,26 @@ router.post('/:id/verify-delivery', (req, res) => {
   }
 });
 
+// Update Shipment Status (e.g. IN_TRANSIT)
+router.patch('/:id/status', (req, res) => {
+  try {
+    const { status } = req.body;
+    const shipment = db.findShipmentById(req.params.id);
+    if (!shipment) return res.status(404).json({ error: 'Shipment not found' });
+
+    const updated = db.updateShipment(shipment.id, { status });
+    db.createStatusLog({
+      shipmentId: shipment.id,
+      status,
+      location: shipment.pickupLocation,
+      notes: `Shipment status manually transitioned to ${status}.`
+    });
+
+    res.json({ message: `Status updated to ${status}`, shipment: updated });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to update shipment status' });
+  }
+});
+
 module.exports = router;
+
