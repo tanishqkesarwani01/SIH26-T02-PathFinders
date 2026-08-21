@@ -4,40 +4,40 @@
       "id": "usr_drv_ramesh",
       "name": "Ramesh Verma",
       "email": "ramesh.driver@loadlink.com",
-      "passwordHash": "$2a$10$j7AibEtEAXUirDQ5.bivReBFIWm3OkXFyMYEfGveBXyycRMnnOpIe",
+      "passwordHash": "$2a$10$r8oMwx9i5FMgeJ6BY1KIP.dd1YQ6tf0JkkzZ0N46/2TTLaUT/K64.",
       "role": "DRIVER",
       "phone": "+91 9839012345",
       "aadhaarNumber": "XXXX-XXXX-8921",
       "aadhaarVerified": true,
       "rating": 4.85,
       "ratingCount": 38,
-      "createdAt": "2026-08-20T19:55:26.043Z"
+      "createdAt": "2026-08-21T04:44:28.895Z"
     },
     {
       "id": "usr_snd_priya",
       "name": "Priya Sharma (Retail Goods)",
       "email": "priya@textiles.com",
-      "passwordHash": "$2a$10$j7AibEtEAXUirDQ5.bivReBFIWm3OkXFyMYEfGveBXyycRMnnOpIe",
+      "passwordHash": "$2a$10$r8oMwx9i5FMgeJ6BY1KIP.dd1YQ6tf0JkkzZ0N46/2TTLaUT/K64.",
       "role": "SENDER",
       "phone": "+91 9415098765",
       "aadhaarNumber": "XXXX-XXXX-4532",
       "aadhaarVerified": true,
       "rating": 4.9,
       "ratingCount": 14,
-      "createdAt": "2026-08-20T19:55:26.043Z"
+      "createdAt": "2026-08-21T04:44:28.895Z"
     },
     {
       "id": "usr_snd_vikram",
       "name": "Vikram Singh (ElectroHub)",
       "email": "vikram@electrohub.in",
-      "passwordHash": "$2a$10$j7AibEtEAXUirDQ5.bivReBFIWm3OkXFyMYEfGveBXyycRMnnOpIe",
+      "passwordHash": "$2a$10$r8oMwx9i5FMgeJ6BY1KIP.dd1YQ6tf0JkkzZ0N46/2TTLaUT/K64.",
       "role": "SENDER",
       "phone": "+91 9792044321",
       "aadhaarNumber": "XXXX-XXXX-6712",
       "aadhaarVerified": true,
       "rating": 4.8,
       "ratingCount": 9,
-      "createdAt": "2026-08-20T19:55:26.043Z"
+      "createdAt": "2026-08-21T04:44:28.895Z"
     }
   ],
   "drivers": [
@@ -81,7 +81,7 @@
       "vehicleType": "Medium LCV (14ft Container)",
       "source": "Lucknow",
       "destination": "Varanasi",
-      "departureDate": "2026-08-20",
+      "departureDate": "2026-08-21",
       "departureTime": "10:30 AM",
       "totalCapacityKg": 5000,
       "currentLoadKg": 2220,
@@ -194,14 +194,14 @@
           "isRecommended": false
         }
       ],
-      "status": "COMPLETED",
+      "status": "SCHEDULED",
       "acceptedShipmentIds": [
         "shp_demo_101",
         "shp_demo_102"
       ],
       "notes": "Scheduled container route. Clean dry bed with space for bundled cartons and parcels.",
-      "createdAt": "2026-08-20T19:55:26.043Z",
-      "updatedAt": "2026-08-20T19:56:04.448Z"
+      "createdAt": "2026-08-21T04:44:28.895Z",
+      "updatedAt": "2026-08-21T04:45:16.941Z"
     }
   ],
   "shipments": [
@@ -245,7 +245,7 @@
       "deliveryOtpVerified": false,
       "deliveryPhoto": null,
       "paymentStatus": "ESCROW_HELD",
-      "createdAt": "2026-08-20T19:55:26.043Z"
+      "createdAt": "2026-08-21T04:44:28.895Z"
     },
     {
       "id": "shp_demo_102",
@@ -285,10 +285,10 @@
       "deliveryOtpVerified": false,
       "deliveryPhoto": null,
       "paymentStatus": "ESCROW_HELD",
-      "createdAt": "2026-08-20T19:55:26.043Z",
+      "createdAt": "2026-08-21T04:44:28.895Z",
       "driverName": "Ramesh Verma",
       "driverPhone": "+91 9839012345",
-      "updatedAt": "2026-08-20T19:55:53.377Z"
+      "updatedAt": "2026-08-21T04:45:16.939Z"
     },
     {
       "id": "shp_demo_103",
@@ -328,22 +328,22 @@
       "deliveryOtpVerified": false,
       "deliveryPhoto": null,
       "paymentStatus": "PENDING",
-      "createdAt": "2026-08-20T19:55:26.043Z"
+      "createdAt": "2026-08-21T04:44:28.895Z"
     }
   ],
   "assignments": [
     {
-      "id": "asg_1787255753379",
+      "id": "asg_1787287516943",
       "tripId": "trip_lko_vns_01",
       "shipmentId": "shp_demo_102",
-      "assignedAt": "2026-08-20T19:55:53.379Z",
+      "assignedAt": "2026-08-21T04:45:16.943Z",
       "acceptanceStatus": "ACCEPTED"
     },
     {
       "id": "asg_demo_01",
       "tripId": "trip_lko_vns_01",
       "shipmentId": "shp_demo_101",
-      "assignedAt": "2026-08-20T19:55:26.043Z",
+      "assignedAt": "2026-08-21T04:44:28.895Z",
       "acceptanceStatus": "ACCEPTED"
     }
   ],
@@ -351,14 +351,14 @@
     {
       "id": "log_demo_01",
       "shipmentId": "shp_demo_101",
-      "timestamp": "2026-08-20T19:55:26.043Z",
+      "timestamp": "2026-08-21T04:44:28.895Z",
       "status": "BOOKED",
       "location": "Lucknow Transport Nagar",
       "notes": "Shipment confirmed and locked in Driver Ramesh trip route."
     },
     {
-      "id": "log_1787255753380_qs1ib",
-      "timestamp": "2026-08-20T19:55:53.380Z",
+      "id": "log_1787287516945_me8c6",
+      "timestamp": "2026-08-21T04:45:16.945Z",
       "shipmentId": "shp_demo_102",
       "status": "BOOKED",
       "location": "Lucknow",
@@ -374,7 +374,7 @@
       "amount": 980,
       "currency": "INR",
       "paymentStatus": "ESCROW_HELD",
-      "paidAt": "2026-08-20T19:55:26.043Z"
+      "paidAt": "2026-08-21T04:44:28.895Z"
     }
   ],
   "ratings": [
@@ -386,7 +386,7 @@
       "senderName": "Priya Sharma",
       "rating": 5,
       "comment": "Very professional driver. Timely pickup at Lucknow and verified OTP smoothly.",
-      "createdAt": "2026-08-18T19:55:26.043Z"
+      "createdAt": "2026-08-19T04:44:28.895Z"
     }
   ],
   "messages": []
