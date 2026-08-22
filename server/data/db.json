@@ -4,7 +4,7 @@
   "vehicles": [],
   "trips": [
     {
-      "id": "trip_1787300221391_5z1u",
+      "id": "trip_1787311036970_apuh",
       "driverId": "drv_manual",
       "driverUserId": null,
       "driverName": "Driver Partner",
@@ -17,8 +17,8 @@
       "departureDate": "2026-08-21",
       "departureTime": "10:00 AM",
       "totalCapacityKg": 5000,
-      "currentLoadKg": 2220,
-      "availableCapacityKg": 2780,
+      "currentLoadKg": 2670,
+      "availableCapacityKg": 2330,
       "selectedRouteId": "route_A",
       "routes": [
         {
@@ -149,122 +149,172 @@
           "color": "#f59e0b"
         }
       ],
-      "status": "SCHEDULED",
-      "acceptedShipmentIds": [],
+      "status": "IN_TRANSIT",
+      "acceptedShipmentIds": [
+        "shp_1787308286130_nr7s"
+      ],
+      "notes": "Scheduled container route. Clean dry bed with space for bundled cargo.",
+      "createdAt": "2026-08-21T11:17:16.970Z",
+      "updatedAt": "2026-08-21T12:00:29.649Z"
+    },
+    {
+      "id": "trip_1787300221391_5z1u",
+      "driverId": "drv_manual",
+      "driverUserId": null,
+      "driverName": "Driver Partner",
+      "driverPhone": "+91 9800000000",
+      "driverRating": 4.9,
+      "vehicleNumber": "UP-32-BZ-7890",
+      "vehicleType": "Medium LCV (14ft Container)",
+      "source": "Lucknow",
+      "destination": "Varanasi",
+      "departureDate": "2026-08-21",
+      "departureTime": "10:00 AM",
+      "totalCapacityKg": 5000,
+      "currentLoadKg": 2670,
+      "availableCapacityKg": 2330,
+      "selectedRouteId": "route_A",
+      "routes": [
+        {
+          "id": "route_A",
+          "name": "Route A: Direct NH731 / Purvanchal Corridor",
+          "corridor": "Lucknow → Nihalgarh → Sultanpur → Jaunpur → Varanasi",
+          "distanceKm": 310,
+          "estimatedDurationHours": 6,
+          "hubs": [
+            "Lucknow",
+            "Nihalgarh",
+            "Sultanpur",
+            "Jaunpur",
+            "Varanasi"
+          ],
+          "stops": [
+            {
+              "name": "Lucknow",
+              "lat": 26.8467,
+              "lng": 80.9462,
+              "type": "source"
+            },
+            {
+              "name": "Nihalgarh",
+              "lat": 26.6025,
+              "lng": 81.652,
+              "type": "hub"
+            },
+            {
+              "name": "Sultanpur",
+              "lat": 26.2648,
+              "lng": 82.0727,
+              "type": "hub"
+            },
+            {
+              "name": "Jaunpur",
+              "lat": 25.7464,
+              "lng": 82.6837,
+              "type": "hub"
+            },
+            {
+              "name": "Varanasi",
+              "lat": 25.3176,
+              "lng": 82.9739,
+              "type": "destination"
+            }
+          ],
+          "color": "#10b981"
+        },
+        {
+          "id": "route_B",
+          "name": "Route B: Southern Highway via Raebareli & Prayagraj",
+          "corridor": "Lucknow → Raebareli → Prayagraj → Varanasi",
+          "distanceKm": 335,
+          "estimatedDurationHours": 6.8,
+          "hubs": [
+            "Lucknow",
+            "Raebareli",
+            "Prayagraj",
+            "Varanasi"
+          ],
+          "stops": [
+            {
+              "name": "Lucknow",
+              "lat": 26.8467,
+              "lng": 80.9462,
+              "type": "source"
+            },
+            {
+              "name": "Raebareli",
+              "lat": 26.2236,
+              "lng": 81.2409,
+              "type": "hub"
+            },
+            {
+              "name": "Prayagraj",
+              "lat": 25.4358,
+              "lng": 81.8463,
+              "type": "hub"
+            },
+            {
+              "name": "Varanasi",
+              "lat": 25.3176,
+              "lng": 82.9739,
+              "type": "destination"
+            }
+          ],
+          "color": "#3b82f6"
+        },
+        {
+          "id": "route_C",
+          "name": "Route C: Northern Heritage via Ayodhya & Akbarpur",
+          "corridor": "Lucknow → Ayodhya → Akbarpur → Varanasi",
+          "distanceKm": 355,
+          "estimatedDurationHours": 7.2,
+          "hubs": [
+            "Lucknow",
+            "Ayodhya",
+            "Akbarpur",
+            "Varanasi"
+          ],
+          "stops": [
+            {
+              "name": "Lucknow",
+              "lat": 26.8467,
+              "lng": 80.9462,
+              "type": "source"
+            },
+            {
+              "name": "Ayodhya",
+              "lat": 26.7922,
+              "lng": 82.1998,
+              "type": "hub"
+            },
+            {
+              "name": "Akbarpur",
+              "lat": 26.4355,
+              "lng": 82.5414,
+              "type": "hub"
+            },
+            {
+              "name": "Varanasi",
+              "lat": 25.3176,
+              "lng": 82.9739,
+              "type": "destination"
+            }
+          ],
+          "color": "#f59e0b"
+        }
+      ],
+      "status": "IN_TRANSIT",
+      "acceptedShipmentIds": [
+        "shp_1787300228749_5bu3"
+      ],
       "notes": "Scheduled container route. Clean dry bed with space for bundled cargo.",
       "createdAt": "2026-08-21T08:17:01.391Z",
-      "updatedAt": "2026-08-21T08:20:34.061Z"
+      "updatedAt": "2026-08-21T10:30:52.884Z"
     }
   ],
   "shipments": [
     {
-      "id": "shp_1787300277756_dqhe",
-      "senderId": "usr_snd_anonymous",
-      "senderName": "Priya ",
-      "senderPhone": "+91 9415098765",
-      "pickupLocation": "Nihalgarh",
-      "pickupCoords": {
-        "lat": 26.6025,
-        "lng": 81.652,
-        "name": "Nihalgarh"
-      },
-      "dropLocation": "Varanasi",
-      "dropCoords": {
-        "lat": 25.3176,
-        "lng": 82.9739,
-        "name": "Varanasi"
-      },
-      "distanceKm": 243.75,
-      "weightKg": 500,
-      "packageType": "Electronics",
-      "packageDescription": "10 Cartons ",
-      "pickupTimeWindow": "Today 10:00 AM - 12:00 PM",
-      "deliveryDeadline": "Today 06:00 PM",
-      "fareEstimate": {
-        "baseFee": 50,
-        "distanceKm": 243.75,
-        "ratePerKm": 2,
-        "distanceFee": 488,
-        "weightKg": 500,
-        "ratePerKg": 1,
-        "weightFee": 500,
-        "packageType": "Electronics",
-        "multiplier": 1.15,
-        "categorySurcharge": 156,
-        "totalFare": 1194,
-        "dedicatedTruckComparison": 3343,
-        "estimatedSavings": 2149,
-        "savingsPercentage": 64
-      },
-      "status": "PENDING",
-      "assignedTripId": null,
-      "driverId": null,
-      "driverName": null,
-      "driverPhone": null,
-      "pickupOtp": "2275",
-      "pickupOtpVerified": false,
-      "pickupPhoto": null,
-      "deliveryOtp": "4611",
-      "deliveryOtpVerified": false,
-      "deliveryPhoto": null,
-      "paymentStatus": "PENDING",
-      "createdAt": "2026-08-21T08:17:57.756Z"
-    },
-    {
-      "id": "shp_1787300256229_yvjd",
-      "senderId": "usr_snd_anonymous",
-      "senderName": "Priya ",
-      "senderPhone": "+91 9415098765",
-      "pickupLocation": "Sultanpur (Civil Lines)",
-      "pickupCoords": {
-        "lat": 26.2648,
-        "lng": 82.0727,
-        "name": "Sultanpur"
-      },
-      "dropLocation": "Jaunpur",
-      "dropCoords": {
-        "lat": 25.7464,
-        "lng": 82.6837,
-        "name": "Jaunpur"
-      },
-      "distanceKm": 105,
-      "weightKg": 500,
-      "packageType": "Electronics",
-      "packageDescription": "10 Cartons ",
-      "pickupTimeWindow": "Today 10:00 AM - 12:00 PM",
-      "deliveryDeadline": "Today 06:00 PM",
-      "fareEstimate": {
-        "baseFee": 50,
-        "distanceKm": 105,
-        "ratePerKm": 2,
-        "distanceFee": 210,
-        "weightKg": 500,
-        "ratePerKg": 1,
-        "weightFee": 500,
-        "packageType": "Electronics",
-        "multiplier": 1.15,
-        "categorySurcharge": 114,
-        "totalFare": 874,
-        "dedicatedTruckComparison": 2447,
-        "estimatedSavings": 1573,
-        "savingsPercentage": 64
-      },
-      "status": "PENDING",
-      "assignedTripId": null,
-      "driverId": null,
-      "driverName": null,
-      "driverPhone": null,
-      "pickupOtp": "8068",
-      "pickupOtpVerified": false,
-      "pickupPhoto": null,
-      "deliveryOtp": "7989",
-      "deliveryOtpVerified": false,
-      "deliveryPhoto": null,
-      "paymentStatus": "PENDING",
-      "createdAt": "2026-08-21T08:17:36.229Z"
-    },
-    {
-      "id": "shp_1787300228749_5bu3",
+      "id": "shp_1787313675799_s5y5",
       "senderId": "usr_snd_anonymous",
       "senderName": "Priya Sharma (Retail Goods)",
       "senderPhone": "+91 9415098765",
@@ -307,17 +357,248 @@
       "driverId": null,
       "driverName": null,
       "driverPhone": null,
+      "pickupOtp": "1086",
+      "pickupOtpVerified": false,
+      "pickupPhoto": null,
+      "deliveryOtp": "7297",
+      "deliveryOtpVerified": false,
+      "deliveryPhoto": null,
+      "paymentStatus": "PENDING",
+      "createdAt": "2026-08-21T12:01:15.799Z"
+    },
+    {
+      "id": "shp_1787308286130_nr7s",
+      "senderId": "usr_snd_anonymous",
+      "senderName": "Priya Sharma (Retail Goods)",
+      "senderPhone": "+91 9415098765",
+      "pickupLocation": "Lucknow (Transport Nagar)",
+      "pickupCoords": {
+        "lat": 26.8467,
+        "lng": 80.9462,
+        "name": "Lucknow"
+      },
+      "dropLocation": "Sultanpur (Civil Lines)",
+      "dropCoords": {
+        "lat": 26.2648,
+        "lng": 82.0727,
+        "name": "Sultanpur"
+      },
+      "distanceKm": 161.25,
+      "weightKg": 450,
+      "packageType": "Clothing & Textiles",
+      "packageDescription": "10 Cartons of Readymade Garments",
+      "pickupTimeWindow": "Today 10:00 AM - 12:00 PM",
+      "deliveryDeadline": "Today 06:00 PM",
+      "fareEstimate": {
+        "baseFee": 50,
+        "distanceKm": 161.25,
+        "ratePerKm": 2,
+        "distanceFee": 323,
+        "weightKg": 450,
+        "ratePerKg": 1,
+        "weightFee": 450,
+        "packageType": "Clothing & Textiles",
+        "multiplier": 1,
+        "categorySurcharge": 0,
+        "totalFare": 823,
+        "dedicatedTruckComparison": 2304,
+        "estimatedSavings": 1481,
+        "savingsPercentage": 64
+      },
+      "status": "BOOKED",
+      "assignedTripId": "trip_1787311036970_apuh",
+      "driverId": "drv_manual",
+      "driverName": "Driver Partner",
+      "driverPhone": "+91 9800000000",
+      "pickupOtp": "1834",
+      "pickupOtpVerified": false,
+      "pickupPhoto": null,
+      "deliveryOtp": "4516",
+      "deliveryOtpVerified": false,
+      "deliveryPhoto": null,
+      "paymentStatus": "ESCROW_HELD",
+      "createdAt": "2026-08-21T10:31:26.130Z",
+      "updatedAt": "2026-08-21T12:00:26.965Z"
+    },
+    {
+      "id": "shp_1787300277756_dqhe",
+      "senderId": "usr_snd_anonymous",
+      "senderName": "Priya ",
+      "senderPhone": "+91 9415098765",
+      "pickupLocation": "Nihalgarh",
+      "pickupCoords": {
+        "lat": 26.6025,
+        "lng": 81.652,
+        "name": "Nihalgarh"
+      },
+      "dropLocation": "Varanasi",
+      "dropCoords": {
+        "lat": 25.3176,
+        "lng": 82.9739,
+        "name": "Varanasi"
+      },
+      "distanceKm": 243.75,
+      "weightKg": 500,
+      "packageType": "Electronics",
+      "packageDescription": "10 Cartons ",
+      "pickupTimeWindow": "Today 10:00 AM - 12:00 PM",
+      "deliveryDeadline": "Today 06:00 PM",
+      "fareEstimate": {
+        "baseFee": 50,
+        "distanceKm": 243.75,
+        "ratePerKm": 2,
+        "distanceFee": 488,
+        "weightKg": 500,
+        "ratePerKg": 1,
+        "weightFee": 500,
+        "packageType": "Electronics",
+        "multiplier": 1.15,
+        "categorySurcharge": 156,
+        "totalFare": 1194,
+        "dedicatedTruckComparison": 3343,
+        "estimatedSavings": 2149,
+        "savingsPercentage": 64
+      },
+      "status": "BOOKED",
+      "assignedTripId": "trip_1787311036970_apuh",
+      "driverId": "drv_manual",
+      "driverName": "Driver Partner",
+      "driverPhone": "+91 9800000000",
+      "pickupOtp": "2275",
+      "pickupOtpVerified": false,
+      "pickupPhoto": null,
+      "deliveryOtp": "4611",
+      "deliveryOtpVerified": false,
+      "deliveryPhoto": null,
+      "paymentStatus": "ESCROW_HELD",
+      "createdAt": "2026-08-21T08:17:57.756Z",
+      "updatedAt": "2026-08-21T12:00:48.867Z"
+    },
+    {
+      "id": "shp_1787300256229_yvjd",
+      "senderId": "usr_snd_anonymous",
+      "senderName": "Priya ",
+      "senderPhone": "+91 9415098765",
+      "pickupLocation": "Sultanpur (Civil Lines)",
+      "pickupCoords": {
+        "lat": 26.2648,
+        "lng": 82.0727,
+        "name": "Sultanpur"
+      },
+      "dropLocation": "Jaunpur",
+      "dropCoords": {
+        "lat": 25.7464,
+        "lng": 82.6837,
+        "name": "Jaunpur"
+      },
+      "distanceKm": 105,
+      "weightKg": 500,
+      "packageType": "Electronics",
+      "packageDescription": "10 Cartons ",
+      "pickupTimeWindow": "Today 10:00 AM - 12:00 PM",
+      "deliveryDeadline": "Today 06:00 PM",
+      "fareEstimate": {
+        "baseFee": 50,
+        "distanceKm": 105,
+        "ratePerKm": 2,
+        "distanceFee": 210,
+        "weightKg": 500,
+        "ratePerKg": 1,
+        "weightFee": 500,
+        "packageType": "Electronics",
+        "multiplier": 1.15,
+        "categorySurcharge": 114,
+        "totalFare": 874,
+        "dedicatedTruckComparison": 2447,
+        "estimatedSavings": 1573,
+        "savingsPercentage": 64
+      },
+      "status": "BOOKED",
+      "assignedTripId": "trip_1787311036970_apuh",
+      "driverId": "drv_manual",
+      "driverName": "Driver Partner",
+      "driverPhone": "+91 9800000000",
+      "pickupOtp": "8068",
+      "pickupOtpVerified": false,
+      "pickupPhoto": null,
+      "deliveryOtp": "7989",
+      "deliveryOtpVerified": false,
+      "deliveryPhoto": null,
+      "paymentStatus": "ESCROW_HELD",
+      "createdAt": "2026-08-21T08:17:36.229Z",
+      "updatedAt": "2026-08-21T12:01:03.877Z"
+    },
+    {
+      "id": "shp_1787300228749_5bu3",
+      "senderId": "usr_snd_anonymous",
+      "senderName": "Priya Sharma (Retail Goods)",
+      "senderPhone": "+91 9415098765",
+      "pickupLocation": "Lucknow (Transport Nagar)",
+      "pickupCoords": {
+        "lat": 26.8467,
+        "lng": 80.9462,
+        "name": "Lucknow"
+      },
+      "dropLocation": "Sultanpur (Civil Lines)",
+      "dropCoords": {
+        "lat": 26.2648,
+        "lng": 82.0727,
+        "name": "Sultanpur"
+      },
+      "distanceKm": 161.25,
+      "weightKg": 450,
+      "packageType": "Clothing & Textiles",
+      "packageDescription": "10 Cartons of Readymade Garments",
+      "pickupTimeWindow": "Today 10:00 AM - 12:00 PM",
+      "deliveryDeadline": "Today 06:00 PM",
+      "fareEstimate": {
+        "baseFee": 50,
+        "distanceKm": 161.25,
+        "ratePerKm": 2,
+        "distanceFee": 323,
+        "weightKg": 450,
+        "ratePerKg": 1,
+        "weightFee": 450,
+        "packageType": "Clothing & Textiles",
+        "multiplier": 1,
+        "categorySurcharge": 0,
+        "totalFare": 823,
+        "dedicatedTruckComparison": 2304,
+        "estimatedSavings": 1481,
+        "savingsPercentage": 64
+      },
+      "status": "BOOKED",
+      "assignedTripId": "trip_1787300221391_5z1u",
+      "driverId": "drv_manual",
+      "driverName": "Driver Partner",
+      "driverPhone": "+91 9800000000",
       "pickupOtp": "4225",
       "pickupOtpVerified": false,
       "pickupPhoto": null,
       "deliveryOtp": "5235",
       "deliveryOtpVerified": false,
       "deliveryPhoto": null,
-      "paymentStatus": "PENDING",
-      "createdAt": "2026-08-21T08:17:08.749Z"
+      "paymentStatus": "ESCROW_HELD",
+      "createdAt": "2026-08-21T08:17:08.749Z",
+      "updatedAt": "2026-08-21T10:30:50.941Z"
     }
   ],
-  "assignments": [],
+  "assignments": [
+    {
+      "id": "asg_1787313626994",
+      "tripId": "trip_1787311036970_apuh",
+      "shipmentId": "shp_1787308286130_nr7s",
+      "assignedAt": "2026-08-21T12:00:26.994Z",
+      "acceptanceStatus": "ACCEPTED"
+    },
+    {
+      "id": "asg_1787308250945",
+      "tripId": "trip_1787300221391_5z1u",
+      "shipmentId": "shp_1787300228749_5bu3",
+      "assignedAt": "2026-08-21T10:30:50.945Z",
+      "acceptanceStatus": "ACCEPTED"
+    }
+  ],
   "shipment_status_logs": [
     {
       "id": "log_1787300228751_inl31",
@@ -341,6 +622,38 @@
       "shipmentId": "shp_1787300277756_dqhe",
       "status": "PENDING",
       "location": "Nihalgarh",
+      "notes": "Shipment created and awaiting driver corridor match."
+    },
+    {
+      "id": "log_1787308250947_nmhlr",
+      "timestamp": "2026-08-21T10:30:50.947Z",
+      "shipmentId": "shp_1787300228749_5bu3",
+      "status": "BOOKED",
+      "location": "Lucknow",
+      "notes": "Driver Driver Partner accepted the shipment for corridor delivery."
+    },
+    {
+      "id": "log_1787308286132_ac95f",
+      "timestamp": "2026-08-21T10:31:26.132Z",
+      "shipmentId": "shp_1787308286130_nr7s",
+      "status": "PENDING",
+      "location": "Lucknow (Transport Nagar)",
+      "notes": "Shipment created and awaiting driver corridor match."
+    },
+    {
+      "id": "log_1787313626996_dz9sq",
+      "timestamp": "2026-08-21T12:00:26.997Z",
+      "shipmentId": "shp_1787308286130_nr7s",
+      "status": "BOOKED",
+      "location": "Lucknow",
+      "notes": "Driver Driver Partner accepted the shipment for corridor delivery."
+    },
+    {
+      "id": "log_1787313675802_sccje",
+      "timestamp": "2026-08-21T12:01:15.802Z",
+      "shipmentId": "shp_1787313675799_s5y5",
+      "status": "PENDING",
+      "location": "Lucknow (Transport Nagar)",
       "notes": "Shipment created and awaiting driver corridor match."
     }
   ],
