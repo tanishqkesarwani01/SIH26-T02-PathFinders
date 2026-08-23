@@ -51,28 +51,3 @@ loadlink-logistics/
 
 ---
 
-## ⚙️ Quick Start
-
-### 1. Start Backend Server
-```bash
-cd server
-npm install
-node src/index.js
-```
-*Backend runs on `http://localhost:5000`*
-
-### 2. Start Frontend App
-```bash
-cd client
-npm install
-npm run dev
-```
-*Frontend runs on `http://localhost:5173`*
-
----
-
-## 🧪 Demo Instructions for SIH Jury
-1. Open `http://localhost:5173`.
-2. Click **"Reset to Empty"** in the top bar to show 100% clean initial state compliance.
-3. Click **"Load SIH Demo (Lucknow → Varanasi)"** to load the multi-corridor route and sample candidate shipments.
-4. Explore **Driver Mode** (Routes A/B/C), **Sender Mode** (Fare calculation & booking), and **Tracker Mode** (OTP verification & escrow release).
