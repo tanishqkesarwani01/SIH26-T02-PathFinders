@@ -1,12 +1,12 @@
 import axios from "axios";
-
-const BASE_URL = "/api";
+const BASE_URL = import.meta.env.VITE_API_URL || "/api";
 
 function getToken() {
-  return localStorage.getItem("vl_token");
+  return localStorage.getItem("vl_token") || localStorage.getItem("loadlink_token");
 }
 
 const api = axios.create({ baseURL: BASE_URL });
+
 
 api.interceptors.request.use((cfg) => {
   const t = getToken();

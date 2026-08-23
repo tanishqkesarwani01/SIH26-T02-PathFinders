@@ -4,6 +4,108 @@
   "vehicles": [],
   "trips": [
     {
+      "id": "trip_1787426734129_utrs",
+      "driverId": "drv_manual",
+      "driverUserId": null,
+      "driverName": "Driver Partner",
+      "driverPhone": "+91 9800000000",
+      "driverRating": 4.9,
+      "vehicleNumber": "UP-32-BZ-7890",
+      "vehicleType": "Medium LCV (14ft Container)",
+      "source": "Lucknow",
+      "destination": "Gorakhpur",
+      "departureDate": "2026-08-22",
+      "departureTime": "10:00 AM",
+      "totalCapacityKg": 5000,
+      "currentLoadKg": 2220,
+      "availableCapacityKg": 2780,
+      "selectedRouteId": "route_A",
+      "routes": [
+        {
+          "id": "route_A",
+          "name": "Route A: Primary Express Highway (Lucknow → Gorakhpur)",
+          "corridor": "Lucknow → Main Corridor → Gorakhpur",
+          "distanceKm": 301,
+          "estimatedDurationHours": 5.5,
+          "hubs": [
+            "Lucknow",
+            "Gorakhpur"
+          ],
+          "stops": [
+            {
+              "name": "Lucknow",
+              "lat": 26.8467,
+              "lng": 80.9462,
+              "type": "source"
+            },
+            {
+              "name": "Gorakhpur",
+              "lat": 26.7606,
+              "lng": 83.3732,
+              "type": "destination"
+            }
+          ],
+          "color": "#10b981"
+        },
+        {
+          "id": "route_B",
+          "name": "Route B: Secondary Arterial Bypass (Lucknow → Gorakhpur)",
+          "corridor": "Lucknow → Regional Hubs → Gorakhpur",
+          "distanceKm": 331,
+          "estimatedDurationHours": 6.6,
+          "hubs": [
+            "Lucknow",
+            "Gorakhpur"
+          ],
+          "stops": [
+            {
+              "name": "Lucknow",
+              "lat": 26.8467,
+              "lng": 80.9462,
+              "type": "source"
+            },
+            {
+              "name": "Gorakhpur",
+              "lat": 26.7606,
+              "lng": 83.3732,
+              "type": "destination"
+            }
+          ],
+          "color": "#3b82f6"
+        },
+        {
+          "id": "route_C",
+          "name": "Route C: Outer Loop Route (Lucknow → Gorakhpur)",
+          "corridor": "Lucknow → Outer Bypass → Gorakhpur",
+          "distanceKm": 362,
+          "estimatedDurationHours": 7.5,
+          "hubs": [
+            "Lucknow",
+            "Gorakhpur"
+          ],
+          "stops": [
+            {
+              "name": "Lucknow",
+              "lat": 26.8467,
+              "lng": 80.9462,
+              "type": "source"
+            },
+            {
+              "name": "Gorakhpur",
+              "lat": 26.7606,
+              "lng": 83.3732,
+              "type": "destination"
+            }
+          ],
+          "color": "#f59e0b"
+        }
+      ],
+      "status": "SCHEDULED",
+      "acceptedShipmentIds": [],
+      "notes": "Scheduled container route. Clean dry bed with space for bundled cargo.",
+      "createdAt": "2026-08-22T19:25:34.130Z"
+    },
+    {
       "id": "trip_1787311036970_apuh",
       "driverId": "drv_manual",
       "driverUserId": null,
@@ -17,9 +119,9 @@
       "departureDate": "2026-08-21",
       "departureTime": "10:00 AM",
       "totalCapacityKg": 5000,
-      "currentLoadKg": 2670,
-      "availableCapacityKg": 2330,
-      "selectedRouteId": "route_A",
+      "currentLoadKg": 3120,
+      "availableCapacityKg": 1880,
+      "selectedRouteId": "route_B",
       "routes": [
         {
           "id": "route_A",
@@ -149,13 +251,14 @@
           "color": "#f59e0b"
         }
       ],
-      "status": "IN_TRANSIT",
+      "status": "COMPLETED",
       "acceptedShipmentIds": [
-        "shp_1787308286130_nr7s"
+        "shp_1787308286130_nr7s",
+        "shp_1787426592856_6xyv"
       ],
       "notes": "Scheduled container route. Clean dry bed with space for bundled cargo.",
       "createdAt": "2026-08-21T11:17:16.970Z",
-      "updatedAt": "2026-08-21T12:00:29.649Z"
+      "updatedAt": "2026-08-22T19:25:22.285Z"
     },
     {
       "id": "trip_1787300221391_5z1u",
@@ -313,6 +416,114 @@
     }
   ],
   "shipments": [
+    {
+      "id": "shp_1787426658175_zf7f",
+      "senderId": "usr_snd_anonymous",
+      "senderName": "Priya Sharma (Retail Goods)",
+      "senderPhone": "+91 9415098765",
+      "pickupLocation": "Raebareli",
+      "pickupCoords": {
+        "lat": 26.2236,
+        "lng": 81.2409,
+        "name": "Raebareli"
+      },
+      "dropLocation": "Prayagraj",
+      "dropCoords": {
+        "lat": 25.4358,
+        "lng": 81.8463,
+        "name": "Prayagraj"
+      },
+      "distanceKm": 133.75,
+      "weightKg": 450,
+      "packageType": "Clothing & Textiles",
+      "packageDescription": "10 Cartons of Readymade Garments",
+      "pickupTimeWindow": "Today 10:00 AM - 12:00 PM",
+      "deliveryDeadline": "Today 06:00 PM",
+      "fareEstimate": {
+        "baseFee": 50,
+        "distanceKm": 133.75,
+        "ratePerKm": 2,
+        "distanceFee": 268,
+        "weightKg": 450,
+        "ratePerKg": 1,
+        "weightFee": 450,
+        "packageType": "Clothing & Textiles",
+        "multiplier": 1,
+        "categorySurcharge": 0,
+        "totalFare": 768,
+        "dedicatedTruckComparison": 2150,
+        "estimatedSavings": 1382,
+        "savingsPercentage": 64
+      },
+      "status": "BOOKED",
+      "assignedTripId": "trip_1787311036970_apuh",
+      "driverId": "drv_manual",
+      "driverName": "Driver Partner",
+      "driverPhone": "+91 9800000000",
+      "pickupOtp": "6553",
+      "pickupOtpVerified": false,
+      "pickupPhoto": null,
+      "deliveryOtp": "8565",
+      "deliveryOtpVerified": false,
+      "deliveryPhoto": null,
+      "paymentStatus": "ESCROW_HELD",
+      "createdAt": "2026-08-22T19:24:18.175Z",
+      "updatedAt": "2026-08-22T19:25:18.004Z"
+    },
+    {
+      "id": "shp_1787426592856_6xyv",
+      "senderId": "usr_snd_anonymous",
+      "senderName": "Priya Sharma (Retail Goods)",
+      "senderPhone": "+91 9415098765",
+      "pickupLocation": "Lucknow (Transport Nagar)",
+      "pickupCoords": {
+        "lat": 26.8467,
+        "lng": 80.9462,
+        "name": "Lucknow"
+      },
+      "dropLocation": "prayagraj",
+      "dropCoords": {
+        "lat": 25.4358,
+        "lng": 81.8463,
+        "name": "Prayagraj"
+      },
+      "distanceKm": 226.25,
+      "weightKg": 450,
+      "packageType": "Clothing & Textiles",
+      "packageDescription": "10 Cartons of Readymade Garments",
+      "pickupTimeWindow": "Today 10:00 AM - 12:00 PM",
+      "deliveryDeadline": "Today 06:00 PM",
+      "fareEstimate": {
+        "baseFee": 50,
+        "distanceKm": 226.25,
+        "ratePerKm": 2,
+        "distanceFee": 453,
+        "weightKg": 450,
+        "ratePerKg": 1,
+        "weightFee": 450,
+        "packageType": "Clothing & Textiles",
+        "multiplier": 1,
+        "categorySurcharge": 0,
+        "totalFare": 953,
+        "dedicatedTruckComparison": 2668,
+        "estimatedSavings": 1715,
+        "savingsPercentage": 64
+      },
+      "status": "BOOKED",
+      "assignedTripId": "trip_1787311036970_apuh",
+      "driverId": "drv_manual",
+      "driverName": "Driver Partner",
+      "driverPhone": "+91 9800000000",
+      "pickupOtp": "5824",
+      "pickupOtpVerified": false,
+      "pickupPhoto": null,
+      "deliveryOtp": "2290",
+      "deliveryOtpVerified": false,
+      "deliveryPhoto": null,
+      "paymentStatus": "ESCROW_HELD",
+      "createdAt": "2026-08-22T19:23:12.856Z",
+      "updatedAt": "2026-08-22T19:24:55.433Z"
+    },
     {
       "id": "shp_1787313675799_s5y5",
       "senderId": "usr_snd_anonymous",
@@ -585,6 +796,13 @@
   ],
   "assignments": [
     {
+      "id": "asg_1787426695438",
+      "tripId": "trip_1787311036970_apuh",
+      "shipmentId": "shp_1787426592856_6xyv",
+      "assignedAt": "2026-08-22T19:24:55.438Z",
+      "acceptanceStatus": "ACCEPTED"
+    },
+    {
       "id": "asg_1787313626994",
       "tripId": "trip_1787311036970_apuh",
       "shipmentId": "shp_1787308286130_nr7s",
@@ -655,6 +873,30 @@
       "status": "PENDING",
       "location": "Lucknow (Transport Nagar)",
       "notes": "Shipment created and awaiting driver corridor match."
+    },
+    {
+      "id": "log_1787426592860_rxl7v",
+      "timestamp": "2026-08-22T19:23:12.861Z",
+      "shipmentId": "shp_1787426592856_6xyv",
+      "status": "PENDING",
+      "location": "Lucknow (Transport Nagar)",
+      "notes": "Shipment created and awaiting driver corridor match."
+    },
+    {
+      "id": "log_1787426658178_xuyt6",
+      "timestamp": "2026-08-22T19:24:18.178Z",
+      "shipmentId": "shp_1787426658175_zf7f",
+      "status": "PENDING",
+      "location": "Raebareli",
+      "notes": "Shipment created and awaiting driver corridor match."
+    },
+    {
+      "id": "log_1787426695441_3b7d9",
+      "timestamp": "2026-08-22T19:24:55.441Z",
+      "shipmentId": "shp_1787426592856_6xyv",
+      "status": "BOOKED",
+      "location": "Lucknow",
+      "notes": "Driver Driver Partner accepted the shipment for corridor delivery."
     }
   ],
   "payments": [],
