@@ -265,48 +265,6 @@ SIH_26/
 
 ---
 
-## 🔌 Main API Areas
-
-### Authentication
-```text
-POST /api/auth/register
-POST /api/auth/login
-POST /api/auth/verify-aadhaar
-```
-
-### Trips & Matching
-```text
-GET  /api/trips
-GET  /api/trips/:id
-POST /api/trips
-POST /api/trips/:id/select-route
-GET  /api/trips/:id/proximity-consignments
-POST /api/trips/:id/accept-enroute-consignment
-POST /api/trips/:id/decline-enroute-consignment
-```
-
-### Shipments
-```text
-GET  /api/shipments
-POST /api/shipments
-GET  /api/shipments/fare-estimate
-POST /api/shipments/:id/book-trip
-POST /api/shipments/:id/verify-pickup
-POST /api/shipments/:id/verify-delivery
-PATCH /api/shipments/:id/status
-```
-
-### Ratings & Demo
-```text
-POST /api/ratings
-GET  /api/ratings/:driverId
-POST /api/demo/seed
-POST /api/demo/reset
-GET  /api/demo/stats
-```
-
----
-
 ## 🧪 Demo Flow
 
 The prototype includes a demonstration scenario for the **Lucknow → Varanasi** corridor.
@@ -327,56 +285,6 @@ This flow demonstrates the complete journey from **route selection → en-route 
 
 ---
 
-## 🚀 Running Locally
-
-### Backend
-
-```bash
-cd server
-npm install
-node src/index.js
-```
-
-Backend:
-
-```text
-http://localhost:5000
-```
-
-### Frontend
-
-Open another terminal:
-
-```bash
-cd client
-npm install
-npm run dev
-```
-
-Frontend:
-
-```text
-http://localhost:5173
-```
-
-The Vite development configuration proxies `/api` requests to the backend.
-
----
-
-## 🌐 Deployment
-
-### Frontend
-Deployed on **Vercel**
-
-https://sih-26-t02-path-finders.vercel.app/
-
-### Backend
-Deployed on **Render**
-
-https://sih26-t02-pathfinders.onrender.com/
-
----
-
 ## 🎯 What This Prototype Demonstrates
 
 LoadLink demonstrates how existing loading vehicles can potentially be utilized more efficiently by combining:
@@ -384,27 +292,6 @@ LoadLink demonstrates how existing loading vehicles can potentially be utilized 
 **Route Optimization + Cargo Matching + Real-Time Proximity Detection + Shipment Tracking**
 
 The prototype is intended to demonstrate our proposed solution and its workflow. It is not presented as a production-ready logistics platform.
-
----
-
-## 👥 Team
-
-**Team PathFinders**
-
-- Tanishq Kesarwani — Team Lead
-- Ekanand Modanwal
-- Sumangal Shukla
-- Khushi Yadav
-- Ayush Kumar
-- Raunak Srivastava
-
----
-
-## 📜 Hackathon Context
-
-**Smart India Hackathon 2026 — Internal Hackathon**
-
-LoadLink was developed as our team's prototype and represents our proposed approach to the logistics and transportation problem addressed during the internal hackathon.
 
 ---
 
