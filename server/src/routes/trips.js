@@ -7,6 +7,13 @@ const {
   scanEnRouteProximityConsignments,
   getCityCoords 
 } = require('../services/matchingEngine');
+const {
+  getDrivingRoute,
+  getDrivingRouteMultiStop,
+  getDrivingDistanceKm,
+  geocodeAddress,
+  reverseGeocode
+} = require('../services/osrmService');
 
 // Create a new Driver Trip
 router.post('/', (req, res) => {
@@ -411,5 +418,111 @@ router.post('/:id/decline-enroute-consignment', (req, res) => {
   }
 });
 
-module.exports = router;
+// ===== OSRM & Nominatim Integration Endpoints =====
 
+// Get real driving route geometry between waypoints using OSRM
+router.get('/:id/driving-route', async (req, res) => {
+  try {
+    const trip = db.findTripById(req.params.id);
+    if (!trip) return res.status(404).json({ error: 'Trip not found' });
+
+    const activeRoute = (trip.routes || []).find(r => r.id === trip.selectedRouteId) || trip.routes?.[0];
+    const stops = activeRoute?.stops || [
+      { name: trip.source, ...getCityCoords(trip.source) },
+      { name: trip.destination, ...getCityCoords(trip.destination) }
+    ];
+
+    if (stops.length < 2) {
+      return res.status(400).json({ error: 'Need at least 2 stops for a route' });
+    }
+
+    const waypoints = stops.map(s => ({ lat: s.lat, lng: s.lng }));
+    const osrmResult = await getDrivingRouteMultiStop(waypoints);
+
+    if (!osrmResult) {
+      // Fallback: return straight-line polyline
+      return res.json({
+        source: 'fallback_straight_line',
+        distanceKm: activeRoute?.distanceKm || 0,
+        durationMinutes: Math.round((activeRoute?.estimatedDurationHours || 5) * 60),
+        geometry: stops.map(s => [s.lat, s.lng])
+      });
+    }
+
+    res.json({
+      source: 'osrm',
+      distanceKm: osrmResult.distanceKm,
+      durationMinutes: osrmResult.durationMinutes,
+      geometry: osrmResult.geometry
+    });
+  } catch (err) {
+    console.error('OSRM driving route error:', err);
+    res.status(500).json({ error: 'Failed to get driving route' });
+  }
+});
+
+// Get driving distance between truck and a point using OSRM
+router.get('/osrm/driving-distance', async (req, res) => {
+  try {
+    const { fromLat, fromLng, toLat, toLng } = req.query;
+    if (!fromLat || !fromLng || !toLat || !toLng) {
+      return res.status(400).json({ error: 'fromLat, fromLng, toLat, toLng are required' });
+    }
+
+    const result = await getDrivingRoute(
+      Number(fromLat), Number(fromLng),
+      Number(toLat), Number(toLng)
+    );
+
+    if (!result) {
+      return res.json({ source: 'fallback', distanceKm: null, durationMinutes: null });
+    }
+
+    res.json({
+      source: 'osrm',
+      distanceKm: result.distanceKm,
+      durationMinutes: result.durationMinutes
+    });
+  } catch (err) {
+    console.error('OSRM distance error:', err);
+    res.status(500).json({ error: 'Failed to get driving distance' });
+  }
+});
+
+// Geocode an address using Nominatim (free OpenStreetMap geocoder)
+router.get('/osrm/geocode', async (req, res) => {
+  try {
+    const { query } = req.query;
+    if (!query) return res.status(400).json({ error: 'query parameter is required' });
+
+    const result = await geocodeAddress(query);
+    if (!result) {
+      return res.json({ found: false, message: 'No results found for this address' });
+    }
+
+    res.json({ found: true, ...result });
+  } catch (err) {
+    console.error('Geocode error:', err);
+    res.status(500).json({ error: 'Failed to geocode address' });
+  }
+});
+
+// Reverse geocode coordinates using Nominatim
+router.get('/osrm/reverse-geocode', async (req, res) => {
+  try {
+    const { lat, lng } = req.query;
+    if (!lat || !lng) return res.status(400).json({ error: 'lat and lng are required' });
+
+    const result = await reverseGeocode(Number(lat), Number(lng));
+    if (!result) {
+      return res.json({ found: false });
+    }
+
+    res.json({ found: true, ...result });
+  } catch (err) {
+    console.error('Reverse geocode error:', err);
+    res.status(500).json({ error: 'Failed to reverse geocode' });
+  }
+});
+
+module.exports = router;

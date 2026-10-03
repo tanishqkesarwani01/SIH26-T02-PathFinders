@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, Polyline, Tooltip, Circle, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -11,6 +11,38 @@ L.Icon.Default.mergeOptions({
   iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
   shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
 });
+
+// OSRM public API for driving route geometry (free, no API key)
+const OSRM_BASE_URL = 'https://router.project-osrm.org';
+
+/**
+ * Fetch real driving route polyline from OSRM for a set of waypoints.
+ * Returns array of [lat, lng] pairs that follow actual roads.
+ */
+async function fetchOSRMRoute(stops) {
+  if (!stops || stops.length < 2) return null;
+  try {
+    // OSRM uses lng,lat order
+    const coords = stops.map(s => `${s.lng},${s.lat}`).join(';');
+    const url = `${OSRM_BASE_URL}/route/v1/driving/${coords}?overview=full&geometries=geojson&steps=false`;
+    const res = await fetch(url);
+    const data = await res.json();
+
+    if (data.code !== 'Ok' || !data.routes || data.routes.length === 0) return null;
+
+    const route = data.routes[0];
+    // GeoJSON [lng, lat] -> Leaflet [lat, lng]
+    const geometry = route.geometry.coordinates.map(([lng, lat]) => [lat, lng]);
+    return {
+      geometry,
+      distanceKm: Math.round((route.distance / 1000) * 10) / 10,
+      durationMinutes: Math.round(route.duration / 60)
+    };
+  } catch (err) {
+    console.warn('OSRM route fetch failed, using straight line:', err.message);
+    return null;
+  }
+}
 
 // Custom SVG Icons
 const createCustomIcon = (bgColor, iconChar, label) => {
@@ -92,6 +124,10 @@ export default function MapView({
   zoom = 8
 }) {
   const [selectedRoute, setSelectedRoute] = useState(null);
+  // Store OSRM road-following geometry per route (keyed by route id)
+  const [osrmGeometries, setOsrmGeometries] = useState({});
+  const [osrmRouteInfo, setOsrmRouteInfo] = useState({});
+  const fetchedRoutesRef = useRef(new Set());
 
   // Dynamic route calculation for single active shipment when trip routes are empty
   const getEffectiveRoutes = () => {
@@ -150,6 +186,29 @@ export default function MapView({
     }
   }, [routes, selectedRouteId, activeShipment]);
 
+  // Fetch OSRM road-following geometries for all routes
+  useEffect(() => {
+    effectiveRoutes.forEach(async (route) => {
+      const routeKey = route.id || route.name;
+      if (fetchedRoutesRef.current.has(routeKey)) return;
+      if (!route.stops || route.stops.length < 2) return;
+
+      fetchedRoutesRef.current.add(routeKey);
+
+      const osrmResult = await fetchOSRMRoute(route.stops);
+      if (osrmResult) {
+        setOsrmGeometries(prev => ({ ...prev, [routeKey]: osrmResult.geometry }));
+        setOsrmRouteInfo(prev => ({
+          ...prev,
+          [routeKey]: {
+            distanceKm: osrmResult.distanceKm,
+            durationMinutes: osrmResult.durationMinutes
+          }
+        }));
+      }
+    });
+  }, [effectiveRoutes]);
+
   // Aggregate all stops for boundary calculations
   const allStops = selectedRoute?.stops || effectiveRoutes[0]?.stops || [
     { name: 'Origin', lat: 26.8467, lng: 80.9462 },
@@ -173,6 +232,9 @@ export default function MapView({
         <div className="absolute top-3 left-3 z-[1000] flex flex-wrap gap-2 bg-slate-900/90 backdrop-blur-md p-2 rounded-xl border border-slate-700 shadow-xl max-w-[90%]">
           {effectiveRoutes.map((route, idx) => {
             const isSelected = (selectedRoute?.id === route.id);
+            const routeKey = route.id || route.name;
+            const osrmInfo = osrmRouteInfo[routeKey];
+            const displayDistance = osrmInfo?.distanceKm || route.distanceKm;
             return (
               <button
                 key={route.id || idx}
@@ -191,7 +253,7 @@ export default function MapView({
                   style={{ backgroundColor: route.color || '#10b981' }}
                 />
                 <span>{route.name?.split(':')[0] || `Route ${idx + 1}`}</span>
-                <span className="text-[10px] opacity-75">({route.distanceKm} km)</span>
+                <span className="text-[10px] opacity-75">({displayDistance} km{osrmInfo ? ' · OSRM' : ''})</span>
               </button>
             );
           })}
@@ -212,11 +274,20 @@ export default function MapView({
 
         <FitBoundsToStops stops={allStops} />
 
-        {/* Draw Polylines for routes */}
+        {/* Draw Polylines for routes — uses OSRM road geometry when available */}
         {effectiveRoutes.map((route) => {
           if (!route.stops || route.stops.length < 2) return null;
           const isSelected = (selectedRoute?.id === route.id) || effectiveRoutes.length === 1;
-          const positions = route.stops.map(s => [s.lat, s.lng]);
+          const routeKey = route.id || route.name;
+
+          // Use OSRM road-following geometry if available, otherwise fall back to straight lines
+          const osrmGeo = osrmGeometries[routeKey];
+          const positions = osrmGeo || route.stops.map(s => [s.lat, s.lng]);
+          const osrmInfo = osrmRouteInfo[routeKey];
+          const displayDistance = osrmInfo?.distanceKm || route.distanceKm;
+          const displayDuration = osrmInfo
+            ? `${Math.floor(osrmInfo.durationMinutes / 60)}h ${osrmInfo.durationMinutes % 60}m`
+            : `${route.estimatedDurationHours || 5} hrs`;
 
           return (
             <React.Fragment key={`frag_line_${route.id}`}>
@@ -247,7 +318,8 @@ export default function MapView({
               >
                 <Tooltip sticky>
                   <div className="text-xs font-semibold text-slate-900">
-                    {route.name} • {route.distanceKm} km ({route.estimatedDurationHours || 5} hrs)
+                    {route.name} • {displayDistance} km ({displayDuration})
+                    {osrmGeo ? ' 🛣️ Real Road' : ''}
                   </div>
                 </Tooltip>
               </Polyline>
@@ -375,8 +447,9 @@ export default function MapView({
             <span>Destination</span>
           </span>
         </div>
-        <div className="text-slate-500 font-mono text-[11px]">
-          OpenStreetMap & Routing Engine
+        <div className="text-slate-500 font-mono text-[11px] flex items-center gap-1.5">
+          <span className="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+          OSRM + OpenStreetMap Routing Engine
         </div>
       </div>
 

@@ -1,7 +1,36 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState, useEffect, useRef } from 'react';
 import { MapContainer, TileLayer, Marker, Polyline, Popup, Tooltip, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import { getCityByName } from '../data/cities';
+
+// OSRM public API for driving route geometry (free, no API key)
+const OSRM_BASE_URL = 'https://router.project-osrm.org';
+
+/**
+ * Fetch real driving route polyline from OSRM for a set of waypoints.
+ */
+async function fetchOSRMRoute(waypoints) {
+  if (!waypoints || waypoints.length < 2) return null;
+  try {
+    const coords = waypoints.map(w => `${w.lng},${w.lat}`).join(';');
+    const url = `${OSRM_BASE_URL}/route/v1/driving/${coords}?overview=full&geometries=geojson&steps=false`;
+    const res = await fetch(url);
+    const data = await res.json();
+
+    if (data.code !== 'Ok' || !data.routes || data.routes.length === 0) return null;
+
+    const route = data.routes[0];
+    const geometry = route.geometry.coordinates.map(([lng, lat]) => [lat, lng]);
+    return {
+      geometry,
+      distanceKm: Math.round((route.distance / 1000) * 10) / 10,
+      durationMinutes: Math.round(route.duration / 60)
+    };
+  } catch (err) {
+    console.warn('OSRM route fetch failed:', err.message);
+    return null;
+  }
+}
 
 // Helper to fit map bounds to current route coordinates
 function ChangeView({ bounds }) {
@@ -64,6 +93,10 @@ const createCustomIcon = (type, label = '') => {
 };
 
 export default function RouteMap({ trip, activeCorridors = [], height = '400px' }) {
+  const [osrmGeometry, setOsrmGeometry] = useState(null);
+  const [osrmInfo, setOsrmInfo] = useState(null);
+  const fetchedRef = useRef(false);
+
   // Extract route coordinates for the selected trip
   const routeWaypoints = useMemo(() => {
     if (trip && trip.waypoints) {
@@ -82,9 +115,25 @@ export default function RouteMap({ trip, activeCorridors = [], height = '400px' 
     return [];
   }, [trip]);
 
-  const polylinePositions = useMemo(() => {
-    return routeWaypoints.map(wp => [wp.lat, wp.lng]);
+  // Fetch OSRM road-following geometry
+  useEffect(() => {
+    if (fetchedRef.current || routeWaypoints.length < 2) return;
+    fetchedRef.current = true;
+
+    const waypointsForOSRM = routeWaypoints.map(wp => ({ lat: wp.lat, lng: wp.lng }));
+    fetchOSRMRoute(waypointsForOSRM).then(result => {
+      if (result) {
+        setOsrmGeometry(result.geometry);
+        setOsrmInfo({ distanceKm: result.distanceKm, durationMinutes: result.durationMinutes });
+      }
+    });
   }, [routeWaypoints]);
+
+  // Use OSRM geometry if available, otherwise fall back to straight lines
+  const polylinePositions = useMemo(() => {
+    if (osrmGeometry) return osrmGeometry;
+    return routeWaypoints.map(wp => [wp.lat, wp.lng]);
+  }, [routeWaypoints, osrmGeometry]);
 
   const bounds = useMemo(() => {
     if (polylinePositions.length > 0) {
@@ -120,6 +169,11 @@ export default function RouteMap({ trip, activeCorridors = [], height = '400px' 
             {trip.waypoints.length} Waypoints
           </span>
         )}
+        {osrmInfo && (
+          <span className="text-[10px] bg-emerald-800/60 text-emerald-300 px-1.5 py-0.5 rounded border border-emerald-600/40 font-mono">
+            🛣️ {osrmInfo.distanceKm} km • {Math.floor(osrmInfo.durationMinutes / 60)}h {osrmInfo.durationMinutes % 60}m
+          </span>
+        )}
       </div>
 
       <MapContainer
@@ -135,7 +189,7 @@ export default function RouteMap({ trip, activeCorridors = [], height = '400px' 
           url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
         />
 
-        {/* Selected Trip Route Polyline */}
+        {/* Selected Trip Route Polyline — OSRM road geometry or straight line */}
         {polylinePositions.length > 1 && (
           <>
             {/* Outer glow stroke */}
@@ -143,11 +197,23 @@ export default function RouteMap({ trip, activeCorridors = [], height = '400px' 
               positions={polylinePositions}
               pathOptions={{ color: '#10b981', weight: 8, opacity: 0.35 }}
             />
-            {/* Inner dashed highway line */}
+            {/* Inner road line */}
             <Polyline
               positions={polylinePositions}
-              pathOptions={{ color: '#059669', weight: 4, opacity: 0.9, dashArray: '6, 8' }}
-            />
+              pathOptions={{
+                color: '#059669',
+                weight: 4,
+                opacity: 0.9,
+                dashArray: osrmGeometry ? null : '6, 8'
+              }}
+            >
+              <Tooltip sticky>
+                <div className="text-xs font-semibold text-slate-900">
+                  {trip?.origin} → {trip?.destination}
+                  {osrmInfo && ` • ${osrmInfo.distanceKm} km (Real Road)`}
+                </div>
+              </Tooltip>
+            </Polyline>
           </>
         )}
 
@@ -198,6 +264,12 @@ export default function RouteMap({ trip, activeCorridors = [], height = '400px' 
           <span className="text-slate-400">Driver: <strong className="text-white">{trip.driverName}</strong></span>
           <span className="text-slate-600">•</span>
           <span className="text-emerald-400 font-semibold">{trip.availableWeightKg} kg available</span>
+          {osrmGeometry && (
+            <>
+              <span className="text-slate-600">•</span>
+              <span className="text-emerald-500 font-mono text-[10px]">🛣️ OSRM Road Route</span>
+            </>
+          )}
         </div>
       )}
 

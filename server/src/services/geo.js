@@ -1,7 +1,9 @@
 // Geospatial utility functions
+const { getDrivingDistanceKm, getDrivingRoute } = require('./osrmService');
 
 /**
  * Haversine formula - distance between two lat/lng points in km
+ * Used as synchronous fallback when OSRM is unavailable
  */
 function haversineDistance(lat1, lng1, lat2, lng2) {
   const R = 6371;
@@ -20,6 +22,7 @@ function toRad(deg) {
 /**
  * Calculate extra detour distance if a driver's trip from A->B
  * needs to go via C (pickup) and D (dropoff)
+ * Synchronous haversine-based fallback
  */
 function detourDistance(srcLat, srcLng, dstLat, dstLng, pickLat, pickLng, dropLat, dropLng) {
   const direct = haversineDistance(srcLat, srcLng, dstLat, dstLng);
@@ -28,6 +31,26 @@ function detourDistance(srcLat, srcLng, dstLat, dstLng, pickLat, pickLng, dropLa
     haversineDistance(pickLat, pickLng, dropLat, dropLng) +
     haversineDistance(dropLat, dropLng, dstLat, dstLng);
   return Math.max(0, withDetour - direct);
+}
+
+/**
+ * OSRM-powered detour distance calculation using actual driving distances.
+ * Falls back to haversine if OSRM is unavailable.
+ */
+async function detourDistanceOSRM(srcLat, srcLng, dstLat, dstLng, pickLat, pickLng, dropLat, dropLng) {
+  try {
+    const [direct, srcToPick, pickToDrop, dropToDst] = await Promise.all([
+      getDrivingDistanceKm(srcLat, srcLng, dstLat, dstLng),
+      getDrivingDistanceKm(srcLat, srcLng, pickLat, pickLng),
+      getDrivingDistanceKm(pickLat, pickLng, dropLat, dropLng),
+      getDrivingDistanceKm(dropLat, dropLng, dstLat, dstLng)
+    ]);
+    const withDetour = srcToPick + pickToDrop + dropToDst;
+    return Math.max(0, Math.round((withDetour - direct) * 10) / 10);
+  } catch (err) {
+    // Fallback to haversine
+    return detourDistance(srcLat, srcLng, dstLat, dstLng, pickLat, pickLng, dropLat, dropLng);
+  }
 }
 
 /**
@@ -111,4 +134,11 @@ function generateRouteVariants(srcLat, srcLng, dstLat, dstLng) {
   ];
 }
 
-module.exports = { haversineDistance, detourDistance, routeOverlapScore, generateRouteVariants };
+module.exports = {
+  haversineDistance,
+  detourDistance,
+  detourDistanceOSRM,
+  routeOverlapScore,
+  generateRouteVariants
+};
+

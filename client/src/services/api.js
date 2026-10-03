@@ -33,7 +33,15 @@ export const tripsAPI = {
   getProximityConsignments: (id, params) => api.get(`/trips/${id}/proximity-consignments`, { params }),
   simulateEnRouteOpportunity: (id, data) => api.post(`/trips/${id}/simulate-enroute-opportunity`, data),
   acceptEnRouteConsignment: (id, shipmentId) => api.post(`/trips/${id}/accept-enroute-consignment`, { shipmentId }),
-  declineEnRouteConsignment: (id, shipmentId, reason) => api.post(`/trips/${id}/decline-enroute-consignment`, { shipmentId, reason })
+  declineEnRouteConsignment: (id, shipmentId, reason) => api.post(`/trips/${id}/decline-enroute-consignment`, { shipmentId, reason }),
+  // OSRM Integration: Real driving route geometry
+  getDrivingRoute: (id) => api.get(`/trips/${id}/driving-route`),
+  // OSRM: Driving distance between two points
+  getDrivingDistance: (params) => api.get('/trips/osrm/driving-distance', { params }),
+  // Nominatim: Geocode address to coordinates
+  geocodeAddress: (query) => api.get('/trips/osrm/geocode', { params: { query } }),
+  // Nominatim: Reverse geocode coordinates to address
+  reverseGeocode: (lat, lng) => api.get('/trips/osrm/reverse-geocode', { params: { lat, lng } })
 };
 
 
