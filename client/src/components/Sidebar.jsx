@@ -49,7 +49,7 @@ export default function Sidebar({
     {
       id: 'admin',
       label: 'System & Demo Hub',
-      subtitle: 'Platform analytics, entity entry, SIH scenario',
+      subtitle: 'Platform analytics, entity entry, Demo scenario',
       icon: Layers,
       color: 'text-purple-400',
       activeBg: 'bg-purple-500/10 border-purple-500/30 text-purple-300'
@@ -72,7 +72,7 @@ export default function Sidebar({
             <div>
               <div className="flex items-center gap-1.5">
                 <span className="font-extrabold text-base tracking-tight text-white">LoadLink</span>
-                <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-semibold border border-emerald-500/30">SIH '26</span>
+                <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-semibold border border-emerald-500/30">Demo</span>
               </div>
               <p className="text-[10px] text-slate-400 font-medium">Shared Freight & Route Optimization</p>
             </div>
@@ -175,7 +175,7 @@ export default function Sidebar({
       {/* Footer Info */}
       {!isCollapsed && (
         <div className="px-4 py-3 bg-slate-950 text-[10px] text-slate-400 border-t border-slate-850 flex items-center justify-between">
-          <span>SIH 2026 Problem #4</span>
+          <span>Problem #4</span>
           <span className="text-emerald-400 font-semibold">Zero Deadhead</span>
         </div>
       )}

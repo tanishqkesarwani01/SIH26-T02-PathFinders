@@ -307,7 +307,7 @@ export default function App() {
           <div className="flex items-center gap-2">
             <span className="font-extrabold text-white">LoadLink</span>
             <span>•</span>
-            <span>SIH 2026 Shared Logistics & Route Optimization Platform</span>
+            <span>Shared Logistics & Route Optimization Platform</span>
           </div>
           <div className="flex items-center gap-3 text-[11px] text-slate-400 font-medium">
             <span>Dynamic Highway Corridors</span>

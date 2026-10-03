@@ -218,10 +218,7 @@ export default function MapView({
   const truckPos = liveTruckLocation?.lat && liveTruckLocation?.lng
     ? [liveTruckLocation.lat, liveTruckLocation.lng]
     : selectedRoute?.stops?.[0]
-    ? [
-        selectedRoute.stops[0].lat + ((selectedRoute.stops[1]?.lat || selectedRoute.stops[0].lat) - selectedRoute.stops[0].lat) * 0.35,
-        selectedRoute.stops[0].lng + ((selectedRoute.stops[1]?.lng || selectedRoute.stops[0].lng) - selectedRoute.stops[0].lng) * 0.35
-      ]
+    ? [selectedRoute.stops[0].lat, selectedRoute.stops[0].lng]
     : [26.8467, 80.9462];
 
   return (

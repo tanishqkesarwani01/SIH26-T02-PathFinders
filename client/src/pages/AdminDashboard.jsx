@@ -111,7 +111,7 @@ export default function AdminDashboard({
               </span>
             </div>
             <p className="text-xs text-slate-400 mt-1">
-              Real-time analytics • Manual entity insertion • Empty state reset & SIH 2026 scenario loaders
+              Real-time analytics • Manual entity insertion • Empty state reset & Demo scenario loaders
             </p>
           </div>
         </div>
@@ -191,7 +191,7 @@ export default function AdminDashboard({
           <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
             <h3 className="text-sm font-bold text-white mb-2 flex items-center gap-2">
               <Sparkles className="w-4 h-4 text-amber-400" />
-              <span>SIH 2026 Evaluation & Jury Controls</span>
+              <span>Evaluation & Admin Controls</span>
             </h3>
             <p className="text-xs text-slate-400 mb-4">
               Switch between a completely fresh blank database for custom input, or load the pre-engineered Lucknow → Varanasi demonstration.
@@ -203,7 +203,7 @@ export default function AdminDashboard({
                 className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-xs flex items-center gap-2 shadow-lg shadow-emerald-500/20"
               >
                 <Sparkles className="w-4 h-4 text-amber-300" />
-                <span>Load SIH 2026 Demo Scenario (Lucknow → Varanasi)</span>
+                <span>Load Demo Scenario (Lucknow → Varanasi)</span>
               </button>
 
               <button

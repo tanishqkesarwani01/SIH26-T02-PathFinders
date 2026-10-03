@@ -635,7 +635,7 @@ export default function DriverDashboard({
           </div>
           <h3 className="text-lg font-bold text-white mb-2">No Active Trips Posted Yet</h3>
           <p className="text-xs text-slate-400 max-w-md mx-auto mb-6">
-            You currently have no scheduled freight routes. Click "Post New Trip" above or click "Load SIH Demo" in the top bar to test the Lucknow → Varanasi corridor.
+            You currently have no scheduled freight routes. Click "Post New Trip" above or click "Load Demo" in the top bar to test the Lucknow → Varanasi corridor.
           </p>
           <button
             onClick={() => setShowCreateForm(true)}

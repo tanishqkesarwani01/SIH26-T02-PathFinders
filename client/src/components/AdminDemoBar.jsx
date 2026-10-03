@@ -13,7 +13,7 @@ export default function AdminDemoBar({
   const handleSeed = async () => {
     try {
       await onSeedDemo();
-      setActionMsg('Lucknow → Varanasi SIH Scenario Loaded!');
+      setActionMsg('Lucknow → Varanasi Demo Scenario Loaded!');
       confetti({
         particleCount: 70,
         spread: 60,
@@ -44,7 +44,7 @@ export default function AdminDemoBar({
       <div className="flex items-center gap-3 flex-wrap">
         <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-950 border border-slate-800 text-slate-300">
           <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-          <span className="font-semibold text-white">SIH 2026 Engine</span>
+          <span className="font-semibold text-white">Routing Engine</span>
         </div>
 
         <div className="hidden sm:flex items-center gap-2 text-slate-400">
@@ -72,7 +72,7 @@ export default function AdminDemoBar({
           title="Preload Lucknow to Varanasi trip with 3 route options and candidate shipments"
         >
           <Sparkles className="w-3.5 h-3.5 text-amber-300" />
-          <span>Load SIH Demo (Lucknow → Varanasi)</span>
+          <span>Load Demo (Lucknow → Varanasi)</span>
         </button>
 
         <button

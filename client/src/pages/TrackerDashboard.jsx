@@ -146,7 +146,7 @@ export default function TrackerDashboard({
           </div>
           <h3 className="text-lg font-bold text-white mb-2">No Active Shipments to Track</h3>
           <p className="text-xs text-slate-400 max-w-md mx-auto mb-6">
-            Create a shipment in Sender Mode or click "Load SIH Demo" in the top bar to simulate the live parcel tracking pipeline.
+            Create a shipment in Sender Mode or click "Load Demo" in the top bar to simulate the live parcel tracking pipeline.
           </p>
         </div>
       ) : (
