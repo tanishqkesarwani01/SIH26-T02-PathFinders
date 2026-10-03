@@ -5,13 +5,14 @@ import DriverDashboard from './pages/DriverDashboard';
 import SenderDashboard from './pages/SenderDashboard';
 import TrackerDashboard from './pages/TrackerDashboard';
 import AdminDashboard from './pages/AdminDashboard';
+import LandingPage from './pages/LandingPage';
 import TrustVerificationModal from './components/TrustVerificationModal';
 import DriverRatingModal from './components/DriverRatingModal';
 import AadhaarModal from './components/AadhaarModal';
 import { tripsAPI, shipmentsAPI, ratingsAPI, demoAPI, authAPI } from './services/api';
 
 export default function App() {
-  const [activeMode, setActiveMode] = useState('driver'); // 'driver' | 'sender' | 'tracker' | 'admin'
+  const [activeMode, setActiveMode] = useState('landing'); // 'landing' | 'driver' | 'sender' | 'tracker' | 'admin'
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -200,6 +201,18 @@ export default function App() {
     await refreshAllData();
   };
 
+  if (activeMode === 'landing') {
+    return (
+      <LandingPage
+        onNavigate={setActiveMode}
+        trips={trips}
+        shipments={shipments}
+        stats={stats}
+        onSeedDemo={handleSeedDemo}
+      />
+    );
+  }
+
   return (
     <div className="min-h-screen bg-slate-950 flex font-sans text-slate-100 selection:bg-emerald-500 selection:text-white">
       
@@ -221,6 +234,7 @@ export default function App() {
           onResetDb={handleResetDb}
           stats={stats}
           isLoading={isLoading}
+          onNavigate={setActiveMode}
         />
 
         {/* Viewport Content */}

@@ -10,7 +10,8 @@ import {
   UserCheck, 
   Sparkles,
   Database,
-  BarChart3
+  BarChart3,
+  Globe
 } from 'lucide-react';
 
 export default function Sidebar({ 
@@ -22,6 +23,14 @@ export default function Sidebar({
   onOpenAadhaarModal
 }) {
   const navItems = [
+    {
+      id: 'landing',
+      label: 'Home & Overview',
+      subtitle: 'Corridors, public showcase & fleet metrics',
+      icon: Globe,
+      color: 'text-indigo-400',
+      activeBg: 'bg-indigo-500/10 border-indigo-500/30 text-indigo-300'
+    },
     {
       id: 'driver',
       label: 'Driver Mode',
@@ -65,20 +74,28 @@ export default function Sidebar({
       {/* Brand Header */}
       <div className="h-16 flex items-center justify-between px-4 border-b border-slate-800">
         {!isCollapsed ? (
-          <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center shadow-lg shadow-emerald-500/20">
+          <div 
+            onClick={() => setActiveMode('landing')}
+            className="flex items-center gap-2.5 cursor-pointer group"
+            title="Return to Public Landing Page"
+          >
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center shadow-lg shadow-emerald-500/20 group-hover:scale-105 transition-transform">
               <Truck className="w-5 h-5 text-slate-950 font-bold" />
             </div>
             <div>
               <div className="flex items-center gap-1.5">
-                <span className="font-extrabold text-base tracking-tight text-white">LoadLink</span>
-                <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-semibold border border-emerald-500/30">Demo</span>
+                <span className="font-extrabold text-base tracking-tight text-white group-hover:text-emerald-400 transition-colors">LoadLink</span>
+                <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-semibold border border-emerald-500/30">Live</span>
               </div>
               <p className="text-[10px] text-slate-400 font-medium">Shared Freight & Route Optimization</p>
             </div>
           </div>
         ) : (
-          <div className="mx-auto w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center shadow-lg shadow-emerald-500/20">
+          <div 
+            onClick={() => setActiveMode('landing')}
+            className="mx-auto w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center shadow-lg shadow-emerald-500/20 cursor-pointer hover:scale-105 transition-transform"
+            title="Return to Public Landing Page"
+          >
             <Truck className="w-5 h-5 text-slate-950 font-bold" />
           </div>
         )}

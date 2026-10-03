@@ -394,8 +394,8 @@ export default function DriverDashboard({
       {/* Driver Header & Profile Summary */}
       <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 sm:p-6 shadow-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div className="flex items-center gap-4">
-          <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-emerald-600 to-teal-500 flex items-center justify-center text-white shadow-lg shadow-emerald-500/20 text-2xl font-bold">
-            🚚
+          <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-emerald-500 via-teal-400 to-emerald-300 flex items-center justify-center text-slate-950 shadow-lg shadow-emerald-500/25 ring-1 ring-white/20">
+            <Truck className="w-7 h-7 text-slate-950 font-black" />
           </div>
           <div>
             <div className="flex items-center gap-2">
@@ -470,7 +470,7 @@ export default function DriverDashboard({
               <div className="flex items-center gap-2 flex-wrap">
                 <span className="flex items-center gap-1.5 text-xs font-black uppercase tracking-wider text-emerald-400 bg-emerald-500/10 px-2.5 py-0.5 rounded-full border border-emerald-500/30">
                   <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                  🟢 Real-Time Proximity Sensor: {isAutoDriving ? 'ACTIVE (DRIVING)' : 'STANDBY'}
+                  Real-Time Proximity Sensor: {isAutoDriving ? 'ACTIVE (DRIVING)' : 'STANDBY'}
                 </span>
                 {journeyProgressPercent > 0 && (
                   <span className="bg-indigo-500/20 text-indigo-300 text-[11px] font-mono px-2 py-0.5 rounded-md border border-indigo-500/30">

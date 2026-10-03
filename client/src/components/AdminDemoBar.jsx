@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
-import { Sparkles, Trash2, RefreshCw, Zap, CheckCircle, Database, TrendingUp, ShieldAlert } from 'lucide-react';
+import { Sparkles, Trash2, RefreshCw, Zap, CheckCircle, Database, TrendingUp, ShieldAlert, Globe, ArrowLeft } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
 export default function AdminDemoBar({
   onSeedDemo,
   onResetDb,
   stats = {},
-  isLoading = false
+  isLoading = false,
+  onNavigate
 }) {
   const [actionMsg, setActionMsg] = useState('');
 
@@ -42,6 +43,17 @@ export default function AdminDemoBar({
       
       {/* Left: Quick Stats / Status */}
       <div className="flex items-center gap-3 flex-wrap">
+        {onNavigate && (
+          <button
+            onClick={() => onNavigate('landing')}
+            className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-slate-950 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-800 hover:border-slate-700 transition-all text-xs font-semibold group shadow-sm"
+            title="Return to Public Landing Page"
+          >
+            <Globe className="w-3.5 h-3.5 text-emerald-400 group-hover:rotate-12 transition-transform" />
+            <span>← Landing Page</span>
+          </button>
+        )}
+
         <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-950 border border-slate-800 text-slate-300">
           <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
           <span className="font-semibold text-white">Routing Engine</span>
