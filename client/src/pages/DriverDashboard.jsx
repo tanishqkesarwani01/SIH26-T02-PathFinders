@@ -87,6 +87,17 @@ export default function DriverDashboard({
     }
   }, [trips, selectedTripId]);
 
+  // Reset live truck simulation state when switching trips
+  useEffect(() => {
+    if (autoDriveTimerRef.current) clearInterval(autoDriveTimerRef.current);
+    setIsAutoDriving(false);
+    setSimulationStepIndex(0);
+    setJourneyProgressPercent(0);
+    setLiveTruckLocation(null);
+    setEnRouteOpportunity(null);
+    notifiedShipmentsRef.current.clear();
+  }, [selectedTripId]);
+
   const currentTrip = trips.find(t => t.id === selectedTripId) || trips[0];
   const activeRoute = (currentTrip?.routes || []).find(r => r.id === currentTrip?.selectedRouteId) || currentTrip?.routes?.[0];
 

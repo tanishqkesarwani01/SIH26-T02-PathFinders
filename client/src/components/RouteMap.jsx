@@ -115,6 +115,13 @@ export default function RouteMap({ trip, activeCorridors = [], height = '400px' 
     return [];
   }, [trip]);
 
+  // Reset OSRM geometry when trip changes
+  useEffect(() => {
+    setOsrmGeometry(null);
+    setOsrmInfo(null);
+    fetchedRef.current = false;
+  }, [trip?.id, trip?.origin, trip?.destination]);
+
   // Fetch OSRM road-following geometry
   useEffect(() => {
     if (fetchedRef.current || routeWaypoints.length < 2) return;

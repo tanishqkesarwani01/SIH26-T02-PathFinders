@@ -186,13 +186,36 @@ export default function MapView({
     }
   }, [routes, selectedRouteId, activeShipment]);
 
-  // Fetch OSRM road-following geometries for all routes
+  const getRouteKey = (route) => {
+    if (!route) return '';
+    const stops = route.stops || [];
+    const first = stops[0]?.name || stops[0]?.lat || '';
+    const last = stops[stops.length - 1]?.name || stops[stops.length - 1]?.lat || '';
+    return `${route.id}_${first}_${last}_${stops.length}`;
+  };
+
+  const routesSignature = (effectiveRoutes || [])
+    .map(r => `${r.id}:${r.stops?.[0]?.name}->${r.stops?.[r.stops.length - 1]?.name}`)
+    .join('|');
+
+  // Reset cached geometries whenever the set of route stops changes between trips
+  useEffect(() => {
+    setOsrmGeometries({});
+    setOsrmRouteInfo({});
+    fetchedRoutesRef.current = new Set();
+  }, [routesSignature]);
+
+  // Fetch OSRM road-following geometries for all routes if not already provided by backend
   useEffect(() => {
     effectiveRoutes.forEach(async (route) => {
-      const routeKey = route.id || route.name;
-      if (fetchedRoutesRef.current.has(routeKey)) return;
+      // If route already has full road geometry from backend, skip fetching
+      if (route.geometry && Array.isArray(route.geometry) && route.geometry.length > 2) {
+        return;
+      }
       if (!route.stops || route.stops.length < 2) return;
 
+      const routeKey = getRouteKey(route);
+      if (fetchedRoutesRef.current.has(routeKey)) return;
       fetchedRoutesRef.current.add(routeKey);
 
       const osrmResult = await fetchOSRMRoute(route.stops);
@@ -207,7 +230,7 @@ export default function MapView({
         }));
       }
     });
-  }, [effectiveRoutes]);
+  }, [effectiveRoutes, routesSignature]);
 
   // Aggregate all stops for boundary calculations
   const allStops = selectedRoute?.stops || effectiveRoutes[0]?.stops || [
@@ -229,9 +252,9 @@ export default function MapView({
         <div className="absolute top-3 left-3 z-[1000] flex flex-wrap gap-2 bg-slate-900/90 backdrop-blur-md p-2 rounded-xl border border-slate-700 shadow-xl max-w-[90%]">
           {effectiveRoutes.map((route, idx) => {
             const isSelected = (selectedRoute?.id === route.id);
-            const routeKey = route.id || route.name;
+            const routeKey = getRouteKey(route);
             const osrmInfo = osrmRouteInfo[routeKey];
-            const displayDistance = osrmInfo?.distanceKm || route.distanceKm;
+            const displayDistance = route.distanceKm || osrmInfo?.distanceKm;
             return (
               <button
                 key={route.id || idx}
@@ -250,7 +273,9 @@ export default function MapView({
                   style={{ backgroundColor: route.color || '#10b981' }}
                 />
                 <span>{route.name?.split(':')[0] || `Route ${idx + 1}`}</span>
-                <span className="text-[10px] opacity-75">({displayDistance} km{osrmInfo ? ' · OSRM' : ''})</span>
+                <span className="text-[10px] opacity-75">
+                  ({displayDistance ? `${displayDistance} km` : '...'})
+                </span>
               </button>
             );
           })}
@@ -275,16 +300,19 @@ export default function MapView({
         {effectiveRoutes.map((route) => {
           if (!route.stops || route.stops.length < 2) return null;
           const isSelected = (selectedRoute?.id === route.id) || effectiveRoutes.length === 1;
-          const routeKey = route.id || route.name;
+          const routeKey = getRouteKey(route);
 
-          // Use OSRM road-following geometry if available (from backend or frontend fetch), otherwise fall back to stops
-          const osrmGeo = osrmGeometries[routeKey] || (route.geometry && route.geometry.length > 2 ? route.geometry : null);
+          // Use OSRM road-following geometry: prioritize route.geometry from backend, then fetched OSRM geometry, then stops
+          const osrmGeo = (route.geometry && Array.isArray(route.geometry) && route.geometry.length > 2)
+            ? route.geometry
+            : osrmGeometries[routeKey];
           const positions = osrmGeo || route.stops.map(s => [s.lat, s.lng]);
           const osrmInfo = osrmRouteInfo[routeKey];
-          const displayDistance = osrmInfo?.distanceKm || route.distanceKm;
-          const displayDuration = osrmInfo
-            ? `${Math.floor(osrmInfo.durationMinutes / 60)}h ${osrmInfo.durationMinutes % 60}m`
-            : `${route.estimatedDurationHours || 5} hrs`;
+          const displayDistance = route.distanceKm || osrmInfo?.distanceKm;
+          const displayDuration = route.estimatedDurationHours
+            ? `${route.estimatedDurationHours} hrs`
+            : (osrmInfo ? `${Math.floor(osrmInfo.durationMinutes / 60)}h ${osrmInfo.durationMinutes % 60}m` : '5 hrs');
+
 
           return (
             <React.Fragment key={`frag_line_${route.id}`}>
