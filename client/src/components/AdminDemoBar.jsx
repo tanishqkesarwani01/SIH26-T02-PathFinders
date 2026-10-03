@@ -43,17 +43,6 @@ export default function AdminDemoBar({
       
       {/* Left: Quick Stats / Status */}
       <div className="flex items-center gap-3 flex-wrap">
-        {onNavigate && (
-          <button
-            onClick={() => onNavigate('landing')}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-950 hover:bg-rose-500/10 text-slate-300 hover:text-rose-400 border border-slate-800 hover:border-rose-500/40 transition-all text-xs font-semibold group shadow-sm"
-            title="Log Out"
-          >
-            <LogOut className="w-3.5 h-3.5 text-rose-400 group-hover:-translate-x-0.5 transition-transform" />
-            <span>Log Out</span>
-          </button>
-        )}
-
         <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-950 border border-slate-800 text-slate-300">
           <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
           <span className="font-semibold text-white">Routing Engine</span>

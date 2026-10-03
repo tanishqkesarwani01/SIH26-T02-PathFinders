@@ -104,22 +104,6 @@ export default function Sidebar({
         </button>
       </div>
 
-      {/* TOP-LEFT OPTION: Log Out Button */}
-      <div className="p-2.5 border-b border-slate-800/80 bg-slate-950/40">
-        <button
-          onClick={() => setActiveMode('landing')}
-          className={`w-full flex items-center gap-2 rounded-xl border border-slate-800 bg-slate-950 hover:bg-rose-500/10 hover:border-rose-500/40 text-slate-300 hover:text-rose-400 transition-all group shadow-sm ${
-            isCollapsed ? 'p-2 justify-center' : 'px-3 py-2 text-xs font-semibold'
-          }`}
-          title="Log Out"
-        >
-          <LogOut className="w-4 h-4 text-rose-400 group-hover:-translate-x-0.5 transition-transform shrink-0" />
-          {!isCollapsed && (
-            <span className="truncate">Log Out</span>
-          )}
-        </button>
-      </div>
-
       {/* Mode Navigation Items */}
       <div className="flex-1 py-4 px-3 space-y-2 overflow-y-auto">
         <div className={`px-2 mb-2 text-[11px] font-semibold text-slate-400 tracking-wider uppercase ${isCollapsed ? 'text-center' : ''}`}>
