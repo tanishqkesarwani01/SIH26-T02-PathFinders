@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Sparkles, Trash2, RefreshCw, Zap, CheckCircle, Database, TrendingUp, ShieldAlert, Globe, ArrowLeft } from 'lucide-react';
+import { Sparkles, Trash2, RefreshCw, Zap, CheckCircle, Database, TrendingUp, ShieldAlert, Globe, ArrowLeft, LogOut } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
 export default function AdminDemoBar({
@@ -46,11 +46,11 @@ export default function AdminDemoBar({
         {onNavigate && (
           <button
             onClick={() => onNavigate('landing')}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-950 hover:bg-emerald-500/10 text-slate-200 hover:text-emerald-300 border border-slate-800 hover:border-emerald-500/40 transition-all text-xs font-bold group shadow-sm"
-            title="Return to Public Landing Page"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-950 hover:bg-rose-500/10 text-slate-300 hover:text-rose-400 border border-slate-800 hover:border-rose-500/40 transition-all text-xs font-semibold group shadow-sm"
+            title="Log Out"
           >
-            <ArrowLeft className="w-3.5 h-3.5 text-emerald-400 group-hover:-translate-x-1 transition-transform" />
-            <span>← Landing Page</span>
+            <LogOut className="w-3.5 h-3.5 text-rose-400 group-hover:-translate-x-0.5 transition-transform" />
+            <span>Log Out</span>
           </button>
         )}
 

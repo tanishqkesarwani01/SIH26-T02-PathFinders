@@ -13,7 +13,8 @@ import {
   BarChart3,
   Globe,
   ArrowLeft,
-  Home
+  Home,
+  LogOut
 } from 'lucide-react';
 
 export default function Sidebar({ 
@@ -71,7 +72,7 @@ export default function Sidebar({
           <div 
             onClick={() => setActiveMode('landing')}
             className="flex items-center gap-2.5 cursor-pointer group"
-            title="Return to Public Landing Page"
+            title="LoadLink Logistics"
           >
             <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center shadow-lg shadow-emerald-500/20 group-hover:scale-105 transition-transform">
               <Truck className="w-5 h-5 text-slate-950 font-bold" />
@@ -88,7 +89,7 @@ export default function Sidebar({
           <div 
             onClick={() => setActiveMode('landing')}
             className="mx-auto w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center shadow-lg shadow-emerald-500/20 cursor-pointer hover:scale-105 transition-transform"
-            title="Return to Public Landing Page"
+            title="LoadLink Logistics"
           >
             <Truck className="w-5 h-5 text-slate-950 font-bold" />
           </div>
@@ -103,21 +104,18 @@ export default function Sidebar({
         </button>
       </div>
 
-      {/* TOP-LEFT OPTION: Direct Return to Landing Page Button */}
+      {/* TOP-LEFT OPTION: Log Out Button */}
       <div className="p-2.5 border-b border-slate-800/80 bg-slate-950/40">
         <button
           onClick={() => setActiveMode('landing')}
-          className={`w-full flex items-center gap-2 rounded-xl border border-slate-800 bg-slate-950 hover:bg-emerald-500/10 hover:border-emerald-500/40 text-slate-300 hover:text-emerald-300 transition-all group shadow-sm ${
+          className={`w-full flex items-center gap-2 rounded-xl border border-slate-800 bg-slate-950 hover:bg-rose-500/10 hover:border-rose-500/40 text-slate-300 hover:text-rose-400 transition-all group shadow-sm ${
             isCollapsed ? 'p-2 justify-center' : 'px-3 py-2 text-xs font-semibold'
           }`}
-          title="Go back to Public Landing Page"
+          title="Log Out"
         >
-          <ArrowLeft className="w-4 h-4 text-emerald-400 group-hover:-translate-x-1 transition-transform shrink-0" />
+          <LogOut className="w-4 h-4 text-rose-400 group-hover:-translate-x-0.5 transition-transform shrink-0" />
           {!isCollapsed && (
-            <div className="flex items-center justify-between w-full min-w-0">
-              <span className="truncate">← Landing Page</span>
-              <span className="text-[9px] px-1.5 py-0.5 rounded bg-slate-800 text-slate-400 group-hover:text-emerald-300 font-mono">Home</span>
-            </div>
+            <span className="truncate">Log Out</span>
           )}
         </button>
       </div>
@@ -202,21 +200,18 @@ export default function Sidebar({
         )}
       </div>
 
-      {/* BOTTOM-LEFT OPTION: Dedicated High-Contrast Return to Landing Page Button */}
+      {/* BOTTOM-LEFT OPTION: Log Out Button */}
       <div className="p-3 border-t border-slate-800 bg-slate-950">
         <button
           onClick={() => setActiveMode('landing')}
-          className={`w-full flex items-center gap-2.5 rounded-xl border border-emerald-500/30 bg-gradient-to-r from-emerald-500/10 to-teal-500/10 hover:from-emerald-500/25 hover:to-teal-500/25 text-emerald-300 hover:text-white transition-all group shadow-md ${
-            isCollapsed ? 'p-2.5 justify-center' : 'px-3 py-2.5 text-xs font-bold'
+          className={`w-full flex items-center gap-2.5 rounded-xl border border-slate-800 hover:border-rose-500/40 bg-slate-900/80 hover:bg-rose-500/10 text-slate-300 hover:text-rose-400 transition-all group shadow-sm ${
+            isCollapsed ? 'p-2.5 justify-center' : 'px-3 py-2.5 text-xs font-semibold'
           }`}
-          title="Return to Public Landing Page (Home)"
+          title="Log Out"
         >
-          <Home className="w-4 h-4 text-emerald-400 group-hover:scale-110 transition-transform shrink-0" />
+          <LogOut className="w-4 h-4 text-rose-400 group-hover:-translate-x-0.5 transition-transform shrink-0" />
           {!isCollapsed && (
-            <div className="flex items-center justify-between w-full min-w-0">
-              <span className="truncate">← Back to Landing Page</span>
-              <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-bold border border-emerald-500/30">Home</span>
-            </div>
+            <span className="truncate">Log Out</span>
           )}
         </button>
 
