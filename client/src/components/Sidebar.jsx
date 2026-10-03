@@ -11,7 +11,9 @@ import {
   Sparkles,
   Database,
   BarChart3,
-  Globe
+  Globe,
+  ArrowLeft,
+  Home
 } from 'lucide-react';
 
 export default function Sidebar({ 
@@ -23,14 +25,6 @@ export default function Sidebar({
   onOpenAadhaarModal
 }) {
   const navItems = [
-    {
-      id: 'landing',
-      label: 'Home & Overview',
-      subtitle: 'Corridors, public showcase & fleet metrics',
-      icon: Globe,
-      color: 'text-indigo-400',
-      activeBg: 'bg-indigo-500/10 border-indigo-500/30 text-indigo-300'
-    },
     {
       id: 'driver',
       label: 'Driver Mode',
@@ -106,6 +100,25 @@ export default function Sidebar({
           title={isCollapsed ? 'Expand Sidebar' : 'Collapse Sidebar'}
         >
           {isCollapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
+        </button>
+      </div>
+
+      {/* TOP-LEFT OPTION: Direct Return to Landing Page Button */}
+      <div className="p-2.5 border-b border-slate-800/80 bg-slate-950/40">
+        <button
+          onClick={() => setActiveMode('landing')}
+          className={`w-full flex items-center gap-2 rounded-xl border border-slate-800 bg-slate-950 hover:bg-emerald-500/10 hover:border-emerald-500/40 text-slate-300 hover:text-emerald-300 transition-all group shadow-sm ${
+            isCollapsed ? 'p-2 justify-center' : 'px-3 py-2 text-xs font-semibold'
+          }`}
+          title="Go back to Public Landing Page"
+        >
+          <ArrowLeft className="w-4 h-4 text-emerald-400 group-hover:-translate-x-1 transition-transform shrink-0" />
+          {!isCollapsed && (
+            <div className="flex items-center justify-between w-full min-w-0">
+              <span className="truncate">← Landing Page</span>
+              <span className="text-[9px] px-1.5 py-0.5 rounded bg-slate-800 text-slate-400 group-hover:text-emerald-300 font-mono">Home</span>
+            </div>
+          )}
         </button>
       </div>
 
@@ -189,13 +202,31 @@ export default function Sidebar({
         )}
       </div>
 
-      {/* Footer Info */}
-      {!isCollapsed && (
-        <div className="px-4 py-3 bg-slate-950 text-[10px] text-slate-400 border-t border-slate-850 flex items-center justify-between">
-          <span>Problem #4</span>
-          <span className="text-emerald-400 font-semibold">Zero Deadhead</span>
-        </div>
-      )}
+      {/* BOTTOM-LEFT OPTION: Dedicated High-Contrast Return to Landing Page Button */}
+      <div className="p-3 border-t border-slate-800 bg-slate-950">
+        <button
+          onClick={() => setActiveMode('landing')}
+          className={`w-full flex items-center gap-2.5 rounded-xl border border-emerald-500/30 bg-gradient-to-r from-emerald-500/10 to-teal-500/10 hover:from-emerald-500/25 hover:to-teal-500/25 text-emerald-300 hover:text-white transition-all group shadow-md ${
+            isCollapsed ? 'p-2.5 justify-center' : 'px-3 py-2.5 text-xs font-bold'
+          }`}
+          title="Return to Public Landing Page (Home)"
+        >
+          <Home className="w-4 h-4 text-emerald-400 group-hover:scale-110 transition-transform shrink-0" />
+          {!isCollapsed && (
+            <div className="flex items-center justify-between w-full min-w-0">
+              <span className="truncate">← Back to Landing Page</span>
+              <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-bold border border-emerald-500/30">Home</span>
+            </div>
+          )}
+        </button>
+
+        {!isCollapsed && (
+          <div className="mt-2 text-[10px] text-slate-400 text-center flex items-center justify-between px-1">
+            <span>Zero Deadhead Logistics</span>
+            <span className="text-emerald-500 font-mono font-semibold">LoadLink</span>
+          </div>
+        )}
+      </div>
     </aside>
   );
 }

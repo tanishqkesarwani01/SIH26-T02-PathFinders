@@ -46,10 +46,10 @@ export default function AdminDemoBar({
         {onNavigate && (
           <button
             onClick={() => onNavigate('landing')}
-            className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-slate-950 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-800 hover:border-slate-700 transition-all text-xs font-semibold group shadow-sm"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-950 hover:bg-emerald-500/10 text-slate-200 hover:text-emerald-300 border border-slate-800 hover:border-emerald-500/40 transition-all text-xs font-bold group shadow-sm"
             title="Return to Public Landing Page"
           >
-            <Globe className="w-3.5 h-3.5 text-emerald-400 group-hover:rotate-12 transition-transform" />
+            <ArrowLeft className="w-3.5 h-3.5 text-emerald-400 group-hover:-translate-x-1 transition-transform" />
             <span>← Landing Page</span>
           </button>
         )}
