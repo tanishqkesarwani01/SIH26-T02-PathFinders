@@ -45,6 +45,11 @@
   z-index: 10;
 }
 
+/* 100% Free, Zero API Key, Zero Watermark Dark Map Theme for OpenStreetMap */
+.leaflet-container .leaflet-tile-pane {
+  filter: brightness(0.6) invert(1) contrast(3) hue-rotate(200deg) saturate(0.25) brightness(0.7);
+}
+
 .leaflet-popup-content-wrapper {
   background: #0b1120 !important;
   color: #f1f5f9 !important;
