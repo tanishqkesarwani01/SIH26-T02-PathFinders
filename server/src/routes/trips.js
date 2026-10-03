@@ -230,7 +230,7 @@ router.post('/:id/status', (req, res) => {
 });
 
 // Scan for en-route consignments within 10 km proximity radius
-router.get('/:id/proximity-consignments', (req, res) => {
+router.get('/:id/proximity-consignments', async (req, res) => {
   try {
     const trip = db.findTripById(req.params.id);
     if (!trip) return res.status(404).json({ error: 'Trip not found' });
@@ -241,7 +241,7 @@ router.get('/:id/proximity-consignments', (req, res) => {
       : getCityCoords(trip.source);
 
     const allShipments = db.getShipments();
-    const opportunities = scanEnRouteProximityConsignments(trip, currentCoords, Number(radiusKm) || 10, allShipments);
+    const opportunities = await scanEnRouteProximityConsignments(trip, currentCoords, Number(radiusKm) || 10, allShipments);
 
     res.json({
       tripId: trip.id,
@@ -257,7 +257,7 @@ router.get('/:id/proximity-consignments', (req, res) => {
 });
 
 // Interactive Simulator: Simulate truck at ANY GPS coordinate or waypoint along the route and detect proximity consignments
-router.post('/:id/simulate-enroute-opportunity', (req, res) => {
+router.post('/:id/simulate-enroute-opportunity', async (req, res) => {
   try {
     const trip = db.findTripById(req.params.id);
     if (!trip) return res.status(404).json({ error: 'Trip not found' });
@@ -282,7 +282,7 @@ router.post('/:id/simulate-enroute-opportunity', (req, res) => {
     }
 
     const allShipments = db.getShipments();
-    const opportunities = scanEnRouteProximityConsignments(trip, truckSimCoords, Number(radiusKm) || 10, allShipments);
+    const opportunities = await scanEnRouteProximityConsignments(trip, truckSimCoords, Number(radiusKm) || 10, allShipments);
 
     res.json({
       message: `🚚 Dynamic 10km Proximity Detection Active at (${truckSimCoords.lat.toFixed(4)}, ${truckSimCoords.lng.toFixed(4)})`,

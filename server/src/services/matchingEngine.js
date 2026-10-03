@@ -422,11 +422,14 @@ function distancePointToPolyline(pLat, pLng, polylineStops = []) {
   };
 }
 
+const { getDrivingDistanceKm } = require('./osrmService');
+
 /**
  * Purely geometric, location-agnostic en-route proximity & 10 km corridor matching algorithm.
  * Evaluates ANY shipment coordinates against ANY truck route geometry and live GPS location.
+ * Now using OSRM for real driving distance instead of just straight lines.
  */
-function scanEnRouteProximityConsignments(trip, currentCoords, proximityRadiusKm = 10, allShipments = []) {
+async function scanEnRouteProximityConsignments(trip, currentCoords, proximityRadiusKm = 10, allShipments = []) {
   if (!trip) return [];
 
   const activeRoute = (trip.routes || []).find(r => r.id === trip.selectedRouteId) || trip.routes?.[0] || {
@@ -469,21 +472,29 @@ function scanEnRouteProximityConsignments(trip, currentCoords, proximityRadiusKm
 
     if (!pCoords || pCoords.lat === undefined || !dCoords || dCoords.lat === undefined) continue;
 
-    // Step 1 — Pickup Proximity (Pure Geometry)
-    // Distance from truck's current GPS position to pickup point
-    const distTruckToPickup = haversineDistance(truckLat, truckLng, pCoords.lat, pCoords.lng);
+    // Step 1 — Fast Haversine Filter
+    // Filter out obvious non-matches before calling OSRM to save time
+    const distTruckToPickupHav = haversineDistance(truckLat, truckLng, pCoords.lat, pCoords.lng);
+    if (distTruckToPickupHav > proximityRadiusKm * 1.5) continue; // Give 50% buffer for road winding
+
+    // Step 2 — Real Driving Distance (OSRM)
+    let distTruckToPickup = await getDrivingDistanceKm(truckLat, truckLng, pCoords.lat, pCoords.lng);
+    if (distTruckToPickup === null) {
+      distTruckToPickup = distTruckToPickupHav * 1.2; // Fallback
+    }
+
     // Minimum distance from pickup to route polyline
     const pickPolyRes = distancePointToPolyline(pCoords.lat, pCoords.lng, polylineStops);
     const distPickupToRoute = pickPolyRes.minDistanceKm;
     const pickupProgress = pickPolyRes.progress;
 
-    // Proximity sensor rule: Truck MUST be physically within proximityRadiusKm (10 km) of pickup
+    // Proximity sensor rule: Truck MUST be physically within proximityRadiusKm (10 km) of pickup BY ROAD
     if (distTruckToPickup > proximityRadiusKm) continue;
 
     // Prevent recommending shipments that were already passed behind the truck
     if (pickupProgress < (truckProgress - 0.04)) continue;
 
-    // Step 2 — Destination Compatibility (Pure Geometry)
+    // Step 3 — Destination Compatibility
     const dropPolyRes = distancePointToPolyline(dCoords.lat, dCoords.lng, polylineStops);
     const distDropToRoute = dropPolyRes.minDistanceKm;
     const dropProgress = dropPolyRes.progress;
@@ -495,11 +506,11 @@ function scanEnRouteProximityConsignments(trip, currentCoords, proximityRadiusKm
     // Destination must not exceed acceptable route corridor detour
     if (distDropToRoute > 45) continue; // Out of corridor -> filter out
 
-    // Step 3 — Dynamic Detour Calculation
+    // Step 4 — Dynamic Detour Calculation
     const detourKm = Math.round((distPickupToRoute + distDropToRoute) * 10) / 10;
     const estimatedMinutesDelay = Math.round(detourKm * 1.8 + 6);
 
-    // Step 4 — Dynamic Compatibility Score (0 to 100%)
+    // Step 5 — Dynamic Compatibility Score (0 to 100%)
     const effectiveProximity = Math.min(distTruckToPickup, distPickupToRoute);
     const proximityScore = Math.max(0, ((proximityRadiusKm - effectiveProximity) / proximityRadiusKm) * 30);
     const destScore = Math.max(0, ((45 - distDropToRoute) / 45) * 35);
@@ -509,7 +520,11 @@ function scanEnRouteProximityConsignments(trip, currentCoords, proximityRadiusKm
 
     const compatibilityScore = Math.min(99, Math.max(65, Math.round(proximityScore + destScore + capacityScore - detourPenalty)));
 
-    const fare = shipment.fareEstimate?.totalFare || calculateFare(shipment.distanceKm || Math.round(haversineDistance(pCoords.lat, pCoords.lng, dCoords.lat, dCoords.lng)), shipment.weightKg).totalFare;
+    // Try OSRM for fare calculation, fallback to haversine
+    let shipmentRealDist = await getDrivingDistanceKm(pCoords.lat, pCoords.lng, dCoords.lat, dCoords.lng);
+    if (!shipmentRealDist) shipmentRealDist = Math.round(haversineDistance(pCoords.lat, pCoords.lng, dCoords.lat, dCoords.lng) * 1.2);
+    
+    const fare = shipment.fareEstimate?.totalFare || calculateFare(shipment.distanceKm || shipmentRealDist, shipment.weightKg).totalFare;
 
     const newRemainingCapacityKg = Math.max(0, remainingCapacity - shipment.weightKg);
     const newTotalLoadKg = (trip.currentLoadKg || 0) + shipment.weightKg;

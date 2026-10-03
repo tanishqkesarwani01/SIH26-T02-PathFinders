@@ -9,14 +9,14 @@ const { generateOtp, verifyOtp } = require('../services/otpService');
 const { getCityDistance } = require('../services/routingService');
 
 // Live Quote Calculator (Public)
-router.post('/quote', (req, res) => {
+router.post('/quote', async (req, res) => {
   try {
     const { origin, destination, weightKg, volumeCbm, cargoType, isUrgent, vehicleType } = req.body;
     if (!origin || !destination) {
       return res.status(400).json({ error: 'Origin and destination are required' });
     }
 
-    const quote = calculateFreightQuote({
+    const quote = await calculateFreightQuote({
       origin,
       destination,
       weightKg: parseFloat(weightKg) || 100,
@@ -58,7 +58,7 @@ router.get('/:id', authMiddleware, (req, res) => {
 });
 
 // Create booking request (Shipper)
-router.post('/', authMiddleware, requireRole('SHIPPER', 'ADMIN'), (req, res) => {
+router.post('/', authMiddleware, requireRole('SHIPPER', 'ADMIN'), async (req, res) => {
   try {
     const {
       tripId,
@@ -89,8 +89,8 @@ router.post('/', authMiddleware, requireRole('SHIPPER', 'ADMIN'), (req, res) => 
       return res.status(400).json({ error: Not enough volume capacity on truck. Available:  CBM });
     }
 
-    const distance = getCityDistance(pickupLocation || trip.origin, dropLocation || trip.destination);
-    const quote = calculateFreightQuote({
+    const distance = await getCityDistance(pickupLocation || trip.origin, dropLocation || trip.destination);
+    const quote = await calculateFreightQuote({
       origin: pickupLocation || trip.origin,
       destination: dropLocation || trip.destination,
       distanceKm: distance,

@@ -6,7 +6,7 @@ const { getCityDistance } = require('./routingService');
  * Formula:
  * Total Price = Base Fee + (Distance * Base Rate/Km) + (Weight Charge) + (Volume Charge) + (Cargo Risk Surcharge)
  */
-function calculateFreightQuote({
+async function calculateFreightQuote({
   origin,
   destination,
   distanceKm,
@@ -16,7 +16,8 @@ function calculateFreightQuote({
   isUrgent = false,
   vehicleType = 'Medium LCV'
 }) {
-  const effectiveDistance = distanceKm || getCityDistance(origin, destination) || 200;
+  const cityDistance = await getCityDistance(origin, destination);
+  const effectiveDistance = distanceKm || cityDistance || 200;
   
   // 1. Base platform & dispatch fee (₹)
   const baseBookingFee = 250;

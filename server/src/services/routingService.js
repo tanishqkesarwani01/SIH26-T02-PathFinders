@@ -59,6 +59,8 @@ function getCoordinates(cityName) {
   return { lat, lon, name: cityName };
 }
 
+const { getDrivingDistanceKm } = require('./osrmService');
+
 // Haversine distance in km
 function calculateDistance(lat1, lon1, lat2, lon2) {
   const R = 6371; // Earth radius in km
@@ -74,17 +76,22 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
   return Math.round(R * c);
 }
 
-function getCityDistance(city1, city2) {
+async function getCityDistance(city1, city2) {
   const c1 = getCoordinates(city1);
   const c2 = getCoordinates(city2);
   if (!c1 || !c2) return 300;
+  
+  // Use OSRM for true driving distance
+  const osrmDist = await getDrivingDistanceKm(c1.lat, c1.lon, c2.lat, c2.lon);
+  if (osrmDist) return Math.round(osrmDist);
+  
+  // Fallback
   const dist = calculateDistance(c1.lat, c1.lon, c2.lat, c2.lon);
-  // Add 15% road curvature factor to straight-line distance
   return Math.round(dist * 1.15) || 50;
 }
 
 // Check if pickup and drop are on or near the trip's corridor
-function matchTripCorridor(trip, shipperPickup, shipperDrop) {
+async function matchTripCorridor(trip, shipperPickup, shipperDrop) {
   const pickupNorm = normalizeCityName(shipperPickup);
   const dropNorm = normalizeCityName(shipperDrop);
 
@@ -108,7 +115,7 @@ function matchTripCorridor(trip, shipperPickup, shipperDrop) {
   if (pickupIndex !== -1 && dropIndex !== -1 && pickupIndex < dropIndex) {
     const pickupCity = fullRoute[pickupIndex];
     const dropCity = fullRoute[dropIndex];
-    const dist = getCityDistance(pickupCity, dropCity);
+    const dist = await getCityDistance(pickupCity, dropCity);
     return {
       isMatch: true,
       matchType: 'CORRIDOR_WAYPOINT_EXACT',
@@ -129,6 +136,7 @@ function matchTripCorridor(trip, shipperPickup, shipperDrop) {
     let closestDropIdx = -1;
     let minDropDist = Infinity;
 
+    // Use haversine for fast filtering of closest waypoints
     fullRoute.forEach((stop, idx) => {
       const stopCoord = getCoordinates(stop);
       if (stopCoord) {
@@ -146,12 +154,20 @@ function matchTripCorridor(trip, shipperPickup, shipperDrop) {
     });
 
     if (minPickupDist <= 75 && minDropDist <= 75 && closestPickupIdx <= closestDropIdx) {
-      const dist = getCityDistance(shipperPickup, shipperDrop);
+      const dist = await getCityDistance(shipperPickup, shipperDrop);
+      
+      const pStopCoord = getCoordinates(fullRoute[closestPickupIdx]);
+      const dStopCoord = getCoordinates(fullRoute[closestDropIdx]);
+      
+      // Get real detour from OSRM instead of guessing from haversine
+      const realPickDist = await getDrivingDistanceKm(pCoord.lat, pCoord.lon, pStopCoord.lat, pStopCoord.lon) || minPickupDist;
+      const realDropDist = await getDrivingDistanceKm(dCoord.lat, dCoord.lon, dStopCoord.lat, dStopCoord.lon) || minDropDist;
+      
       return {
         isMatch: true,
         matchType: 'DETOUR_RADIUS_MATCH',
         estimatedDistanceKm: dist,
-        detourKm: Math.round(minPickupDist + minDropDist),
+        detourKm: Math.round(realPickDist + realDropDist),
         pickupStop: fullRoute[closestPickupIdx],
         dropStop: fullRoute[closestDropIdx]
       };
