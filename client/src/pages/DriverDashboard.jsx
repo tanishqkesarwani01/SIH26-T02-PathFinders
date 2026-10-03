@@ -144,7 +144,7 @@ export default function DriverDashboard({
         setEnRouteOpportunity(newOpp);
         
         const locName = newOpp.pickupLocation?.split('(')[0]?.trim() || newOpp.pickupLocation;
-        setEnRouteStatusMsg(`🔔 Automatic 10km Trigger: Truck entered 10km zone of ${locName} (${newOpp.proximityDistanceKm} km away, ${newOpp.compatibilityScore}% Match)`);
+        setEnRouteStatusMsg(`🔔 Proximity Alert: 10km before reaching ${locName} pickup point (${newOpp.proximityDistanceKm} km away, ${newOpp.compatibilityScore}% Match)`);
 
         // Add to history tray with exact timestamp
         const historyItem = {
@@ -263,17 +263,18 @@ export default function DriverDashboard({
     const pLng = targetShipment.pickupCoords?.lng || 81.6520;
     const locName = targetShipment.pickupLocation?.split('(')[0]?.trim() || targetShipment.pickupLocation || 'Upcoming Hub';
 
-    // Position truck ~9.2 km before the upcoming consignment pickup
+    // Position truck exactly 10 km before the upcoming consignment pickup
+    // 10km offset (approx 0.090 degrees lat)
     const approachCoord = {
-      lat: pLat + 0.048,
-      lng: pLng - 0.058,
-      name: `Approaching ${locName} (~9.2 km ahead)`
+      lat: pLat + 0.075,
+      lng: pLng - 0.045,
+      name: `Approaching ${locName} (10 km before pickup)`
     };
 
     setLiveTruckLocation({
       lat: approachCoord.lat,
       lng: approachCoord.lng,
-      statusText: `🚚 Live GPS: Approaching ${locName} (9.2 km away)`
+      statusText: `🚚 Live GPS: 10km before reaching ${locName} pickup point`
     });
 
     await evaluateProximityAtCoords(approachCoord);

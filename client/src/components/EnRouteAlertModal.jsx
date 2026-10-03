@@ -72,7 +72,7 @@ export default function EnRouteAlertModal({
             🚚 En-Route Cargo Opportunity
           </h2>
           <p className="text-xs text-slate-300 mt-0.5">
-            A compatible shipment has been detected along your forward highway corridor within 10 km.
+            A compatible shipment has been detected 10km before reaching the pickup point along your forward highway corridor.
           </p>
         </div>
 
