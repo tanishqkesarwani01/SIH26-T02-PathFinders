@@ -247,45 +247,45 @@ export default function SenderDashboard({
                   <div className="space-y-2 text-xs text-slate-300">
                     <div className="flex justify-between">
                       <span className="text-slate-400">Fixed Platform Base Fee:</span>
-                      <span className="font-semibold text-white">₹{fareEstimate.baseFee}</span>
+                      <span className="font-semibold text-white font-mono">₹{fareEstimate.baseFee}</span>
                     </div>
 
                     <div className="flex justify-between">
                       <span className="text-slate-400">
                         Distance ({fareEstimate.distanceKm} km × ₹{fareEstimate.ratePerKm}/km):
                       </span>
-                      <span className="font-semibold text-white">₹{fareEstimate.distanceFee}</span>
+                      <span className="font-semibold text-white font-mono">₹{fareEstimate.distanceFee}</span>
                     </div>
 
                     <div className="flex justify-between">
                       <span className="text-slate-400">
                         Weight Charge ({fareEstimate.weightKg} kg × ₹{fareEstimate.ratePerKg}/kg):
                       </span>
-                      <span className="font-semibold text-white">₹{fareEstimate.weightFee}</span>
+                      <span className="font-semibold text-white font-mono">₹{fareEstimate.weightFee}</span>
                     </div>
 
                     {fareEstimate.categorySurcharge > 0 && (
                       <div className="flex justify-between text-amber-300">
                         <span>Category Modifier ({packageType}):</span>
-                        <span className="font-semibold">+₹{fareEstimate.categorySurcharge}</span>
+                        <span className="font-semibold font-mono">+₹{fareEstimate.categorySurcharge}</span>
                       </div>
                     )}
 
                     <div className="border-t border-slate-800 pt-3 mt-3 flex justify-between items-end">
                       <div>
                         <span className="text-xs text-slate-400 font-medium block">Total Calculated Fare</span>
-                        <span className="text-2xl font-extrabold text-emerald-400">
-                          ₹{fareEstimate.totalFare}
+                        <span className="text-2xl font-extrabold text-emerald-400 font-mono tracking-tight">
+                          ₹{Number(fareEstimate.totalFare).toLocaleString()}
                         </span>
                       </div>
 
                       <div className="text-right">
-                        <div className="text-[10px] text-slate-400 line-through">
-                          Dedicated Truck: ₹{fareEstimate.dedicatedTruckComparison}
+                        <div className="text-[10px] text-slate-400 line-through font-mono">
+                          Dedicated Truck: ₹{Number(fareEstimate.dedicatedTruckComparison).toLocaleString()}
                         </div>
-                        <div className="text-xs font-bold text-emerald-400 flex items-center gap-1">
-                          <TrendingDown className="w-3.5 h-3.5" />
-                          Save {fareEstimate.savingsPercentage}% (₹{fareEstimate.estimatedSavings})
+                        <div className="text-xs font-bold text-emerald-400 flex items-center justify-end gap-1 font-mono">
+                          <TrendingDown className="w-3.5 h-3.5 shrink-0" />
+                          <span>Save {fareEstimate.savingsPercentage}% (₹{Number(fareEstimate.estimatedSavings).toLocaleString()})</span>
                         </div>
                       </div>
                     </div>

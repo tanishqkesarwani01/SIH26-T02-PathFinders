@@ -731,17 +731,17 @@ export default function DriverDashboard({
 
                 {/* Capacity Gauges */}
                 <div className="grid grid-cols-3 gap-3 text-center">
-                  <div className="bg-slate-950 p-3 rounded-xl border border-slate-800">
+                  <div className="bg-slate-950/80 p-3 rounded-xl border border-slate-800/80 shadow-inner">
                     <p className="text-[11px] text-slate-400 font-medium">Total Capacity</p>
-                    <p className="text-base font-bold text-white mt-0.5">{currentTrip.totalCapacityKg} kg</p>
+                    <p className="text-base font-bold text-white font-mono tracking-tight mt-0.5">{Number(currentTrip.totalCapacityKg).toLocaleString()} kg</p>
                   </div>
-                  <div className="bg-slate-950 p-3 rounded-xl border border-slate-800">
+                  <div className="bg-slate-950/80 p-3 rounded-xl border border-slate-800/80 shadow-inner">
                     <p className="text-[11px] text-slate-400 font-medium">Current Loaded</p>
-                    <p className="text-base font-bold text-sky-400 mt-0.5">{displayCurrentLoad} kg</p>
+                    <p className="text-base font-bold text-sky-400 font-mono tracking-tight mt-0.5">{Number(displayCurrentLoad).toLocaleString()} kg</p>
                   </div>
-                  <div className="bg-slate-950 p-3 rounded-xl border border-slate-800">
+                  <div className="bg-slate-950/80 p-3 rounded-xl border border-slate-800/80 shadow-inner">
                     <p className="text-[11px] text-slate-400 font-medium">Available Space</p>
-                    <p className="text-base font-bold text-emerald-400 mt-0.5">{displayAvailableSpace} kg</p>
+                    <p className="text-base font-bold text-emerald-400 font-mono tracking-tight mt-0.5">{Number(displayAvailableSpace).toLocaleString()} kg</p>
                   </div>
                 </div>
 

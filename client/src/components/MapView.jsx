@@ -51,48 +51,57 @@ const createCustomIcon = (bgColor, iconChar, label) => {
     html: `
       <div style="
         background-color: ${bgColor};
-        width: 32px;
-        height: 32px;
+        width: 30px;
+        height: 30px;
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
         color: white;
         font-weight: 800;
-        font-size: 13px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+        font-size: 12px;
+        box-shadow: 0 4px 14px rgba(0,0,0,0.6);
         border: 2px solid #ffffff;
       ">
         ${iconChar}
       </div>
     `,
-    iconSize: [32, 32],
-    iconAnchor: [16, 16],
-    popupAnchor: [0, -18]
+    iconSize: [30, 30],
+    iconAnchor: [15, 15],
+    popupAnchor: [0, -16]
   });
 };
 
 const truckIcon = L.divIcon({
   className: 'truck-map-marker',
   html: `
-    <div style="
-      background: linear-gradient(135deg, #10b981, #059669);
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      box-shadow: 0 0 20px rgba(16, 185, 129, 0.6);
-      border: 3px solid #ffffff;
-      animation: pulse 2s infinite;
-    ">
-      🚚
+    <div style="position: relative; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center;">
+      <div class="beacon-pulse-ring"></div>
+      <div style="
+        background: linear-gradient(135deg, #10b981, #0d9488);
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 0 22px rgba(16, 185, 129, 0.75), 0 4px 12px rgba(0,0,0,0.6);
+        border: 2px solid #ffffff;
+        position: relative;
+        z-index: 2;
+      ">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#04120e" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/>
+          <path d="M15 18H9"/>
+          <path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"/>
+          <circle cx="17" cy="18" r="2"/>
+          <circle cx="7" cy="18" r="2"/>
+        </svg>
+      </div>
     </div>
   `,
-  iconSize: [40, 40],
-  iconAnchor: [20, 20],
+  iconSize: [44, 44],
+  iconAnchor: [22, 22],
   popupAnchor: [0, -22]
 });
 
@@ -290,8 +299,8 @@ export default function MapView({
         className="z-0"
       >
         <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+          url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
         />
 
         <FitBoundsToStops stops={allStops} />
@@ -342,9 +351,9 @@ export default function MapView({
                 }}
               >
                 <Tooltip sticky>
-                  <div className="text-xs font-semibold text-slate-900">
+                  <div className="text-xs font-semibold text-slate-100 font-mono">
                     {route.name} • {displayDistance} km ({displayDuration})
-                    {osrmGeo ? ' 🛣️ Real Road' : ''}
+                    {osrmGeo ? ' • Road Curvature' : ''}
                   </div>
                 </Tooltip>
               </Polyline>
@@ -424,8 +433,8 @@ export default function MapView({
             }}
           >
             <Tooltip sticky>
-              <div className="text-[11px] font-bold text-slate-900">
-                🛰️ 10 km En-Route Proximity Corridor Zone
+              <div className="text-[11px] font-bold text-slate-100 font-mono">
+                10 km En-Route Autonomous Proximity Zone
               </div>
             </Tooltip>
           </Circle>
@@ -438,12 +447,13 @@ export default function MapView({
             icon={truckIcon}
           >
             <Popup>
-              <div className="p-1 text-slate-900 text-xs">
-                <p className="font-bold text-emerald-700 flex items-center gap-1">
-                  🚚 Live Truck In-Transit
+              <div className="p-1.5 text-xs text-slate-100">
+                <p className="font-bold text-emerald-400 flex items-center gap-1.5 font-mono">
+                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                  <span>Active Commercial Fleet</span>
                 </p>
-                <p className="text-slate-700 mt-0.5">
-                  {liveTruckLocation?.statusText || 'Active GPS Telemetry Synced'}
+                <p className="text-slate-300 mt-1 font-mono text-[11px] leading-snug">
+                  {liveTruckLocation?.statusText || 'Highway GPS Telemetry Synced'}
                 </p>
               </div>
             </Popup>
