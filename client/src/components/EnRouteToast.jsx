@@ -116,11 +116,11 @@ export default function EnRouteToast({
               <span>{locName}</span>
             </span>
             <span className="text-xs font-bold font-mono text-emerald-400 bg-slate-950 px-2 py-0.5 rounded-md border border-slate-800">
-              ⚡ {dist} km ahead
+              ⚡ 10 km ahead
             </span>
           </div>
           <p className="text-xs text-slate-300 mt-0.5">
-            Truck is within 10 km of <strong className="text-white">{locName}</strong> ({dist} km away).
+            Truck is exactly 10 km before reaching <strong className="text-white">{locName}</strong>.
           </p>
         </div>
 

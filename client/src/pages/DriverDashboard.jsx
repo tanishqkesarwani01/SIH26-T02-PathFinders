@@ -140,11 +140,12 @@ export default function DriverDashboard({
       // Proximity sensor rule: Choose the FIRST one that is physically within <= 10 km and not yet notified
       const newOpp = opportunities.find(o => !notifiedShipmentsRef.current.has(o.shipmentId));
       if (newOpp && newOpp.proximityDistanceKm <= 10) {
+        newOpp.proximityDistanceKm = 10;
         notifiedShipmentsRef.current.add(newOpp.shipmentId);
         setEnRouteOpportunity(newOpp);
         
         const locName = newOpp.pickupLocation?.split('(')[0]?.trim() || newOpp.pickupLocation;
-        setEnRouteStatusMsg(`🔔 Proximity Alert: 10km before reaching ${locName} pickup point (${newOpp.proximityDistanceKm} km away, ${newOpp.compatibilityScore}% Match)`);
+        setEnRouteStatusMsg(`🔔 Proximity Alert: 10km before reaching ${locName} pickup point (10 km away, ${newOpp.compatibilityScore}% Match)`);
 
         // Add to history tray with exact timestamp
         const historyItem = {
