@@ -57,6 +57,14 @@ export default function EnRouteToast({
   onDismiss,
   isLoading
 }) {
+  const oppId = opportunity?.shipmentId;
+
+  useEffect(() => {
+    if (oppId) {
+      playNotificationChime();
+    }
+  }, [oppId]);
+
   if (!opportunity) return null;
 
   const locName = opportunity.pickupLocation?.split('(')[0]?.trim() || opportunity.pickupLocation || 'Nearby Corridor Hub';
@@ -67,10 +75,6 @@ export default function EnRouteToast({
   const pickup = opportunity.pickupLocation || 'Pickup Point';
   const drop = opportunity.dropLocation || 'Drop Destination';
   const score = opportunity.compatibilityScore || 92;
-
-  useEffect(() => {
-    playNotificationChime();
-  }, [opportunity.shipmentId]);
 
   return (
     <div className="fixed top-5 right-5 z-[9999] max-w-md w-full animate-slideInRight shadow-2xl">

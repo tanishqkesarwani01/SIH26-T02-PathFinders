@@ -113,18 +113,18 @@ export default function TrustVerificationModal({
   const [successMsg, setSuccessMsg] = useState('');
   const [matchStatus, setMatchStatus] = useState(null); // null | 'MATCHED' | 'MISMATCHED' | 'CHECKING'
 
-  if (!isOpen || !shipment) return null;
-
   const isPickup = type === 'pickup';
-  const expectedOtp = isPickup ? shipment.pickupOtp : shipment.deliveryOtp;
+  const expectedOtp = isPickup ? shipment?.pickupOtp : shipment?.deliveryOtp;
   const standardPickupPhoto = 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=600&auto=format&fit=crop&q=80';
   const mismatchedSamplePhoto = 'https://images.unsplash.com/photo-1566576912321-d58ddd7a6088?w=600&auto=format&fit=crop&q=80';
   
   // Baseline pickup photo recorded on shipment
-  const referencePickupPhoto = shipment.pickupPhoto || standardPickupPhoto;
+  const referencePickupPhoto = shipment?.pickupPhoto || standardPickupPhoto;
 
   // Real-time photo comparison whenever delivery photo changes
   useEffect(() => {
+    if (!isOpen || !shipment) return;
+
     if (!isPickup && photoPreview) {
       setMatchStatus('CHECKING');
       verifyPhotosMatch(referencePickupPhoto, photoPreview).then((isMatch) => {
@@ -139,7 +139,20 @@ export default function TrustVerificationModal({
       setMatchStatus(null);
       setErrorMsg('');
     }
-  }, [photoPreview, isPickup, referencePickupPhoto]);
+  }, [isOpen, shipment, photoPreview, isPickup, referencePickupPhoto]);
+
+  // Reset inputs whenever modal is closed
+  useEffect(() => {
+    if (!isOpen) {
+      setEnteredOtp('');
+      setPhotoPreview(null);
+      setErrorMsg('');
+      setSuccessMsg('');
+      setMatchStatus(null);
+    }
+  }, [isOpen, shipment?.id]);
+
+  if (!isOpen || !shipment) return null;
 
   const handlePhotoUpload = (e) => {
     const file = e.target.files?.[0];
