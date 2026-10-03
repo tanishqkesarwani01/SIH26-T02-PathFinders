@@ -72,38 +72,64 @@ const createCustomIcon = (bgColor, iconChar, label) => {
   });
 };
 
-const truckIcon = L.divIcon({
-  className: 'truck-map-marker',
-  html: `
-    <div style="position: relative; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center;">
-      <div class="beacon-pulse-ring"></div>
-      <div style="
-        background: linear-gradient(135deg, #10b981, #0d9488);
-        width: 34px;
-        height: 34px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        box-shadow: 0 0 22px rgba(16, 185, 129, 0.75), 0 4px 12px rgba(0,0,0,0.6);
-        border: 2px solid #ffffff;
-        position: relative;
-        z-index: 2;
-      ">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#04120e" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/>
-          <path d="M15 18H9"/>
-          <path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"/>
-          <circle cx="17" cy="18" r="2"/>
-          <circle cx="7" cy="18" r="2"/>
-        </svg>
+const getTruckIcon = (isPaused = false) => {
+  return L.divIcon({
+    className: 'truck-map-marker',
+    html: `
+      <div style="position: relative; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center;">
+        <div class="${isPaused ? 'beacon-pulse-ring-amber' : 'beacon-pulse-ring'}"></div>
+        <div style="
+          background: ${isPaused ? 'linear-gradient(135deg, #f59e0b, #d97706)' : 'linear-gradient(135deg, #10b981, #0d9488)'};
+          width: 34px;
+          height: 34px;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          box-shadow: 0 0 22px ${isPaused ? 'rgba(245, 158, 11, 0.85)' : 'rgba(16, 185, 129, 0.75)'}, 0 4px 12px rgba(0,0,0,0.6);
+          border: 2px solid #ffffff;
+          position: relative;
+          z-index: 2;
+        ">
+          ${isPaused ? `
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="#0f172a" stroke="#0f172a" stroke-width="2">
+              <rect x="6" y="4" width="4" height="16" rx="1"/>
+              <rect x="14" y="4" width="4" height="16" rx="1"/>
+            </svg>
+          ` : `
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#04120e" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/>
+              <path d="M15 18H9"/>
+              <path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"/>
+              <circle cx="17" cy="18" r="2"/>
+              <circle cx="7" cy="18" r="2"/>
+            </svg>
+          `}
+        </div>
+        ${isPaused ? `
+          <div style="
+            position: absolute;
+            top: -4px;
+            right: -6px;
+            background: #ef4444;
+            color: #ffffff;
+            font-size: 8px;
+            font-weight: 900;
+            padding: 1px 4px;
+            border-radius: 4px;
+            border: 1px solid #ffffff;
+            line-height: 1;
+            z-index: 3;
+            letter-spacing: 0.5px;
+          ">PAUSED</div>
+        ` : ''}
       </div>
-    </div>
-  `,
-  iconSize: [44, 44],
-  iconAnchor: [22, 22],
-  popupAnchor: [0, -22]
-});
+    `,
+    iconSize: [44, 44],
+    iconAnchor: [22, 22],
+    popupAnchor: [0, -22]
+  });
+};
 
 // Helper component to auto-fit bounds
 function FitBoundsToStops({ stops = [] }) {
@@ -252,6 +278,8 @@ export default function MapView({
     : selectedRoute?.stops?.[0]
     ? [selectedRoute.stops[0].lat, selectedRoute.stops[0].lng]
     : [26.8467, 80.9462];
+
+  const isTruckPaused = Boolean(enRouteOpportunity);
 
   return (
     <div className="relative rounded-2xl overflow-hidden border border-slate-700/80 shadow-2xl bg-slate-900">
@@ -425,16 +453,16 @@ export default function MapView({
             center={truckPos}
             radius={10000}
             pathOptions={{
-              color: '#10b981',
-              fillColor: '#10b981',
-              fillOpacity: 0.12,
-              weight: 2,
-              dashArray: '5, 5'
+              color: isTruckPaused ? '#f59e0b' : '#10b981',
+              fillColor: isTruckPaused ? '#f59e0b' : '#10b981',
+              fillOpacity: isTruckPaused ? 0.22 : 0.12,
+              weight: isTruckPaused ? 2.5 : 2,
+              dashArray: isTruckPaused ? '4, 4' : '5, 5'
             }}
           >
             <Tooltip sticky>
               <div className="text-[11px] font-bold text-slate-100 font-mono">
-                10 km En-Route Autonomous Proximity Zone
+                {isTruckPaused ? '⏸️ 10 km Detection Zone (Truck Paused for Decision)' : '10 km En-Route Autonomous Proximity Zone'}
               </div>
             </Tooltip>
           </Circle>
@@ -444,13 +472,13 @@ export default function MapView({
         {truckPos && (
           <Marker
             position={truckPos}
-            icon={truckIcon}
+            icon={getTruckIcon(isTruckPaused)}
           >
             <Popup>
               <div className="p-1.5 text-xs text-slate-100">
-                <p className="font-bold text-emerald-400 flex items-center gap-1.5 font-mono">
-                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                  <span>Active Commercial Fleet</span>
+                <p className={`font-bold flex items-center gap-1.5 font-mono ${isTruckPaused ? 'text-amber-400' : 'text-emerald-400'}`}>
+                  <span className={`w-2 h-2 rounded-full ${isTruckPaused ? 'bg-amber-400' : 'bg-emerald-400'} animate-pulse`}></span>
+                  <span>{isTruckPaused ? 'Truck Stopped • Awaiting Decision' : 'Active Commercial Fleet'}</span>
                 </p>
                 <p className="text-slate-300 mt-1 font-mono text-[11px] leading-snug">
                   {liveTruckLocation?.statusText || 'Highway GPS Telemetry Synced'}
@@ -458,6 +486,25 @@ export default function MapView({
               </div>
             </Popup>
           </Marker>
+        )}
+
+        {/* 10km Radar Proximity Lock to upcoming cargo pickup when paused */}
+        {isTruckPaused && enRouteOpportunity?.pickupCoords && truckPos && (
+          <Polyline
+            positions={[truckPos, [enRouteOpportunity.pickupCoords.lat, enRouteOpportunity.pickupCoords.lng]]}
+            pathOptions={{
+              color: '#f59e0b',
+              weight: 3,
+              dashArray: '6, 6',
+              opacity: 0.95
+            }}
+          >
+            <Tooltip sticky>
+              <div className="text-xs font-bold text-amber-400 font-mono">
+                ⚡ 10 km Proximity Lock: {enRouteOpportunity.pickupLocation}
+              </div>
+            </Tooltip>
+          </Polyline>
         )}
 
       </MapContainer>

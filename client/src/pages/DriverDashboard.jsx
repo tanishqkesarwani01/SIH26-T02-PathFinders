@@ -66,6 +66,8 @@ export default function DriverDashboard({
   // Ref tracking for notifications and timer
   const notifiedShipmentsRef = useRef(new Set());
   const autoDriveTimerRef = useRef(null);
+  const currentStepRef = useRef(0);
+  const isAutoDrivingRef = useRef(false);
 
   // Form State
   const [source, setSource] = useState('Lucknow');
@@ -89,8 +91,10 @@ export default function DriverDashboard({
 
   // Reset live truck simulation state when switching trips
   useEffect(() => {
-    if (autoDriveTimerRef.current) clearInterval(autoDriveTimerRef.current);
+    isAutoDrivingRef.current = false;
+    if (autoDriveTimerRef.current) clearTimeout(autoDriveTimerRef.current);
     setIsAutoDriving(false);
+    currentStepRef.current = 0;
     setSimulationStepIndex(0);
     setJourneyProgressPercent(0);
     setLiveTruckLocation(null);
@@ -156,7 +160,7 @@ export default function DriverDashboard({
         setEnRouteOpportunity(newOpp);
         
         const locName = newOpp.pickupLocation?.split('(')[0]?.trim() || newOpp.pickupLocation;
-        setEnRouteStatusMsg(`🔔 Proximity Alert: 10km before reaching ${locName} pickup point (10 km away, ${newOpp.compatibilityScore}% Match)`);
+        setEnRouteStatusMsg(`⏸️ Proximity Alert: 10km before ${locName}. Truck stopped on map. Awaiting response (Accept Cargo or Dismiss)...`);
 
         // Add to history tray with exact timestamp
         const historyItem = {
@@ -186,56 +190,113 @@ export default function DriverDashboard({
     return null;
   };
 
+  // Start or resume real-time auto-drive from an explicit step index along the corridor
+  const startAutoDriveFromStep = (initialStep) => {
+    if (autoDriveTimerRef.current) {
+      clearTimeout(autoDriveTimerRef.current);
+      autoDriveTimerRef.current = null;
+    }
+
+    const waypoints = generateRouteWaypoints();
+    if (!waypoints || waypoints.length === 0) return;
+
+    let targetStep = initialStep;
+    if (targetStep >= waypoints.length) {
+      targetStep = 0; // Wrap around to origin if completed
+    }
+
+    currentStepRef.current = targetStep;
+    setSimulationStepIndex(targetStep);
+    isAutoDrivingRef.current = true;
+    setIsAutoDriving(true);
+    setAcceptedNotice(null);
+
+    setEnRouteStatusMsg(`🚀 Auto-Drive Active: Monitoring 10km radius along ${currentTrip?.source} → ${currentTrip?.destination}...`);
+
+    const intervalMs = simulationSpeed === 2 ? 750 : 1200;
+
+    const runDriveTick = async () => {
+      if (!isAutoDrivingRef.current) return;
+
+      const step = currentStepRef.current;
+      if (step >= waypoints.length) {
+        isAutoDrivingRef.current = false;
+        setIsAutoDriving(false);
+        setEnRouteStatusMsg(`🏁 Destination Reached: ${currentTrip?.destination}`);
+        return;
+      }
+
+      const currentWaypoint = waypoints[step];
+      const progress = Math.round((step / Math.max(1, waypoints.length - 1)) * 100);
+      setJourneyProgressPercent(progress);
+      setSimulationStepIndex(step);
+
+      setLiveTruckLocation({
+        lat: currentWaypoint.lat,
+        lng: currentWaypoint.lng,
+        statusText: `GPS: ${currentWaypoint.name} • ${progress}% Route Progress`
+      });
+
+      // Proximity sensor continuously monitors coordinates
+      const detectedOpp = await evaluateProximityAtCoords(currentWaypoint);
+
+      // If an opportunity is detected, STOP TRUCK ON MAP AT THIS EXACT POINT!
+      if (detectedOpp) {
+        isAutoDrivingRef.current = false;
+        setIsAutoDriving(false);
+        if (autoDriveTimerRef.current) {
+          clearTimeout(autoDriveTimerRef.current);
+          autoDriveTimerRef.current = null;
+        }
+
+        const locName = detectedOpp.pickupLocation?.split('(')[0]?.trim() || detectedOpp.pickupLocation;
+        setLiveTruckLocation({
+          lat: currentWaypoint.lat,
+          lng: currentWaypoint.lng,
+          statusText: `⏸️ Truck Paused: 10km before ${locName} • Awaiting Driver Decision`
+        });
+        setEnRouteStatusMsg(`⏸️ Truck Paused: 10km before ${locName}. Awaiting driver response (Accept Cargo or Dismiss)...`);
+        return; // Halt movement loop! Truck remains stopped at this exact point!
+      }
+
+      // No alert triggered; advance to next waypoint and schedule next tick
+      currentStepRef.current = step + 1;
+      if (isAutoDrivingRef.current) {
+        autoDriveTimerRef.current = setTimeout(runDriveTick, intervalMs);
+      }
+    };
+
+    runDriveTick();
+  };
+
   // Start or Toggle Real-Time Auto-Drive along the route
   const handleToggleAutoDrive = () => {
     if (isAutoDriving) {
       // Pause
+      isAutoDrivingRef.current = false;
       setIsAutoDriving(false);
-      if (autoDriveTimerRef.current) clearInterval(autoDriveTimerRef.current);
+      if (autoDriveTimerRef.current) {
+        clearTimeout(autoDriveTimerRef.current);
+        autoDriveTimerRef.current = null;
+      }
       setEnRouteStatusMsg('Auto-Drive paused. GPS sensor on standby.');
     } else {
-      // Start / Resume
-      setIsAutoDriving(true);
-      setAcceptedNotice(null);
+      // Start / Resume from current position
       const waypoints = generateRouteWaypoints();
-      let step = simulationStepIndex >= waypoints.length - 1 ? 0 : simulationStepIndex;
-      setSimulationStepIndex(step);
-
-      setEnRouteStatusMsg(`🚀 Auto-Drive Active: Monitoring 10km radius along ${currentTrip?.source} → ${currentTrip?.destination}...`);
-
-      const intervalMs = simulationSpeed === 2 ? 800 : 1400;
-
-      autoDriveTimerRef.current = setInterval(async () => {
-        if (step >= waypoints.length) {
-          clearInterval(autoDriveTimerRef.current);
-          setIsAutoDriving(false);
-          setEnRouteStatusMsg(`🏁 Destination Reached: ${currentTrip?.destination}`);
-          return;
-        }
-
-        const currentWaypoint = waypoints[step];
-        const progress = Math.round((step / (waypoints.length - 1)) * 100);
-        setJourneyProgressPercent(progress);
-        setSimulationStepIndex(step);
-
-        setLiveTruckLocation({
-          lat: currentWaypoint.lat,
-          lng: currentWaypoint.lng,
-          statusText: `GPS: ${currentWaypoint.name} • ${progress}% Route Progress`
-        });
-
-        // Proximity sensor continuously monitors and automatically triggers
-        await evaluateProximityAtCoords(currentWaypoint);
-
-        step++;
-      }, intervalMs);
+      let step = currentStepRef.current >= waypoints.length - 1 ? 0 : currentStepRef.current;
+      startAutoDriveFromStep(step);
     }
   };
 
   // Reset simulation to start of trip
   const handleResetSimulation = () => {
-    if (autoDriveTimerRef.current) clearInterval(autoDriveTimerRef.current);
+    isAutoDrivingRef.current = false;
+    if (autoDriveTimerRef.current) {
+      clearTimeout(autoDriveTimerRef.current);
+      autoDriveTimerRef.current = null;
+    }
     setIsAutoDriving(false);
+    currentStepRef.current = 0;
     setSimulationStepIndex(0);
     setJourneyProgressPercent(0);
     setLiveTruckLocation(null);
@@ -247,6 +308,14 @@ export default function DriverDashboard({
   // Fast forward to next upcoming cargo location along the route
   const handleFastForwardToNextCargo = async () => {
     if (!currentTrip) return;
+
+    // Halt running auto-drive
+    isAutoDrivingRef.current = false;
+    setIsAutoDriving(false);
+    if (autoDriveTimerRef.current) {
+      clearTimeout(autoDriveTimerRef.current);
+      autoDriveTimerRef.current = null;
+    }
 
     const candidateMatches = currentTrip.candidateMatches || [];
     const upcomingCandidates = candidateMatches.filter(
@@ -283,10 +352,28 @@ export default function DriverDashboard({
       name: `Approaching ${locName} (10 km before pickup)`
     };
 
+    // Calculate nearest waypoint along route corridor so drive can resume smoothly from here
+    const waypoints = generateRouteWaypoints();
+    let closestIndex = 0;
+    let minDistance = Infinity;
+    waypoints.forEach((wp, idx) => {
+      const d = Math.hypot(wp.lat - approachCoord.lat, wp.lng - approachCoord.lng);
+      if (d < minDistance) {
+        minDistance = d;
+        closestIndex = idx;
+      }
+    });
+
+    currentStepRef.current = closestIndex;
+    setSimulationStepIndex(closestIndex);
+    const progress = Math.round((closestIndex / Math.max(1, waypoints.length - 1)) * 100);
+    setJourneyProgressPercent(progress);
+
+    // Stop truck on map at this exact point where the pop-up arrives
     setLiveTruckLocation({
       lat: approachCoord.lat,
       lng: approachCoord.lng,
-      statusText: `🚚 Live GPS: 10km before reaching ${locName} pickup point`
+      statusText: `⏸️ Truck Paused: 10km before ${locName} • Awaiting Driver Decision`
     });
 
     await evaluateProximityAtCoords(approachCoord);
@@ -294,7 +381,8 @@ export default function DriverDashboard({
 
   useEffect(() => {
     return () => {
-      if (autoDriveTimerRef.current) clearInterval(autoDriveTimerRef.current);
+      isAutoDrivingRef.current = false;
+      if (autoDriveTimerRef.current) clearTimeout(autoDriveTimerRef.current);
     };
   }, []);
 
@@ -336,8 +424,9 @@ export default function DriverDashboard({
         weight: enRouteOpportunity.weightKg || 450
       });
 
+      // Clear the pop-up
       setEnRouteOpportunity(null);
-      setEnRouteStatusMsg(`✅ Cargo Accepted: ${pickupLoc} → ${dropLoc} (+₹${earning})`);
+      setEnRouteStatusMsg(`✅ Cargo Accepted: ${pickupLoc} → ${dropLoc} (+₹${earning}) • Resuming truck movement on map...`);
 
       confetti({
         particleCount: 90,
@@ -346,10 +435,23 @@ export default function DriverDashboard({
       });
 
       if (onRefreshData) onRefreshData();
+
+      // RESUME TRUCK MOVEMENT FORWARD ON THE MAP!
+      const nextStep = currentStepRef.current + 1;
+      setTimeout(() => {
+        startAutoDriveFromStep(nextStep);
+      }, 700);
+
     } catch (err) {
       console.error(err);
       setEnRouteOpportunity(null);
       if (onRefreshData) onRefreshData();
+
+      // Resume truck movement even if API error occurred
+      const nextStep = currentStepRef.current + 1;
+      setTimeout(() => {
+        startAutoDriveFromStep(nextStep);
+      }, 700);
     } finally {
       setIsAcceptingEnRoute(false);
     }
@@ -362,9 +464,15 @@ export default function DriverDashboard({
         await tripsAPI.declineEnRouteConsignment(currentTrip.id, enRouteOpportunity.shipmentId, 'Driver dismissed toast');
       } catch (err) {}
     }
+    // Clear pop-up
     setEnRouteOpportunity(null);
-    setEnRouteStatusMsg('Shipment dismissed. Continuing route without detour.');
-    setTimeout(() => setEnRouteStatusMsg(''), 3000);
+    setEnRouteStatusMsg('Shipment dismissed. Resuming truck movement along route corridor on map...');
+
+    // RESUME TRUCK MOVEMENT FORWARD ON THE MAP!
+    const nextStep = currentStepRef.current + 1;
+    setTimeout(() => {
+      startAutoDriveFromStep(nextStep);
+    }, 400);
   };
 
   // Compute stats for current driver
@@ -468,9 +576,27 @@ export default function DriverDashboard({
             </div>
             <div>
               <div className="flex items-center gap-2 flex-wrap">
-                <span className="flex items-center gap-1.5 text-xs font-black uppercase tracking-wider text-emerald-400 bg-emerald-500/10 px-2.5 py-0.5 rounded-full border border-emerald-500/30">
-                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                  Real-Time Proximity Sensor: {isAutoDriving ? 'ACTIVE (DRIVING)' : 'STANDBY'}
+                <span className={`flex items-center gap-1.5 text-xs font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full border ${
+                  isAutoDriving
+                    ? 'text-emerald-400 bg-emerald-500/10 border-emerald-500/30'
+                    : enRouteOpportunity
+                    ? 'text-amber-400 bg-amber-500/10 border-amber-500/30'
+                    : 'text-slate-400 bg-slate-800 border-slate-700'
+                }`}>
+                  <span className={`w-2 h-2 rounded-full ${
+                    isAutoDriving
+                      ? 'bg-emerald-400 animate-pulse'
+                      : enRouteOpportunity
+                      ? 'bg-amber-400 animate-ping'
+                      : 'bg-slate-500'
+                  }`}></span>
+                  Real-Time Proximity Sensor: {
+                    isAutoDriving 
+                      ? 'ACTIVE (DRIVING)' 
+                      : enRouteOpportunity 
+                      ? 'PAUSED (AWAITING DRIVER DECISION)' 
+                      : 'STANDBY'
+                  }
                 </span>
                 {journeyProgressPercent > 0 && (
                   <span className="bg-indigo-500/20 text-indigo-300 text-[11px] font-mono px-2 py-0.5 rounded-md border border-indigo-500/30">
@@ -497,11 +623,13 @@ export default function DriverDashboard({
               className={`px-4 py-2.5 rounded-xl font-black text-xs flex items-center gap-2 shadow-lg transition-all ${
                 isAutoDriving
                   ? 'bg-amber-500 hover:bg-amber-600 text-slate-950 shadow-amber-500/30'
+                  : enRouteOpportunity
+                  ? 'bg-amber-600/30 border border-amber-500/50 text-amber-300 hover:bg-amber-600/40'
                   : 'bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white shadow-emerald-600/30 hover:scale-105 active:scale-95'
               }`}
             >
               {isAutoDriving ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4 fill-white" />}
-              <span>{isAutoDriving ? 'Pause Auto-Drive' : 'Start Auto-Drive & Sensor'}</span>
+              <span>{isAutoDriving ? 'Pause Auto-Drive' : enRouteOpportunity ? 'Paused (Respond to Cargo)' : 'Start Auto-Drive & Sensor'}</span>
             </button>
 
             {/* Fast-Forward to next cargo */}
