@@ -4,31 +4,114 @@
  */
 
 const { calculateFare } = require('./pricingEngine');
+const {
+  getDrivingRoute,
+  getDrivingRouteMultiStop,
+  getDrivingRouteAlternatives,
+  getDrivingDistanceKm,
+  geocodeAddress,
+  reverseGeocode
+} = require('./osrmService');
 
-// City Coordinates for Geocoding & Distance Calculation in North India / Uttar Pradesh corridor
+// Extended City Coordinates for Uttar Pradesh, New Delhi / NCR Corridor & North India
 const CITY_COORDINATES = {
+  // National Capital Region (NCR) & Delhi
+  'delhi': { lat: 28.6139, lng: 77.2090, name: 'Delhi' },
+  'new delhi': { lat: 28.6139, lng: 77.2090, name: 'New Delhi' },
+  'noida': { lat: 28.5355, lng: 77.3910, name: 'Noida' },
+  'greater noida': { lat: 28.4744, lng: 77.5040, name: 'Greater Noida' },
+  'ghaziabad': { lat: 28.6692, lng: 77.4538, name: 'Ghaziabad' },
+  'gurgaon': { lat: 28.4595, lng: 77.0266, name: 'Gurgaon' },
+  'gurugram': { lat: 28.4595, lng: 77.0266, name: 'Gurugram' },
+  'faridabad': { lat: 28.4089, lng: 77.3178, name: 'Faridabad' },
+  'meerut': { lat: 28.9845, lng: 77.7064, name: 'Meerut' },
+  'hapur': { lat: 28.7306, lng: 77.7759, name: 'Hapur' },
+  'bulandshahr': { lat: 28.4070, lng: 77.8498, name: 'Bulandshahr' },
+  'muzaffarnagar': { lat: 29.4727, lng: 77.7085, name: 'Muzaffarnagar' },
+  'saharanpur': { lat: 29.9679, lng: 77.5452, name: 'Saharanpur' },
+
+  // Western & Central UP
+  'aligarh': { lat: 27.8974, lng: 78.0880, name: 'Aligarh' },
+  'mathura': { lat: 27.4924, lng: 77.6737, name: 'Mathura' },
+  'agra': { lat: 27.1767, lng: 78.0081, name: 'Agra' },
+  'firozabad': { lat: 27.1593, lng: 78.3957, name: 'Firozabad' },
+  'mainpuri': { lat: 27.2289, lng: 79.0278, name: 'Mainpuri' },
+  'etawah': { lat: 26.7855, lng: 79.0154, name: 'Etawah' },
+  'auraiya': { lat: 26.4673, lng: 79.5165, name: 'Auraiya' },
+
+  // Rohilkhand & Northern UP
+  'moradabad': { lat: 28.8386, lng: 78.7733, name: 'Moradabad' },
+  'bareilly': { lat: 28.3670, lng: 79.4304, name: 'Bareilly' },
+  'rampur': { lat: 28.8154, lng: 79.0257, name: 'Rampur' },
+  'shahjahanpur': { lat: 27.8814, lng: 79.9120, name: 'Shahjahanpur' },
+  'sitapur': { lat: 27.5683, lng: 80.6829, name: 'Sitapur' },
+  'hardoi': { lat: 27.3956, lng: 80.1317, name: 'Hardoi' },
+  'lakhimpur': { lat: 27.9463, lng: 80.7767, name: 'Lakhimpur' },
+
+  // Awadh & Central Corridor
   'lucknow': { lat: 26.8467, lng: 80.9462, name: 'Lucknow' },
+  'barabanki': { lat: 26.9274, lng: 81.1834, name: 'Barabanki' },
+  'haidergarh': { lat: 26.6980, lng: 81.3340, name: 'Haidergarh' },
   'nihalgarh': { lat: 26.6025, lng: 81.6520, name: 'Nihalgarh' },
-  'varanasi': { lat: 25.3176, lng: 82.9739, name: 'Varanasi' },
-  'sultanpur': { lat: 26.2648, lng: 82.0727, name: 'Sultanpur' },
-  'jaunpur': { lat: 25.7464, lng: 82.6837, name: 'Jaunpur' },
+  'unnao': { lat: 26.5393, lng: 80.4878, name: 'Unnao' },
+  'kanpur': { lat: 26.4499, lng: 80.3319, name: 'Kanpur' },
+  'fatehpur': { lat: 25.9284, lng: 80.8130, name: 'Fatehpur' },
   'raebareli': { lat: 26.2236, lng: 81.2409, name: 'Raebareli' },
-  'prayagraj': { lat: 25.4358, lng: 81.8463, name: 'Prayagraj' },
-  'allahabad': { lat: 25.4358, lng: 81.8463, name: 'Prayagraj' },
+  'amethi': { lat: 26.1557, lng: 81.8159, name: 'Amethi' },
+  'sultanpur': { lat: 26.2648, lng: 82.0727, name: 'Sultanpur' },
+  'pratapgarh': { lat: 25.8977, lng: 81.9472, name: 'Pratapgarh' },
+
+  // Eastern UP & Purvanchal
   'ayodhya': { lat: 26.7922, lng: 82.1998, name: 'Ayodhya' },
   'faizabad': { lat: 26.7922, lng: 82.1998, name: 'Ayodhya' },
   'akbarpur': { lat: 26.4355, lng: 82.5414, name: 'Akbarpur' },
-  'delhi': { lat: 28.6139, lng: 77.2090, name: 'Delhi' },
-  'kanpur': { lat: 26.4499, lng: 80.3319, name: 'Kanpur' },
-  'agra': { lat: 27.1767, lng: 78.0081, name: 'Agra' },
-  'gorakhpur': { lat: 26.7606, lng: 83.3732, name: 'Gorakhpur' }
+  'gonda': { lat: 27.1340, lng: 81.9619, name: 'Gonda' },
+  'bahraich': { lat: 27.5750, lng: 81.5950, name: 'Bahraich' },
+  'basti': { lat: 26.7963, lng: 82.7483, name: 'Basti' },
+  'gorakhpur': { lat: 26.7606, lng: 83.3732, name: 'Gorakhpur' },
+  'deoria': { lat: 26.5024, lng: 83.7791, name: 'Deoria' },
+  'kushinagar': { lat: 26.7410, lng: 83.8890, name: 'Kushinagar' },
+  'azamgarh': { lat: 26.0738, lng: 83.1859, name: 'Azamgarh' },
+  'mau': { lat: 25.9419, lng: 83.5610, name: 'Mau' },
+  'ballia': { lat: 25.7583, lng: 84.1482, name: 'Ballia' },
+  'jaunpur': { lat: 25.7464, lng: 82.6837, name: 'Jaunpur' },
+  'ghazipur': { lat: 25.5840, lng: 83.5770, name: 'Ghazipur' },
+  'varanasi': { lat: 25.3176, lng: 82.9739, name: 'Varanasi' },
+  'prayagraj': { lat: 25.4358, lng: 81.8463, name: 'Prayagraj' },
+  'allahabad': { lat: 25.4358, lng: 81.8463, name: 'Prayagraj' },
+  'mirzapur': { lat: 25.1337, lng: 82.5644, name: 'Mirzapur' },
+  'bhadohi': { lat: 25.3944, lng: 82.5694, name: 'Bhadohi' },
+  'chandauli': { lat: 25.2608, lng: 83.2707, name: 'Chandauli' },
+
+  // Bundelkhand
+  'jhansi': { lat: 25.4484, lng: 78.5685, name: 'Jhansi' },
+  'lalitpur': { lat: 24.6908, lng: 78.4116, name: 'Lalitpur' },
+  'orai': { lat: 25.9904, lng: 79.4526, name: 'Orai' },
+  'banda': { lat: 25.4756, lng: 80.3364, name: 'Banda' },
+  'chitrakoot': { lat: 25.2070, lng: 80.9200, name: 'Chitrakoot' }
 };
 
 function normalizeCityName(str = '') {
-  const lower = str.toLowerCase();
-  for (const city of Object.keys(CITY_COORDINATES)) {
-    if (lower.includes(city)) return city;
+  if (!str) return null;
+  const lower = str.toLowerCase().trim();
+
+  // 1. Exact match
+  if (CITY_COORDINATES[lower]) return lower;
+
+  // 2. Sort keys by length descending so longer city names match before substrings
+  const sortedKeys = Object.keys(CITY_COORDINATES).sort((a, b) => b.length - a.length);
+
+  // 3. Word boundary or sub-phrase match
+  for (const city of sortedKeys) {
+    const regex = new RegExp(`\\b${city}\\b`, 'i');
+    if (regex.test(lower)) return city;
   }
+
+  // 4. Fallback substring match (only for longer words to avoid false positive like 'agra' in 'prayagraj')
+  for (const city of sortedKeys) {
+    if (city.length > 4 && lower.includes(city)) return city;
+  }
+
   return null;
 }
 
@@ -48,29 +131,130 @@ function haversineDistance(lat1, lon1, lat2, lon2) {
 
 function getCityCoords(name) {
   const key = normalizeCityName(name);
-  if (key && CITY_COORDINATES[key]) return CITY_COORDINATES[key];
+  if (key && CITY_COORDINATES[key]) return { ...CITY_COORDINATES[key] };
   return { lat: 26.8467, lng: 80.9462, name: name || 'City' };
 }
 
+async function getCityCoordsAsync(name) {
+  const key = normalizeCityName(name);
+  if (key && CITY_COORDINATES[key]) return { ...CITY_COORDINATES[key] };
+
+  // Try geocoding with Nominatim (free geocoder)
+  const geo = await geocodeAddress(`${name}, Uttar Pradesh, India`);
+  if (geo) {
+    const entry = { lat: geo.lat, lng: geo.lng, name: name.trim() };
+    CITY_COORDINATES[name.toLowerCase().trim()] = entry;
+    return entry;
+  }
+
+  return getCityCoords(name);
+}
+
 /**
- * Generate 3 alternative route corridors for any origin -> destination
+ * Identify intermediate cities/hubs along a route's Leaflet geometry.
  */
-function generateCandidateRoutes(origin, destination) {
-  const origKey = normalizeCityName(origin) || 'lucknow';
-  const destKey = normalizeCityName(destination) || 'varanasi';
+function detectHubsAlongGeometry(geometry, origCoords, destCoords) {
+  if (!geometry || geometry.length < 2) return [];
 
-  const origCoords = getCityCoords(origKey);
-  const destCoords = getCityCoords(destKey);
-  const directDistance = Math.max(50, haversineDistance(origCoords.lat, origCoords.lng, destCoords.lat, destCoords.lng) * 1.25);
+  const origKey = normalizeCityName(origCoords.name);
+  const destKey = normalizeCityName(destCoords.name);
+  const detected = [];
 
+  for (const [key, c] of Object.entries(CITY_COORDINATES)) {
+    if (key === origKey || key === destKey) continue;
+    if (c.name.toLowerCase() === origCoords.name.toLowerCase() || c.name.toLowerCase() === destCoords.name.toLowerCase()) continue;
+
+    // Skip hubs that are too close to origin or destination (< 20 km)
+    const distToOrig = haversineDistance(origCoords.lat, origCoords.lng, c.lat, c.lng);
+    const distToDest = haversineDistance(destCoords.lat, destCoords.lng, c.lat, c.lng);
+    if (distToOrig < 20 || distToDest < 20) continue;
+
+    let minD = 9999;
+    let bestIdx = 0;
+
+    // Sample geometry points
+    const step = Math.max(1, Math.floor(geometry.length / 80));
+    for (let i = 0; i < geometry.length; i += step) {
+      const pt = geometry[i];
+      const dlat = (pt[0] - c.lat) * 110.57;
+      const dlng = (pt[1] - c.lng) * 111.32 * Math.cos((c.lat * Math.PI) / 180);
+      const dist = Math.sqrt(dlat * dlat + dlng * dlng);
+      if (dist < minD) {
+        minD = dist;
+        bestIdx = i;
+      }
+    }
+
+    // Road bypass detection radius (22 km)
+    if (minD <= 22) {
+      detected.push({
+        name: c.name,
+        lat: c.lat,
+        lng: c.lng,
+        dist: minD,
+        progress: bestIdx / geometry.length
+      });
+    }
+  }
+
+  // Sort by progression along the route
+  detected.sort((a, b) => a.progress - b.progress);
+
+  // Filter out adjacent duplicate hubs that are within 30 km of each other
+  const uniqueHubs = [];
+  for (const hub of detected) {
+    const isTooClose = uniqueHubs.some(u => haversineDistance(u.lat, u.lng, hub.lat, hub.lng) < 30);
+    if (!isTooClose) {
+      uniqueHubs.push(hub);
+    }
+  }
+
+  // Keep up to 4 prominent intermediate hubs for a clean corridor title
+  return uniqueHubs.slice(0, 4);
+}
+
+/**
+ * Generate 3 alternative route corridors for any origin -> destination dynamically
+ * using OSRM alternatives and intermediate corridor detection.
+ */
+async function generateCandidateRoutes(origin, destination) {
+  const origCoords = await getCityCoordsAsync(origin);
+  const destCoords = await getCityCoordsAsync(destination);
+
+  const origKey = normalizeCityName(origin);
+  const destKey = normalizeCityName(destination);
+
+  // Special scenario: Lucknow ↔ Varanasi (ensures demo consignments and corridors remain consistent)
   if (origKey === 'lucknow' && destKey === 'varanasi') {
+    const [routeAData, routeBData, routeCData] = await Promise.all([
+      getDrivingRouteMultiStop([
+        { lat: 26.8467, lng: 80.9462 },
+        { lat: 26.6025, lng: 81.6520 }, // Nihalgarh
+        { lat: 26.2648, lng: 82.0727 }, // Sultanpur
+        { lat: 25.7464, lng: 82.6837 }, // Jaunpur
+        { lat: 25.3176, lng: 82.9739 }  // Varanasi
+      ]),
+      getDrivingRouteMultiStop([
+        { lat: 26.8467, lng: 80.9462 },
+        { lat: 26.2236, lng: 81.2409 }, // Raebareli
+        { lat: 25.4358, lng: 81.8463 }, // Prayagraj
+        { lat: 25.3176, lng: 82.9739 }  // Varanasi
+      ]),
+      getDrivingRouteMultiStop([
+        { lat: 26.8467, lng: 80.9462 },
+        { lat: 26.7922, lng: 82.1998 }, // Ayodhya
+        { lat: 26.4355, lng: 82.5414 }, // Akbarpur
+        { lat: 25.3176, lng: 82.9739 }  // Varanasi
+      ])
+    ]);
+
     return [
       {
         id: 'route_A',
         name: 'Route A: Direct NH731 / Purvanchal Corridor',
         corridor: 'Lucknow → Nihalgarh → Sultanpur → Jaunpur → Varanasi',
-        distanceKm: 310,
-        estimatedDurationHours: 6.0,
+        distanceKm: routeAData?.distanceKm || 310,
+        estimatedDurationHours: routeAData ? Number((routeAData.durationMinutes / 60).toFixed(1)) : 6.0,
         hubs: ['Lucknow', 'Nihalgarh', 'Sultanpur', 'Jaunpur', 'Varanasi'],
         stops: [
           { name: 'Lucknow', lat: 26.8467, lng: 80.9462, type: 'source' },
@@ -79,15 +263,15 @@ function generateCandidateRoutes(origin, destination) {
           { name: 'Jaunpur', lat: 25.7464, lng: 82.6837, type: 'hub' },
           { name: 'Varanasi', lat: 25.3176, lng: 82.9739, type: 'destination' }
         ],
+        geometry: routeAData?.geometry || null,
         color: '#10b981'
       },
-
       {
         id: 'route_B',
         name: 'Route B: Southern Highway via Raebareli & Prayagraj',
         corridor: 'Lucknow → Raebareli → Prayagraj → Varanasi',
-        distanceKm: 335,
-        estimatedDurationHours: 6.8,
+        distanceKm: routeBData?.distanceKm || 335,
+        estimatedDurationHours: routeBData ? Number((routeBData.durationMinutes / 60).toFixed(1)) : 6.8,
         hubs: ['Lucknow', 'Raebareli', 'Prayagraj', 'Varanasi'],
         stops: [
           { name: 'Lucknow', lat: 26.8467, lng: 80.9462, type: 'source' },
@@ -95,14 +279,15 @@ function generateCandidateRoutes(origin, destination) {
           { name: 'Prayagraj', lat: 25.4358, lng: 81.8463, type: 'hub' },
           { name: 'Varanasi', lat: 25.3176, lng: 82.9739, type: 'destination' }
         ],
+        geometry: routeBData?.geometry || null,
         color: '#3b82f6'
       },
       {
         id: 'route_C',
         name: 'Route C: Northern Heritage via Ayodhya & Akbarpur',
         corridor: 'Lucknow → Ayodhya → Akbarpur → Varanasi',
-        distanceKm: 355,
-        estimatedDurationHours: 7.2,
+        distanceKm: routeCData?.distanceKm || 355,
+        estimatedDurationHours: routeCData ? Number((routeCData.durationMinutes / 60).toFixed(1)) : 7.2,
         hubs: ['Lucknow', 'Ayodhya', 'Akbarpur', 'Varanasi'],
         stops: [
           { name: 'Lucknow', lat: 26.8467, lng: 80.9462, type: 'source' },
@@ -110,54 +295,128 @@ function generateCandidateRoutes(origin, destination) {
           { name: 'Akbarpur', lat: 26.4355, lng: 82.5414, type: 'hub' },
           { name: 'Varanasi', lat: 25.3176, lng: 82.9739, type: 'destination' }
         ],
+        geometry: routeCData?.geometry || null,
         color: '#f59e0b'
       }
     ];
   }
 
-  // Generic fallback generator for arbitrary cities
-  return [
-    {
-      id: 'route_A',
-      name: `Route A: Primary Express Highway (${origin} → ${destination})`,
-      corridor: `${origin} → Main Corridor → ${destination}`,
-      distanceKm: Math.round(directDistance),
-      estimatedDurationHours: Number((directDistance / 55).toFixed(1)),
-      hubs: [origin, destination],
-      stops: [
-        { name: origin, lat: origCoords.lat, lng: origCoords.lng, type: 'source' },
-        { name: destination, lat: destCoords.lat, lng: destCoords.lng, type: 'destination' }
-      ],
-      color: '#10b981'
-    },
-    {
-      id: 'route_B',
-      name: `Route B: Secondary Arterial Bypass (${origin} → ${destination})`,
-      corridor: `${origin} → Regional Hubs → ${destination}`,
-      distanceKm: Math.round(directDistance * 1.1),
-      estimatedDurationHours: Number(((directDistance * 1.1) / 50).toFixed(1)),
-      hubs: [origin, destination],
-      stops: [
-        { name: origin, lat: origCoords.lat, lng: origCoords.lng, type: 'source' },
-        { name: destination, lat: destCoords.lat, lng: destCoords.lng, type: 'destination' }
-      ],
-      color: '#3b82f6'
-    },
-    {
-      id: 'route_C',
-      name: `Route C: Outer Loop Route (${origin} → ${destination})`,
-      corridor: `${origin} → Outer Bypass → ${destination}`,
-      distanceKm: Math.round(directDistance * 1.2),
-      estimatedDurationHours: Number(((directDistance * 1.2) / 48).toFixed(1)),
-      hubs: [origin, destination],
-      stops: [
-        { name: origin, lat: origCoords.lat, lng: origCoords.lng, type: 'source' },
-        { name: destination, lat: destCoords.lat, lng: destCoords.lng, type: 'destination' }
-      ],
-      color: '#f59e0b'
+  // 1. Fetch OSRM alternatives for any arbitrary city pair
+  let osrmAlternatives = await getDrivingRouteAlternatives(
+    origCoords.lat, origCoords.lng,
+    destCoords.lat, destCoords.lng
+  );
+
+  // 2. If OSRM returns fewer than 3 alternatives, find intermediate waypoints from our registry
+  if (!osrmAlternatives || osrmAlternatives.length < 3) {
+    if (!osrmAlternatives) osrmAlternatives = [];
+
+    // Find viable intermediate cities between origin & destination
+    const totalDist = haversineDistance(origCoords.lat, origCoords.lng, destCoords.lat, destCoords.lng);
+    const dLat = destCoords.lat - origCoords.lat;
+    const dLng = destCoords.lng - origCoords.lng;
+
+    const candidateWaypoints = [];
+    for (const [key, c] of Object.entries(CITY_COORDINATES)) {
+      if (key === origKey || key === destKey) continue;
+      const d1 = haversineDistance(origCoords.lat, origCoords.lng, c.lat, c.lng);
+      const d2 = haversineDistance(c.lat, c.lng, destCoords.lat, destCoords.lng);
+      const detour = (d1 + d2) - totalDist;
+
+      // Reasonable detour window (between 8 km and max(40, totalDist * 0.35))
+      if (detour >= 8 && detour <= Math.max(40, totalDist * 0.35)) {
+        // Cross-product lateral offset sign (determines which side of the line it is on)
+        const cross = (c.lat - origCoords.lat) * dLng - (c.lng - origCoords.lng) * dLat;
+        candidateWaypoints.push({ city: c, detour, side: cross >= 0 ? 1 : -1 });
+      }
     }
+
+    // Pick top candidates from positive and negative lateral sides
+    const posCandidates = candidateWaypoints.filter(w => w.side > 0).sort((a, b) => a.detour - b.detour);
+    const negCandidates = candidateWaypoints.filter(w => w.side < 0).sort((a, b) => a.detour - b.detour);
+
+    const waypointsToTry = [];
+    if (posCandidates[0]) waypointsToTry.push(posCandidates[0].city);
+    if (negCandidates[0]) waypointsToTry.push(negCandidates[0].city);
+    if (waypointsToTry.length < 2 && candidateWaypoints.length > 1) {
+      for (const w of candidateWaypoints) {
+        if (!waypointsToTry.includes(w.city)) waypointsToTry.push(w.city);
+        if (waypointsToTry.length >= 2) break;
+      }
+    }
+
+    // Query multi-stop routes for additional alternatives
+    for (const wp of waypointsToTry) {
+      if (osrmAlternatives.length >= 3) break;
+      const multi = await getDrivingRouteMultiStop([origCoords, wp, destCoords]);
+      if (multi) {
+        // Avoid duplicate distances
+        const exists = osrmAlternatives.some(r => Math.abs(r.distanceKm - multi.distanceKm) < 5);
+        if (!exists) {
+          osrmAlternatives.push({
+            distanceKm: multi.distanceKm,
+            durationMinutes: multi.durationMinutes,
+            estimatedDurationHours: Number((multi.durationMinutes / 60).toFixed(1)),
+            geometry: multi.geometry
+          });
+        }
+      }
+    }
+  }
+
+  // 3. Fallback if OSRM is completely offline
+  const directDistance = Math.max(50, haversineDistance(origCoords.lat, origCoords.lng, destCoords.lat, destCoords.lng) * 1.25);
+  while (osrmAlternatives.length < 3) {
+    const factor = osrmAlternatives.length === 0 ? 1.0 : osrmAlternatives.length === 1 ? 1.12 : 1.22;
+    const dist = Math.round(directDistance * factor);
+    osrmAlternatives.push({
+      distanceKm: dist,
+      durationMinutes: Math.round((dist / 55) * 60),
+      estimatedDurationHours: Number((dist / 55).toFixed(1)),
+      geometry: [
+        [origCoords.lat, origCoords.lng],
+        [destCoords.lat, destCoords.lng]
+      ]
+    });
+  }
+
+  // 4. Sort routes by distance
+  osrmAlternatives.sort((a, b) => a.distanceKm - b.distanceKm);
+
+  // 5. Build the 3 Candidate Routes (Route A, Route B, Route C)
+  const routeConfigs = [
+    { id: 'route_A', prefix: 'Route A: Primary Express Corridor', color: '#10b981' },
+    { id: 'route_B', prefix: 'Route B: Alternative Highway Bypass', color: '#3b82f6' },
+    { id: 'route_C', prefix: 'Route C: Regional Transit Corridor', color: '#f59e0b' }
   ];
+
+  return routeConfigs.map((cfg, idx) => {
+    const routeData = osrmAlternatives[idx] || osrmAlternatives[0];
+    const detectedHubs = detectHubsAlongGeometry(routeData.geometry, origCoords, destCoords);
+
+    const hubsList = [origCoords.name, ...detectedHubs.map(h => h.name), destCoords.name];
+    const stopsList = [
+      { name: origCoords.name, lat: origCoords.lat, lng: origCoords.lng, type: 'source' },
+      ...detectedHubs.map(h => ({ name: h.name, lat: h.lat, lng: h.lng, type: 'hub' })),
+      { name: destCoords.name, lat: destCoords.lat, lng: destCoords.lng, type: 'destination' }
+    ];
+
+    const corridorString = hubsList.join(' → ');
+
+    return {
+      id: cfg.id,
+      name: `${cfg.prefix} (${origCoords.name} → ${destCoords.name})`,
+      corridor: corridorString,
+      distanceKm: routeData.distanceKm,
+      estimatedDurationHours: routeData.estimatedDurationHours || Number((routeData.durationMinutes / 60).toFixed(1)),
+      hubs: hubsList,
+      stops: stopsList,
+      geometry: routeData.geometry,
+      color: cfg.color
+    };
+  });
 }
+
 
 /**
  * Check if a shipment is geographically along the route corridor
@@ -243,10 +502,10 @@ function computeShipmentScore(trip, route, shipment, routeCheck) {
 /**
  * Main Algorithm: Evaluate Route Options (A, B, C) and Bundle Compatible Shipments
  */
-function matchTripRoutes(trip, availableShipments) {
+async function matchTripRoutes(trip, availableShipments) {
   const routes = trip.routes && trip.routes.length > 0
     ? trip.routes
-    : generateCandidateRoutes(trip.source, trip.destination);
+    : await generateCandidateRoutes(trip.source, trip.destination);
 
   const evaluatedRoutes = routes.map((route) => {
     // 1. Filter shipments by hard constraints
@@ -421,8 +680,6 @@ function distancePointToPolyline(pLat, pLng, polylineStops = []) {
     closestStopIndex: bestStopIndex
   };
 }
-
-const { getDrivingDistanceKm } = require('./osrmService');
 
 /**
  * Purely geometric, location-agnostic en-route proximity & 10 km corridor matching algorithm.

@@ -116,7 +116,47 @@ async function getDrivingRouteMultiStop(waypoints) {
     return result;
   } catch (err) {
     console.warn(`OSRM multi-stop route fetch failed:`, err.message);
-    return null;
+  }
+}
+
+/**
+ * Get driving route alternatives between two coordinates using OSRM.
+ * Returns array of routes: [ { distanceKm, durationMinutes, estimatedDurationHours, geometry } ]
+ *
+ * @param {number} fromLat
+ * @param {number} fromLng
+ * @param {number} toLat
+ * @param {number} toLng
+ * @returns {Promise<Array<{distanceKm: number, durationMinutes: number, estimatedDurationHours: number, geometry: Array<[number, number]>}>>}
+ */
+async function getDrivingRouteAlternatives(fromLat, fromLng, toLat, toLng) {
+  const cacheKey = `alt_${fromLat.toFixed(4)},${fromLng.toFixed(4)}-${toLat.toFixed(4)},${toLng.toFixed(4)}`;
+
+  if (routeCache.has(cacheKey)) {
+    return routeCache.get(cacheKey);
+  }
+
+  try {
+    const url = `${OSRM_BASE_URL}/route/v1/driving/${fromLng},${fromLat};${toLng},${toLat}?overview=full&geometries=geojson&alternatives=3`;
+    const data = await fetchWithTimeout(url, 10000);
+
+    if (data.code !== 'Ok' || !data.routes || data.routes.length === 0) {
+      throw new Error('OSRM returned no routes');
+    }
+
+    const results = data.routes.map(route => {
+      const distanceKm = Math.round((route.distance / 1000) * 10) / 10;
+      const durationMinutes = Math.round(route.duration / 60);
+      const estimatedDurationHours = Number((route.duration / 3600).toFixed(1));
+      const geometry = route.geometry.coordinates.map(([lng, lat]) => [lat, lng]);
+      return { distanceKm, durationMinutes, estimatedDurationHours, geometry };
+    });
+
+    routeCache.set(cacheKey, results);
+    return results;
+  } catch (err) {
+    console.warn(`OSRM alternatives fetch failed (${cacheKey}):`, err.message);
+    return [];
   }
 }
 
@@ -254,6 +294,7 @@ function clearCaches() {
 module.exports = {
   getDrivingRoute,
   getDrivingRouteMultiStop,
+  getDrivingRouteAlternatives,
   getDrivingDistanceKm,
   geocodeAddress,
   reverseGeocode,

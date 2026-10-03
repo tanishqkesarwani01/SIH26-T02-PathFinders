@@ -277,8 +277,8 @@ export default function MapView({
           const isSelected = (selectedRoute?.id === route.id) || effectiveRoutes.length === 1;
           const routeKey = route.id || route.name;
 
-          // Use OSRM road-following geometry if available, otherwise fall back to straight lines
-          const osrmGeo = osrmGeometries[routeKey];
+          // Use OSRM road-following geometry if available (from backend or frontend fetch), otherwise fall back to stops
+          const osrmGeo = osrmGeometries[routeKey] || (route.geometry && route.geometry.length > 2 ? route.geometry : null);
           const positions = osrmGeo || route.stops.map(s => [s.lat, s.lng]);
           const osrmInfo = osrmRouteInfo[routeKey];
           const displayDistance = osrmInfo?.distanceKm || route.distanceKm;

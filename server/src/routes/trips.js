@@ -16,7 +16,7 @@ const {
 } = require('../services/osrmService');
 
 // Create a new Driver Trip
-router.post('/', (req, res) => {
+router.post('/', async (req, res) => {
   try {
     const {
       driverId,
@@ -43,7 +43,7 @@ router.post('/', (req, res) => {
     const availCap = Math.max(0, totalCap - curLoad);
 
     const tripId = `trip_${Date.now()}_${Math.random().toString(36).substr(2, 4)}`;
-    const candidateRoutes = generateCandidateRoutes(source, destination);
+    const candidateRoutes = await generateCandidateRoutes(source, destination);
 
     const newTrip = {
       id: tripId,
@@ -88,7 +88,7 @@ router.get('/', (req, res) => {
 });
 
 // Get Trip Details with Intelligent Multi-Route Matching Evaluator
-router.get('/:id', (req, res) => {
+router.get('/:id', async (req, res) => {
   try {
     const trip = db.findTripById(req.params.id);
     if (!trip) {
@@ -96,7 +96,7 @@ router.get('/:id', (req, res) => {
     }
 
     const allShipments = db.getShipments();
-    const evaluatedRoutes = matchTripRoutes(trip, allShipments);
+    const evaluatedRoutes = await matchTripRoutes(trip, allShipments);
 
     // Also get currently booked/accepted shipments for this trip
     const bookedShipments = allShipments.filter(s => s.assignedTripId === trip.id);
@@ -434,6 +434,15 @@ router.get('/:id/driving-route', async (req, res) => {
 
     if (stops.length < 2) {
       return res.status(400).json({ error: 'Need at least 2 stops for a route' });
+    }
+
+    if (activeRoute?.geometry && activeRoute.geometry.length > 2) {
+      return res.json({
+        source: 'osrm',
+        distanceKm: activeRoute.distanceKm,
+        durationMinutes: Math.round((activeRoute.estimatedDurationHours || 5) * 60),
+        geometry: activeRoute.geometry
+      });
     }
 
     const waypoints = stops.map(s => ({ lat: s.lat, lng: s.lng }));
