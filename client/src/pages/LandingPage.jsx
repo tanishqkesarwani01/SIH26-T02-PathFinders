@@ -193,30 +193,54 @@ export default function LandingPage({
             )}
           </div>
 
-          {/* Platform Performance Metric Badges */}
-          <div className="mt-14 grid grid-cols-2 md:grid-cols-4 gap-3 max-w-4xl mx-auto">
-            <div className="p-4 rounded-2xl bg-slate-900/70 border border-slate-800/80 backdrop-blur text-left">
-              <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block">Shipper Savings</span>
-              <span className="text-2xl font-black text-emerald-400 mt-1 block">40% - 60%</span>
-              <span className="text-[11px] text-slate-500 mt-0.5 block">vs. dedicated full-truck booking</span>
+          {/* Core Platform Features Showcase */}
+          <div className="mt-14 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 max-w-5xl mx-auto text-left">
+            <div className="p-4.5 rounded-2xl bg-slate-900/80 border border-slate-800/90 hover:border-emerald-500/50 hover:bg-slate-900 transition-all duration-300 backdrop-blur group shadow-lg">
+              <div className="w-10 h-10 rounded-xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400 mb-3 group-hover:scale-110 transition-transform">
+                <Navigation className="w-5 h-5" />
+              </div>
+              <h4 className="text-sm font-bold text-white mb-1 group-hover:text-emerald-300 transition-colors">
+                3-Way Corridor Engine
+              </h4>
+              <p className="text-xs text-slate-400 leading-relaxed">
+                Evaluates recommended, alternative, and bypass highway routes for maximum truck capacity utilization.
+              </p>
             </div>
 
-            <div className="p-4 rounded-2xl bg-slate-900/70 border border-slate-800/80 backdrop-blur text-left">
-              <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block">Proximity Sensor</span>
-              <span className="text-2xl font-black text-teal-300 mt-1 block">10 km Radius</span>
-              <span className="text-[11px] text-slate-500 mt-0.5 block">Zero detour waste along road</span>
+            <div className="p-4.5 rounded-2xl bg-slate-900/80 border border-slate-800/90 hover:border-teal-500/50 hover:bg-slate-900 transition-all duration-300 backdrop-blur group shadow-lg">
+              <div className="w-10 h-10 rounded-xl bg-teal-500/15 border border-teal-500/30 flex items-center justify-center text-teal-400 mb-3 group-hover:scale-110 transition-transform">
+                <Radio className="w-5 h-5 animate-pulse" />
+              </div>
+              <h4 className="text-sm font-bold text-white mb-1 group-hover:text-teal-300 transition-colors">
+                10km Proximity Sensor
+              </h4>
+              <p className="text-xs text-slate-400 leading-relaxed">
+                Autonomous radar stops truck telemetry 10km before pickup to alert drivers of instant en-route cargo.
+              </p>
             </div>
 
-            <div className="p-4 rounded-2xl bg-slate-900/70 border border-slate-800/80 backdrop-blur text-left">
-              <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block">Driver Return Income</span>
-              <span className="text-2xl font-black text-sky-400 mt-1 block">+₹18,500/mo</span>
-              <span className="text-[11px] text-slate-500 mt-0.5 block">Monetizing empty returning deck</span>
+            <div className="p-4.5 rounded-2xl bg-slate-900/80 border border-slate-800/90 hover:border-sky-500/50 hover:bg-slate-900 transition-all duration-300 backdrop-blur group shadow-lg">
+              <div className="w-10 h-10 rounded-xl bg-sky-500/15 border border-sky-500/30 flex items-center justify-center text-sky-400 mb-3 group-hover:scale-110 transition-transform">
+                <FileCheck className="w-5 h-5" />
+              </div>
+              <h4 className="text-sm font-bold text-white mb-1 group-hover:text-sky-300 transition-colors">
+                Strict Photo & OTP Proof
+              </h4>
+              <p className="text-xs text-slate-400 leading-relaxed">
+                Ensures exact cargo photo verification and dual-factor cryptographic OTP proof before delivery completion.
+              </p>
             </div>
 
-            <div className="p-4 rounded-2xl bg-slate-900/70 border border-slate-800/80 backdrop-blur text-left">
-              <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block">Trust Infrastructure</span>
-              <span className="text-2xl font-black text-amber-400 mt-1 block">100% Escrow</span>
-              <span className="text-[11px] text-slate-500 mt-0.5 block">Two-step pickup & drop OTP</span>
+            <div className="p-4.5 rounded-2xl bg-slate-900/80 border border-slate-800/90 hover:border-amber-500/50 hover:bg-slate-900 transition-all duration-300 backdrop-blur group shadow-lg">
+              <div className="w-10 h-10 rounded-xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-amber-400 mb-3 group-hover:scale-110 transition-transform">
+                <Lock className="w-5 h-5" />
+              </div>
+              <h4 className="text-sm font-bold text-white mb-1 group-hover:text-amber-300 transition-colors">
+                Automated Escrow Vault
+              </h4>
+              <p className="text-xs text-slate-400 leading-relaxed">
+                Guarantees payment safety by holding shipper funds in escrow until verified recipient handover.
+              </p>
             </div>
           </div>
 
