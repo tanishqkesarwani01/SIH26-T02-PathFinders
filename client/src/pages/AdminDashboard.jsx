@@ -194,7 +194,7 @@ export default function AdminDashboard({
               <span>Evaluation & Admin Controls</span>
             </h3>
             <p className="text-xs text-slate-400 mb-4">
-              Switch between a completely fresh blank database for custom input, or load the pre-engineered Lucknow → Varanasi demonstration.
+              Switch between a completely fresh blank database for custom input, or load the pre-engineered multi-corridor demonstrations (Lucknow-Varanasi, Prayagraj-New Delhi, Gorakhpur-Meerut).
             </p>
 
             <div className="flex flex-wrap gap-3">
@@ -203,7 +203,7 @@ export default function AdminDashboard({
                 className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-xs flex items-center gap-2 shadow-lg shadow-emerald-500/20"
               >
                 <Sparkles className="w-4 h-4 text-amber-300" />
-                <span>Load Demo Scenario (Lucknow → Varanasi)</span>
+                <span>Load Demo</span>
               </button>
 
               <button

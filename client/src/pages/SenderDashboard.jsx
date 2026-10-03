@@ -337,7 +337,7 @@ export default function SenderDashboard({
           <div className="py-8 text-center text-slate-400 text-xs">
             <p className="text-slate-300 font-semibold mb-1">No Active Trips Posted Yet</p>
             <p className="text-[11px]">
-              Switch to "Driver Mode" to create a trip or click "Load Demo" in the top bar to load Ramesh's Lucknow-Varanasi truck.
+              Switch to "Driver Mode" to create a trip or click "Load Demo" in the top bar to load the 3 demo freight corridors.
             </p>
           </div>
         ) : (

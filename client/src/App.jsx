@@ -71,8 +71,8 @@ export default function App() {
       setShipments(rawShipments);
       setStats(statsRes.data);
 
-      // Fetch sample ratings
-      const ratingsRes = await ratingsAPI.getDriverRatings('drv_ramesh');
+      // Fetch ratings across all drivers
+      const ratingsRes = await ratingsAPI.getDriverRatings();
       setRatings(ratingsRes.data.ratings || []);
     } catch (err) {
       console.error('Failed to refresh data:', err);

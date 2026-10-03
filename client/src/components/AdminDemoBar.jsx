@@ -14,7 +14,7 @@ export default function AdminDemoBar({
   const handleSeed = async () => {
     try {
       await onSeedDemo();
-      setActionMsg('Lucknow → Varanasi Demo Scenario Loaded!');
+      setActionMsg('3 Freight Corridors Loaded (Lucknow, Prayagraj, Gorakhpur)!');
       confetti({
         particleCount: 70,
         spread: 60,
@@ -70,10 +70,10 @@ export default function AdminDemoBar({
           onClick={handleSeed}
           disabled={isLoading}
           className="px-3 py-1.5 rounded-lg bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-semibold flex items-center gap-1.5 transition-all shadow-md shadow-emerald-950 disabled:opacity-50 text-xs"
-          title="Preload Lucknow to Varanasi trip with 3 route options and candidate shipments"
+          title="Preload 3 demo freight corridors with distinct drivers, vehicles, and shipments"
         >
           <Sparkles className="w-3.5 h-3.5 text-amber-300" />
-          <span>Load Demo (Lucknow → Varanasi)</span>
+          <span>Load Demo</span>
         </button>
 
         <button

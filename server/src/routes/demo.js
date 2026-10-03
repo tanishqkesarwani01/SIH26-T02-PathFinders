@@ -21,12 +21,12 @@ router.post('/reset', (req, res) => {
   }
 });
 
-// Seed the SIH 2026 Lucknow -> Varanasi Demo Scenario
+// Seed the SIH 2026 3 Corridors Demo Scenario (Lucknow-Varanasi, Prayagraj-New Delhi, Gorakhpur-Meerut)
 router.post('/seed', (req, res) => {
   try {
     const data = db.seedDemoScenario();
     res.json({
-      message: 'SIH 2026 Lucknow → Varanasi demo corridor and shipments seeded successfully!',
+      message: 'SIH 2026 3 Freight Corridors (Lucknow-Varanasi, Prayagraj-New Delhi, Gorakhpur-Meerut) seeded successfully!',
       counts: {
         users: data.users.length,
         trips: data.trips.length,
@@ -34,15 +34,26 @@ router.post('/seed', (req, res) => {
         payments: data.payments.length,
         ratings: data.ratings.length
       },
-      scenario: {
-        driver: 'Ramesh Verma (Tata 14ft LCV - Lucknow → Varanasi)',
-        routesAvailable: ['Route A: NH31 / Sultanpur', 'Route B: Raebareli / Prayagraj', 'Route C: Ayodhya / Akbarpur'],
-        candidateShipments: [
-          'Lucknow → Sultanpur (650 kg Textiles)',
-          'Sultanpur → Varanasi (420 kg Electronics)',
-          'Raebareli → Prayagraj (800 kg Hardware)'
-        ]
-      }
+      scenarios: [
+        {
+          corridor: 'Lucknow → Varanasi',
+          driver: 'Ramesh Verma (Tata 14ft Container - UP-32-BZ-7890)',
+          routesAvailable: ['Route A: NH731 / Purvanchal', 'Route B: Raebareli / Prayagraj', 'Route C: Ayodhya / Akbarpur'],
+          shipmentsCount: 3
+        },
+        {
+          corridor: 'Prayagraj → New Delhi',
+          driver: 'Harish Chandra Yadav (BharatBenz 24ft Multi-Axle - UP-70-ET-4521)',
+          routesAvailable: ['Route A: Yamuna / Agra-Lucknow Exp', 'Route B: NH19 Grand Trunk Road', 'Route C: Central Awadh Bypass'],
+          shipmentsCount: 3
+        },
+        {
+          corridor: 'Gorakhpur → Meerut',
+          driver: 'Balwant Singh (Ashok Leyland 17ft High Deck - UP-53-CK-3108)',
+          routesAvailable: ['Route A: Express Purvanchal-Bareilly', 'Route B: NH27 Northern Highway', 'Route C: Western NCR Link via Hardoi'],
+          shipmentsCount: 3
+        }
+      ]
     });
   } catch (err) {
     console.error('Seed error:', err);

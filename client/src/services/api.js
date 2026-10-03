@@ -59,7 +59,7 @@ export const shipmentsAPI = {
 
 export const ratingsAPI = {
   submitRating: (data) => api.post('/ratings', data),
-  getDriverRatings: (driverId) => api.get(`/ratings/${driverId}`)
+  getDriverRatings: (driverId) => driverId ? api.get(`/ratings/${driverId}`) : api.get('/ratings')
 };
 
 export const demoAPI = {

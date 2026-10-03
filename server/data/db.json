@@ -1,36 +1,266 @@
 {
-  "users": [],
-  "drivers": [],
-  "vehicles": [],
+  "users": [
+    {
+      "id": "usr_drv_ramesh",
+      "name": "Ramesh Verma",
+      "email": "ramesh.driver@loadlink.com",
+      "passwordHash": "$2a$10$Wg9baxOYqaULuj.RHIBkHurxqNegDxB2YmW5xpNOQOjw8lE.v8vZ.",
+      "role": "DRIVER",
+      "phone": "+91 98390 12345",
+      "aadhaarNumber": "XXXX-XXXX-8921",
+      "aadhaarVerified": true,
+      "rating": 4.85,
+      "ratingCount": 38,
+      "createdAt": "2026-10-03T20:26:28.304Z"
+    },
+    {
+      "id": "usr_drv_harish",
+      "name": "Harish Chandra Yadav",
+      "email": "harish.driver@loadlink.com",
+      "passwordHash": "$2a$10$Wg9baxOYqaULuj.RHIBkHurxqNegDxB2YmW5xpNOQOjw8lE.v8vZ.",
+      "role": "DRIVER",
+      "phone": "+91 94152 66780",
+      "aadhaarNumber": "XXXX-XXXX-3419",
+      "aadhaarVerified": true,
+      "rating": 4.92,
+      "ratingCount": 54,
+      "createdAt": "2026-10-03T20:26:28.304Z"
+    },
+    {
+      "id": "usr_drv_balwant",
+      "name": "Balwant Singh",
+      "email": "balwant.driver@loadlink.com",
+      "passwordHash": "$2a$10$Wg9baxOYqaULuj.RHIBkHurxqNegDxB2YmW5xpNOQOjw8lE.v8vZ.",
+      "role": "DRIVER",
+      "phone": "+91 98381 99234",
+      "aadhaarNumber": "XXXX-XXXX-7612",
+      "aadhaarVerified": true,
+      "rating": 4.88,
+      "ratingCount": 42,
+      "createdAt": "2026-10-03T20:26:28.304Z"
+    },
+    {
+      "id": "usr_snd_priya",
+      "name": "Priya Sharma (Retail Goods)",
+      "email": "priya@textiles.com",
+      "passwordHash": "$2a$10$Wg9baxOYqaULuj.RHIBkHurxqNegDxB2YmW5xpNOQOjw8lE.v8vZ.",
+      "role": "SENDER",
+      "phone": "+91 94150 98765",
+      "aadhaarNumber": "XXXX-XXXX-4532",
+      "aadhaarVerified": true,
+      "rating": 4.9,
+      "ratingCount": 14,
+      "createdAt": "2026-10-03T20:26:28.304Z"
+    },
+    {
+      "id": "usr_snd_rajesh",
+      "name": "Rajesh Mishra (Auto Spares)",
+      "email": "rajesh.spares@gmail.com",
+      "passwordHash": "$2a$10$Wg9baxOYqaULuj.RHIBkHurxqNegDxB2YmW5xpNOQOjw8lE.v8vZ.",
+      "role": "SENDER",
+      "phone": "+91 94150 77890",
+      "aadhaarNumber": "XXXX-XXXX-7714",
+      "aadhaarVerified": true,
+      "rating": 4.8,
+      "ratingCount": 11,
+      "createdAt": "2026-10-03T20:26:28.304Z"
+    },
+    {
+      "id": "usr_snd_vikram",
+      "name": "Vikram Singh (ElectroHub)",
+      "email": "vikram@electrohub.in",
+      "passwordHash": "$2a$10$Wg9baxOYqaULuj.RHIBkHurxqNegDxB2YmW5xpNOQOjw8lE.v8vZ.",
+      "role": "SENDER",
+      "phone": "+91 97920 44321",
+      "aadhaarNumber": "XXXX-XXXX-6712",
+      "aadhaarVerified": true,
+      "rating": 4.8,
+      "ratingCount": 9,
+      "createdAt": "2026-10-03T20:26:28.304Z"
+    },
+    {
+      "id": "usr_snd_amitabh",
+      "name": "Amitabh Sen (Industrial Glassware)",
+      "email": "amitabh.sen@ananyaglass.in",
+      "passwordHash": "$2a$10$Wg9baxOYqaULuj.RHIBkHurxqNegDxB2YmW5xpNOQOjw8lE.v8vZ.",
+      "role": "SENDER",
+      "phone": "+91 98180 55123",
+      "aadhaarNumber": "XXXX-XXXX-9104",
+      "aadhaarVerified": true,
+      "rating": 4.95,
+      "ratingCount": 22,
+      "createdAt": "2026-10-03T20:26:28.304Z"
+    },
+    {
+      "id": "usr_snd_sunil",
+      "name": "Sunil Chaurasia (Leather & Footwear Exports)",
+      "email": "sunil@chaurasialeather.com",
+      "passwordHash": "$2a$10$Wg9baxOYqaULuj.RHIBkHurxqNegDxB2YmW5xpNOQOjw8lE.v8vZ.",
+      "role": "SENDER",
+      "phone": "+91 94151 22345",
+      "aadhaarNumber": "XXXX-XXXX-3382",
+      "aadhaarVerified": true,
+      "rating": 4.85,
+      "ratingCount": 17,
+      "createdAt": "2026-10-03T20:26:28.304Z"
+    },
+    {
+      "id": "usr_snd_manish",
+      "name": "Manish Agarwal (Auto Die-Castings)",
+      "email": "manish@agarwalfoundry.in",
+      "passwordHash": "$2a$10$Wg9baxOYqaULuj.RHIBkHurxqNegDxB2YmW5xpNOQOjw8lE.v8vZ.",
+      "role": "SENDER",
+      "phone": "+91 98370 11982",
+      "aadhaarNumber": "XXXX-XXXX-5521",
+      "aadhaarVerified": true,
+      "rating": 4.75,
+      "ratingCount": 8,
+      "createdAt": "2026-10-03T20:26:28.304Z"
+    },
+    {
+      "id": "usr_snd_devendra",
+      "name": "Devendra Pandey (Terai Agro Mills)",
+      "email": "devendra@terairice.in",
+      "passwordHash": "$2a$10$Wg9baxOYqaULuj.RHIBkHurxqNegDxB2YmW5xpNOQOjw8lE.v8vZ.",
+      "role": "SENDER",
+      "phone": "+91 98392 33411",
+      "aadhaarNumber": "XXXX-XXXX-6619",
+      "aadhaarVerified": true,
+      "rating": 4.9,
+      "ratingCount": 19,
+      "createdAt": "2026-10-03T20:26:28.304Z"
+    },
+    {
+      "id": "usr_snd_ramakant",
+      "name": "Ramakant Tiwari (Wooden Handicrafts)",
+      "email": "ramakant@ayodhyacrafts.com",
+      "passwordHash": "$2a$10$Wg9baxOYqaULuj.RHIBkHurxqNegDxB2YmW5xpNOQOjw8lE.v8vZ.",
+      "role": "SENDER",
+      "phone": "+91 94501 88920",
+      "aadhaarNumber": "XXXX-XXXX-1943",
+      "aadhaarVerified": true,
+      "rating": 4.85,
+      "ratingCount": 13,
+      "createdAt": "2026-10-03T20:26:28.304Z"
+    },
+    {
+      "id": "usr_snd_farhan",
+      "name": "Farhan Ansari (Cane & Bamboo Works)",
+      "email": "farhan@rohilkhandcane.com",
+      "passwordHash": "$2a$10$Wg9baxOYqaULuj.RHIBkHurxqNegDxB2YmW5xpNOQOjw8lE.v8vZ.",
+      "role": "SENDER",
+      "phone": "+91 94122 77810",
+      "aadhaarNumber": "XXXX-XXXX-8820",
+      "aadhaarVerified": true,
+      "rating": 4.8,
+      "ratingCount": 7,
+      "createdAt": "2026-10-03T20:26:28.304Z"
+    }
+  ],
+  "drivers": [
+    {
+      "id": "drv_ramesh",
+      "userId": "usr_drv_ramesh",
+      "name": "Ramesh Verma",
+      "licenseNumber": "UP32-2018-0098421",
+      "vehicleId": "veh_up32_7890",
+      "status": "VERIFIED",
+      "experienceYears": 7
+    },
+    {
+      "id": "drv_harish",
+      "userId": "usr_drv_harish",
+      "name": "Harish Chandra Yadav",
+      "licenseNumber": "UP70-2016-0043190",
+      "vehicleId": "veh_up70_4521",
+      "status": "VERIFIED",
+      "experienceYears": 10
+    },
+    {
+      "id": "drv_balwant",
+      "userId": "usr_drv_balwant",
+      "name": "Balwant Singh",
+      "licenseNumber": "UP53-2017-0076211",
+      "vehicleId": "veh_up53_3108",
+      "status": "VERIFIED",
+      "experienceYears": 8
+    }
+  ],
+  "vehicles": [
+    {
+      "id": "veh_up32_7890",
+      "driverId": "drv_ramesh",
+      "userId": "usr_drv_ramesh",
+      "registrationNumber": "UP-32-BZ-7890",
+      "vehicleType": "Medium LCV (14ft Container - Tata 1109)",
+      "capacityKg": 5000,
+      "currentLoadKg": 1800,
+      "availableCapacityKg": 3200,
+      "features": [
+        "GPS Realtime",
+        "Waterproof Container",
+        "FastTag Enabled"
+      ]
+    },
+    {
+      "id": "veh_up70_4521",
+      "driverId": "drv_harish",
+      "userId": "usr_drv_harish",
+      "registrationNumber": "UP-70-ET-4521",
+      "vehicleType": "Heavy Multi-Axle (24ft Container - BharatBenz)",
+      "capacityKg": 12000,
+      "currentLoadKg": 4500,
+      "availableCapacityKg": 7500,
+      "features": [
+        "GPS Telematics",
+        "Heavy Axle Bed",
+        "FastTag Enabled",
+        "Tarpaulin Cover"
+      ]
+    },
+    {
+      "id": "veh_up53_3108",
+      "driverId": "drv_balwant",
+      "userId": "usr_drv_balwant",
+      "registrationNumber": "UP-53-CK-3108",
+      "vehicleType": "Intermediate LCV (17ft Open High Deck - Ashok Leyland)",
+      "capacityKg": 7500,
+      "currentLoadKg": 2600,
+      "availableCapacityKg": 4900,
+      "features": [
+        "GPS Realtime",
+        "High Side Deck",
+        "FastTag Enabled",
+        "Tailgate Lift"
+      ]
+    }
+  ],
   "trips": [
     {
-      "id": "trip_1787426734129_utrs",
-      "driverId": "drv_manual",
-      "driverUserId": null,
-      "driverName": "Driver Partner",
-      "driverPhone": "+91 9800000000",
-      "driverRating": 4.9,
+      "id": "trip_lko_vns_01",
+      "driverId": "drv_ramesh",
+      "driverUserId": "usr_drv_ramesh",
+      "driverName": "Ramesh Verma",
+      "driverPhone": "+91 98390 12345",
+      "driverRating": 4.85,
+      "vehicleId": "veh_up32_7890",
       "vehicleNumber": "UP-32-BZ-7890",
-      "vehicleType": "Medium LCV (14ft Container)",
+      "vehicleType": "Medium LCV (14ft Container - Tata 1109)",
       "source": "Lucknow",
-      "destination": "Gorakhpur",
-      "departureDate": "2026-08-22",
-      "departureTime": "10:00 AM",
+      "destination": "Varanasi",
+      "departureDate": "2026-10-03",
+      "departureTime": "10:30 AM",
       "totalCapacityKg": 5000,
-      "currentLoadKg": 2220,
-      "availableCapacityKg": 2780,
+      "currentLoadKg": 1800,
+      "availableCapacityKg": 3200,
       "selectedRouteId": "route_A",
       "routes": [
         {
           "id": "route_A",
-          "name": "Route A: Primary Express Highway (Lucknow → Gorakhpur)",
-          "corridor": "Lucknow → Main Corridor → Gorakhpur",
-          "distanceKm": 301,
-          "estimatedDurationHours": 5.5,
-          "hubs": [
-            "Lucknow",
-            "Gorakhpur"
-          ],
+          "name": "Route A: Direct NH731 / Purvanchal Corridor",
+          "corridor": "Lucknow → Nihalgarh → Sultanpur → Jaunpur → Varanasi",
+          "distanceKm": 310,
+          "estimatedDurationHours": 6,
           "stops": [
             {
               "name": "Lucknow",
@@ -39,24 +269,39 @@
               "type": "source"
             },
             {
-              "name": "Gorakhpur",
-              "lat": 26.7606,
-              "lng": 83.3732,
+              "name": "Nihalgarh",
+              "lat": 26.6025,
+              "lng": 81.652,
+              "type": "hub"
+            },
+            {
+              "name": "Sultanpur",
+              "lat": 26.2648,
+              "lng": 82.0727,
+              "type": "hub"
+            },
+            {
+              "name": "Jaunpur",
+              "lat": 25.7464,
+              "lng": 82.6837,
+              "type": "hub"
+            },
+            {
+              "name": "Varanasi",
+              "lat": 25.3176,
+              "lng": 82.9739,
               "type": "destination"
             }
           ],
-          "color": "#10b981"
+          "color": "#10b981",
+          "isRecommended": true
         },
         {
           "id": "route_B",
-          "name": "Route B: Secondary Arterial Bypass (Lucknow → Gorakhpur)",
-          "corridor": "Lucknow → Regional Hubs → Gorakhpur",
-          "distanceKm": 331,
-          "estimatedDurationHours": 6.6,
-          "hubs": [
-            "Lucknow",
-            "Gorakhpur"
-          ],
+          "name": "Route B: Southern Highway via Raebareli & Prayagraj",
+          "corridor": "Lucknow → Raebareli → Prayagraj → Varanasi",
+          "distanceKm": 335,
+          "estimatedDurationHours": 6.8,
           "stops": [
             {
               "name": "Lucknow",
@@ -65,24 +310,33 @@
               "type": "source"
             },
             {
-              "name": "Gorakhpur",
-              "lat": 26.7606,
-              "lng": 83.3732,
+              "name": "Raebareli",
+              "lat": 26.2236,
+              "lng": 81.2409,
+              "type": "hub"
+            },
+            {
+              "name": "Prayagraj",
+              "lat": 25.4358,
+              "lng": 81.8463,
+              "type": "hub"
+            },
+            {
+              "name": "Varanasi",
+              "lat": 25.3176,
+              "lng": 82.9739,
               "type": "destination"
             }
           ],
-          "color": "#3b82f6"
+          "color": "#3b82f6",
+          "isRecommended": false
         },
         {
           "id": "route_C",
-          "name": "Route C: Outer Loop Route (Lucknow → Gorakhpur)",
-          "corridor": "Lucknow → Outer Bypass → Gorakhpur",
-          "distanceKm": 362,
-          "estimatedDurationHours": 7.5,
-          "hubs": [
-            "Lucknow",
-            "Gorakhpur"
-          ],
+          "name": "Route C: Northern Heritage via Ayodhya & Akbarpur",
+          "corridor": "Lucknow → Ayodhya → Akbarpur → Varanasi",
+          "distanceKm": 355,
+          "estimatedDurationHours": 7.2,
           "stops": [
             {
               "name": "Lucknow",
@@ -91,257 +345,159 @@
               "type": "source"
             },
             {
-              "name": "Gorakhpur",
-              "lat": 26.7606,
-              "lng": 83.3732,
+              "name": "Ayodhya",
+              "lat": 26.7922,
+              "lng": 82.1998,
+              "type": "hub"
+            },
+            {
+              "name": "Akbarpur",
+              "lat": 26.4355,
+              "lng": 82.5414,
+              "type": "hub"
+            },
+            {
+              "name": "Varanasi",
+              "lat": 25.3176,
+              "lng": 82.9739,
               "type": "destination"
             }
           ],
-          "color": "#f59e0b"
+          "color": "#f59e0b",
+          "isRecommended": false
         }
       ],
       "status": "SCHEDULED",
-      "acceptedShipmentIds": [],
-      "notes": "Scheduled container route. Clean dry bed with space for bundled cargo.",
-      "createdAt": "2026-08-22T19:25:34.130Z"
-    },
-    {
-      "id": "trip_1787311036970_apuh",
-      "driverId": "drv_manual",
-      "driverUserId": null,
-      "driverName": "Driver Partner",
-      "driverPhone": "+91 9800000000",
-      "driverRating": 4.9,
-      "vehicleNumber": "UP-32-BZ-7890",
-      "vehicleType": "Medium LCV (14ft Container)",
-      "source": "Lucknow",
-      "destination": "Varanasi",
-      "departureDate": "2026-08-21",
-      "departureTime": "10:00 AM",
-      "totalCapacityKg": 5000,
-      "currentLoadKg": 3120,
-      "availableCapacityKg": 1880,
-      "selectedRouteId": "route_B",
-      "routes": [
-        {
-          "id": "route_A",
-          "name": "Route A: Direct NH731 / Purvanchal Corridor",
-          "corridor": "Lucknow → Nihalgarh → Sultanpur → Jaunpur → Varanasi",
-          "distanceKm": 310,
-          "estimatedDurationHours": 6,
-          "hubs": [
-            "Lucknow",
-            "Nihalgarh",
-            "Sultanpur",
-            "Jaunpur",
-            "Varanasi"
-          ],
-          "stops": [
-            {
-              "name": "Lucknow",
-              "lat": 26.8467,
-              "lng": 80.9462,
-              "type": "source"
-            },
-            {
-              "name": "Nihalgarh",
-              "lat": 26.6025,
-              "lng": 81.652,
-              "type": "hub"
-            },
-            {
-              "name": "Sultanpur",
-              "lat": 26.2648,
-              "lng": 82.0727,
-              "type": "hub"
-            },
-            {
-              "name": "Jaunpur",
-              "lat": 25.7464,
-              "lng": 82.6837,
-              "type": "hub"
-            },
-            {
-              "name": "Varanasi",
-              "lat": 25.3176,
-              "lng": 82.9739,
-              "type": "destination"
-            }
-          ],
-          "color": "#10b981"
-        },
-        {
-          "id": "route_B",
-          "name": "Route B: Southern Highway via Raebareli & Prayagraj",
-          "corridor": "Lucknow → Raebareli → Prayagraj → Varanasi",
-          "distanceKm": 335,
-          "estimatedDurationHours": 6.8,
-          "hubs": [
-            "Lucknow",
-            "Raebareli",
-            "Prayagraj",
-            "Varanasi"
-          ],
-          "stops": [
-            {
-              "name": "Lucknow",
-              "lat": 26.8467,
-              "lng": 80.9462,
-              "type": "source"
-            },
-            {
-              "name": "Raebareli",
-              "lat": 26.2236,
-              "lng": 81.2409,
-              "type": "hub"
-            },
-            {
-              "name": "Prayagraj",
-              "lat": 25.4358,
-              "lng": 81.8463,
-              "type": "hub"
-            },
-            {
-              "name": "Varanasi",
-              "lat": 25.3176,
-              "lng": 82.9739,
-              "type": "destination"
-            }
-          ],
-          "color": "#3b82f6"
-        },
-        {
-          "id": "route_C",
-          "name": "Route C: Northern Heritage via Ayodhya & Akbarpur",
-          "corridor": "Lucknow → Ayodhya → Akbarpur → Varanasi",
-          "distanceKm": 355,
-          "estimatedDurationHours": 7.2,
-          "hubs": [
-            "Lucknow",
-            "Ayodhya",
-            "Akbarpur",
-            "Varanasi"
-          ],
-          "stops": [
-            {
-              "name": "Lucknow",
-              "lat": 26.8467,
-              "lng": 80.9462,
-              "type": "source"
-            },
-            {
-              "name": "Ayodhya",
-              "lat": 26.7922,
-              "lng": 82.1998,
-              "type": "hub"
-            },
-            {
-              "name": "Akbarpur",
-              "lat": 26.4355,
-              "lng": 82.5414,
-              "type": "hub"
-            },
-            {
-              "name": "Varanasi",
-              "lat": 25.3176,
-              "lng": 82.9739,
-              "type": "destination"
-            }
-          ],
-          "color": "#f59e0b"
-        }
-      ],
-      "status": "COMPLETED",
       "acceptedShipmentIds": [
-        "shp_1787308286130_nr7s",
-        "shp_1787426592856_6xyv"
+        "shp_lko_vns_101"
       ],
-      "notes": "Scheduled container route. Clean dry bed with space for bundled cargo.",
-      "createdAt": "2026-08-21T11:17:16.970Z",
-      "updatedAt": "2026-08-22T19:25:22.285Z"
+      "notes": "Scheduled container route. Clean dry bed with space for bundled cartons and parcels.",
+      "createdAt": "2026-10-03T20:26:28.305Z"
     },
     {
-      "id": "trip_1787300221391_5z1u",
-      "driverId": "drv_manual",
-      "driverUserId": null,
-      "driverName": "Driver Partner",
-      "driverPhone": "+91 9800000000",
-      "driverRating": 4.9,
-      "vehicleNumber": "UP-32-BZ-7890",
-      "vehicleType": "Medium LCV (14ft Container)",
-      "source": "Lucknow",
-      "destination": "Varanasi",
-      "departureDate": "2026-08-21",
-      "departureTime": "10:00 AM",
-      "totalCapacityKg": 5000,
-      "currentLoadKg": 2670,
-      "availableCapacityKg": 2330,
+      "id": "trip_pry_del_02",
+      "driverId": "drv_harish",
+      "driverUserId": "usr_drv_harish",
+      "driverName": "Harish Chandra Yadav",
+      "driverPhone": "+91 94152 66780",
+      "driverRating": 4.92,
+      "vehicleId": "veh_up70_4521",
+      "vehicleNumber": "UP-70-ET-4521",
+      "vehicleType": "Heavy Multi-Axle (24ft Container - BharatBenz)",
+      "source": "Prayagraj",
+      "destination": "New Delhi",
+      "departureDate": "2026-10-04",
+      "departureTime": "08:00 AM",
+      "totalCapacityKg": 12000,
+      "currentLoadKg": 4500,
+      "availableCapacityKg": 7500,
       "selectedRouteId": "route_A",
       "routes": [
         {
           "id": "route_A",
-          "name": "Route A: Direct NH731 / Purvanchal Corridor",
-          "corridor": "Lucknow → Nihalgarh → Sultanpur → Jaunpur → Varanasi",
-          "distanceKm": 310,
-          "estimatedDurationHours": 6,
-          "hubs": [
-            "Lucknow",
-            "Nihalgarh",
-            "Sultanpur",
-            "Jaunpur",
-            "Varanasi"
-          ],
+          "name": "Route A: Yamuna & Agra-Lucknow Expressway Corridor",
+          "corridor": "Prayagraj → Kanpur → Etawah → Agra → Greater Noida → New Delhi",
+          "distanceKm": 665,
+          "estimatedDurationHours": 9.5,
           "stops": [
             {
-              "name": "Lucknow",
-              "lat": 26.8467,
-              "lng": 80.9462,
+              "name": "Prayagraj",
+              "lat": 25.4358,
+              "lng": 81.8463,
               "type": "source"
             },
             {
-              "name": "Nihalgarh",
-              "lat": 26.6025,
-              "lng": 81.652,
+              "name": "Kanpur",
+              "lat": 26.4499,
+              "lng": 80.3319,
               "type": "hub"
             },
             {
-              "name": "Sultanpur",
-              "lat": 26.2648,
-              "lng": 82.0727,
+              "name": "Etawah",
+              "lat": 26.7855,
+              "lng": 79.0154,
               "type": "hub"
             },
             {
-              "name": "Jaunpur",
-              "lat": 25.7464,
-              "lng": 82.6837,
+              "name": "Agra",
+              "lat": 27.1767,
+              "lng": 78.0081,
               "type": "hub"
             },
             {
-              "name": "Varanasi",
-              "lat": 25.3176,
-              "lng": 82.9739,
+              "name": "Greater Noida",
+              "lat": 28.4744,
+              "lng": 77.504,
+              "type": "hub"
+            },
+            {
+              "name": "New Delhi",
+              "lat": 28.6139,
+              "lng": 77.209,
               "type": "destination"
             }
           ],
-          "color": "#10b981"
+          "color": "#10b981",
+          "isRecommended": true
         },
         {
           "id": "route_B",
-          "name": "Route B: Southern Highway via Raebareli & Prayagraj",
-          "corridor": "Lucknow → Raebareli → Prayagraj → Varanasi",
-          "distanceKm": 335,
-          "estimatedDurationHours": 6.8,
-          "hubs": [
-            "Lucknow",
-            "Raebareli",
-            "Prayagraj",
-            "Varanasi"
-          ],
+          "name": "Route B: Grand Trunk Road / NH19 Corridor",
+          "corridor": "Prayagraj → Fatehpur → Kanpur → Aligarh → Bulandshahr → New Delhi",
+          "distanceKm": 685,
+          "estimatedDurationHours": 10.5,
           "stops": [
             {
-              "name": "Lucknow",
-              "lat": 26.8467,
-              "lng": 80.9462,
+              "name": "Prayagraj",
+              "lat": 25.4358,
+              "lng": 81.8463,
+              "type": "source"
+            },
+            {
+              "name": "Fatehpur",
+              "lat": 25.9284,
+              "lng": 80.813,
+              "type": "hub"
+            },
+            {
+              "name": "Kanpur",
+              "lat": 26.4499,
+              "lng": 80.3319,
+              "type": "hub"
+            },
+            {
+              "name": "Aligarh",
+              "lat": 27.8974,
+              "lng": 78.088,
+              "type": "hub"
+            },
+            {
+              "name": "Bulandshahr",
+              "lat": 28.407,
+              "lng": 77.8498,
+              "type": "hub"
+            },
+            {
+              "name": "New Delhi",
+              "lat": 28.6139,
+              "lng": 77.209,
+              "type": "destination"
+            }
+          ],
+          "color": "#3b82f6",
+          "isRecommended": false
+        },
+        {
+          "id": "route_C",
+          "name": "Route C: Central Awadh & Rohilkhand Bypass",
+          "corridor": "Prayagraj → Raebareli → Lucknow → Bareilly → Moradabad → New Delhi",
+          "distanceKm": 730,
+          "estimatedDurationHours": 11.5,
+          "stops": [
+            {
+              "name": "Prayagraj",
+              "lat": 25.4358,
+              "lng": 81.8463,
               "type": "source"
             },
             {
@@ -351,37 +507,71 @@
               "type": "hub"
             },
             {
-              "name": "Prayagraj",
-              "lat": 25.4358,
-              "lng": 81.8463,
-              "type": "hub"
-            },
-            {
-              "name": "Varanasi",
-              "lat": 25.3176,
-              "lng": 82.9739,
-              "type": "destination"
-            }
-          ],
-          "color": "#3b82f6"
-        },
-        {
-          "id": "route_C",
-          "name": "Route C: Northern Heritage via Ayodhya & Akbarpur",
-          "corridor": "Lucknow → Ayodhya → Akbarpur → Varanasi",
-          "distanceKm": 355,
-          "estimatedDurationHours": 7.2,
-          "hubs": [
-            "Lucknow",
-            "Ayodhya",
-            "Akbarpur",
-            "Varanasi"
-          ],
-          "stops": [
-            {
               "name": "Lucknow",
               "lat": 26.8467,
               "lng": 80.9462,
+              "type": "hub"
+            },
+            {
+              "name": "Bareilly",
+              "lat": 28.367,
+              "lng": 79.4304,
+              "type": "hub"
+            },
+            {
+              "name": "Moradabad",
+              "lat": 28.8386,
+              "lng": 78.7733,
+              "type": "hub"
+            },
+            {
+              "name": "New Delhi",
+              "lat": 28.6139,
+              "lng": 77.209,
+              "type": "destination"
+            }
+          ],
+          "color": "#f59e0b",
+          "isRecommended": false
+        }
+      ],
+      "status": "SCHEDULED",
+      "acceptedShipmentIds": [
+        "shp_pry_del_201"
+      ],
+      "notes": "Heavy multi-axle freight carrier. High-capacity container bed suitable for palletized consignments.",
+      "createdAt": "2026-10-03T20:26:28.305Z"
+    },
+    {
+      "id": "trip_gkp_mrt_03",
+      "driverId": "drv_balwant",
+      "driverUserId": "usr_drv_balwant",
+      "driverName": "Balwant Singh",
+      "driverPhone": "+91 98381 99234",
+      "driverRating": 4.88,
+      "vehicleId": "veh_up53_3108",
+      "vehicleNumber": "UP-53-CK-3108",
+      "vehicleType": "Intermediate LCV (17ft Open High Deck - Ashok Leyland)",
+      "source": "Gorakhpur",
+      "destination": "Meerut",
+      "departureDate": "2026-10-04",
+      "departureTime": "09:15 AM",
+      "totalCapacityKg": 7500,
+      "currentLoadKg": 2600,
+      "availableCapacityKg": 4900,
+      "selectedRouteId": "route_A",
+      "routes": [
+        {
+          "id": "route_A",
+          "name": "Route A: Express Corridor via Purvanchal & Bareilly",
+          "corridor": "Gorakhpur → Ayodhya → Lucknow → Bareilly → Moradabad → Meerut",
+          "distanceKm": 690,
+          "estimatedDurationHours": 10.2,
+          "stops": [
+            {
+              "name": "Gorakhpur",
+              "lat": 26.7606,
+              "lng": 83.3732,
               "type": "source"
             },
             {
@@ -391,515 +581,634 @@
               "type": "hub"
             },
             {
-              "name": "Akbarpur",
-              "lat": 26.4355,
-              "lng": 82.5414,
+              "name": "Lucknow",
+              "lat": 26.8467,
+              "lng": 80.9462,
               "type": "hub"
             },
             {
-              "name": "Varanasi",
-              "lat": 25.3176,
-              "lng": 82.9739,
+              "name": "Bareilly",
+              "lat": 28.367,
+              "lng": 79.4304,
+              "type": "hub"
+            },
+            {
+              "name": "Moradabad",
+              "lat": 28.8386,
+              "lng": 78.7733,
+              "type": "hub"
+            },
+            {
+              "name": "Meerut",
+              "lat": 28.9845,
+              "lng": 77.7064,
               "type": "destination"
             }
           ],
-          "color": "#f59e0b"
+          "color": "#10b981",
+          "isRecommended": true
+        },
+        {
+          "id": "route_B",
+          "name": "Route B: Northern Highway NH27 / NH730 via Basti & Sitapur",
+          "corridor": "Gorakhpur → Basti → Gonda → Sitapur → Bareilly → Meerut",
+          "distanceKm": 715,
+          "estimatedDurationHours": 11,
+          "stops": [
+            {
+              "name": "Gorakhpur",
+              "lat": 26.7606,
+              "lng": 83.3732,
+              "type": "source"
+            },
+            {
+              "name": "Basti",
+              "lat": 26.7963,
+              "lng": 82.7483,
+              "type": "hub"
+            },
+            {
+              "name": "Gonda",
+              "lat": 27.134,
+              "lng": 81.9619,
+              "type": "hub"
+            },
+            {
+              "name": "Sitapur",
+              "lat": 27.5683,
+              "lng": 80.6829,
+              "type": "hub"
+            },
+            {
+              "name": "Bareilly",
+              "lat": 28.367,
+              "lng": 79.4304,
+              "type": "hub"
+            },
+            {
+              "name": "Meerut",
+              "lat": 28.9845,
+              "lng": 77.7064,
+              "type": "destination"
+            }
+          ],
+          "color": "#3b82f6",
+          "isRecommended": false
+        },
+        {
+          "id": "route_C",
+          "name": "Route C: Central Awadh & Western NCR Link via Hardoi",
+          "corridor": "Gorakhpur → Ayodhya → Barabanki → Hardoi → Hapur → Meerut",
+          "distanceKm": 745,
+          "estimatedDurationHours": 11.8,
+          "stops": [
+            {
+              "name": "Gorakhpur",
+              "lat": 26.7606,
+              "lng": 83.3732,
+              "type": "source"
+            },
+            {
+              "name": "Ayodhya",
+              "lat": 26.7922,
+              "lng": 82.1998,
+              "type": "hub"
+            },
+            {
+              "name": "Barabanki",
+              "lat": 26.9274,
+              "lng": 81.1834,
+              "type": "hub"
+            },
+            {
+              "name": "Hardoi",
+              "lat": 27.3956,
+              "lng": 80.1317,
+              "type": "hub"
+            },
+            {
+              "name": "Hapur",
+              "lat": 28.7306,
+              "lng": 77.7759,
+              "type": "hub"
+            },
+            {
+              "name": "Meerut",
+              "lat": 28.9845,
+              "lng": 77.7064,
+              "type": "destination"
+            }
+          ],
+          "color": "#f59e0b",
+          "isRecommended": false
         }
       ],
-      "status": "IN_TRANSIT",
+      "status": "SCHEDULED",
       "acceptedShipmentIds": [
-        "shp_1787300228749_5bu3"
+        "shp_gkp_mrt_301"
       ],
-      "notes": "Scheduled container route. Clean dry bed with space for bundled cargo.",
-      "createdAt": "2026-08-21T08:17:01.391Z",
-      "updatedAt": "2026-08-21T10:30:52.884Z"
+      "notes": "Intermediate LCV route. High deck with waterproof tarpaulin protection for agricultural and manufactured goods.",
+      "createdAt": "2026-10-03T20:26:28.305Z"
     }
   ],
   "shipments": [
     {
-      "id": "shp_1787426658175_zf7f",
-      "senderId": "usr_snd_anonymous",
+      "id": "shp_lko_vns_101",
+      "senderId": "usr_snd_priya",
       "senderName": "Priya Sharma (Retail Goods)",
-      "senderPhone": "+91 9415098765",
-      "pickupLocation": "Raebareli",
+      "senderPhone": "+91 94150 98765",
+      "pickupLocation": "Lucknow (Transport Nagar)",
       "pickupCoords": {
-        "lat": 26.2236,
-        "lng": 81.2409,
-        "name": "Raebareli"
+        "lat": 26.7794,
+        "lng": 80.8872,
+        "name": "Lucknow"
       },
-      "dropLocation": "Prayagraj",
+      "dropLocation": "Varanasi (Lanka Gate)",
       "dropCoords": {
-        "lat": 25.4358,
-        "lng": 81.8463,
-        "name": "Prayagraj"
+        "lat": 25.2818,
+        "lng": 82.9995,
+        "name": "Varanasi"
       },
-      "distanceKm": 133.75,
-      "weightKg": 450,
+      "distanceKm": 310,
+      "weightKg": 1200,
       "packageType": "Clothing & Textiles",
-      "packageDescription": "10 Cartons of Readymade Garments",
+      "packageDescription": "15 Boxes of Cotton Kurtis & Banarasi Fabrics",
       "pickupTimeWindow": "Today 10:00 AM - 12:00 PM",
       "deliveryDeadline": "Today 06:00 PM",
       "fareEstimate": {
         "baseFee": 50,
-        "distanceKm": 133.75,
-        "ratePerKm": 2,
-        "distanceFee": 268,
-        "weightKg": 450,
-        "ratePerKg": 1,
-        "weightFee": 450,
-        "packageType": "Clothing & Textiles",
-        "multiplier": 1,
-        "categorySurcharge": 0,
-        "totalFare": 768,
-        "dedicatedTruckComparison": 2150,
-        "estimatedSavings": 1382,
-        "savingsPercentage": 64
+        "distanceFee": 620,
+        "weightFee": 1200,
+        "packageMultiplier": 1,
+        "totalFare": 1870
       },
       "status": "BOOKED",
-      "assignedTripId": "trip_1787311036970_apuh",
-      "driverId": "drv_manual",
-      "driverName": "Driver Partner",
-      "driverPhone": "+91 9800000000",
-      "pickupOtp": "6553",
+      "assignedTripId": "trip_lko_vns_01",
+      "driverId": "drv_ramesh",
+      "driverName": "Ramesh Verma",
+      "driverPhone": "+91 98390 12345",
+      "pickupOtp": "4819",
       "pickupOtpVerified": false,
       "pickupPhoto": null,
-      "deliveryOtp": "8565",
+      "deliveryOtp": "7302",
       "deliveryOtpVerified": false,
       "deliveryPhoto": null,
       "paymentStatus": "ESCROW_HELD",
-      "createdAt": "2026-08-22T19:24:18.175Z",
-      "updatedAt": "2026-08-22T19:25:18.004Z"
+      "createdAt": "2026-10-03T20:26:28.305Z"
     },
     {
-      "id": "shp_1787426592856_6xyv",
-      "senderId": "usr_snd_anonymous",
-      "senderName": "Priya Sharma (Retail Goods)",
-      "senderPhone": "+91 9415098765",
-      "pickupLocation": "Lucknow (Transport Nagar)",
-      "pickupCoords": {
-        "lat": 26.8467,
-        "lng": 80.9462,
-        "name": "Lucknow"
-      },
-      "dropLocation": "prayagraj",
-      "dropCoords": {
-        "lat": 25.4358,
-        "lng": 81.8463,
-        "name": "Prayagraj"
-      },
-      "distanceKm": 226.25,
-      "weightKg": 450,
-      "packageType": "Clothing & Textiles",
-      "packageDescription": "10 Cartons of Readymade Garments",
-      "pickupTimeWindow": "Today 10:00 AM - 12:00 PM",
-      "deliveryDeadline": "Today 06:00 PM",
-      "fareEstimate": {
-        "baseFee": 50,
-        "distanceKm": 226.25,
-        "ratePerKm": 2,
-        "distanceFee": 453,
-        "weightKg": 450,
-        "ratePerKg": 1,
-        "weightFee": 450,
-        "packageType": "Clothing & Textiles",
-        "multiplier": 1,
-        "categorySurcharge": 0,
-        "totalFare": 953,
-        "dedicatedTruckComparison": 2668,
-        "estimatedSavings": 1715,
-        "savingsPercentage": 64
-      },
-      "status": "BOOKED",
-      "assignedTripId": "trip_1787311036970_apuh",
-      "driverId": "drv_manual",
-      "driverName": "Driver Partner",
-      "driverPhone": "+91 9800000000",
-      "pickupOtp": "5824",
-      "pickupOtpVerified": false,
-      "pickupPhoto": null,
-      "deliveryOtp": "2290",
-      "deliveryOtpVerified": false,
-      "deliveryPhoto": null,
-      "paymentStatus": "ESCROW_HELD",
-      "createdAt": "2026-08-22T19:23:12.856Z",
-      "updatedAt": "2026-08-22T19:24:55.433Z"
-    },
-    {
-      "id": "shp_1787313675799_s5y5",
-      "senderId": "usr_snd_anonymous",
-      "senderName": "Priya Sharma (Retail Goods)",
-      "senderPhone": "+91 9415098765",
-      "pickupLocation": "Lucknow (Transport Nagar)",
-      "pickupCoords": {
-        "lat": 26.8467,
-        "lng": 80.9462,
-        "name": "Lucknow"
-      },
-      "dropLocation": "Sultanpur (Civil Lines)",
-      "dropCoords": {
-        "lat": 26.2648,
-        "lng": 82.0727,
-        "name": "Sultanpur"
-      },
-      "distanceKm": 161.25,
-      "weightKg": 450,
-      "packageType": "Clothing & Textiles",
-      "packageDescription": "10 Cartons of Readymade Garments",
-      "pickupTimeWindow": "Today 10:00 AM - 12:00 PM",
-      "deliveryDeadline": "Today 06:00 PM",
-      "fareEstimate": {
-        "baseFee": 50,
-        "distanceKm": 161.25,
-        "ratePerKm": 2,
-        "distanceFee": 323,
-        "weightKg": 450,
-        "ratePerKg": 1,
-        "weightFee": 450,
-        "packageType": "Clothing & Textiles",
-        "multiplier": 1,
-        "categorySurcharge": 0,
-        "totalFare": 823,
-        "dedicatedTruckComparison": 2304,
-        "estimatedSavings": 1481,
-        "savingsPercentage": 64
-      },
-      "status": "PENDING",
-      "assignedTripId": null,
-      "driverId": null,
-      "driverName": null,
-      "driverPhone": null,
-      "pickupOtp": "1086",
-      "pickupOtpVerified": false,
-      "pickupPhoto": null,
-      "deliveryOtp": "7297",
-      "deliveryOtpVerified": false,
-      "deliveryPhoto": null,
-      "paymentStatus": "PENDING",
-      "createdAt": "2026-08-21T12:01:15.799Z"
-    },
-    {
-      "id": "shp_1787308286130_nr7s",
-      "senderId": "usr_snd_anonymous",
-      "senderName": "Priya Sharma (Retail Goods)",
-      "senderPhone": "+91 9415098765",
-      "pickupLocation": "Lucknow (Transport Nagar)",
-      "pickupCoords": {
-        "lat": 26.8467,
-        "lng": 80.9462,
-        "name": "Lucknow"
-      },
-      "dropLocation": "Sultanpur (Civil Lines)",
-      "dropCoords": {
-        "lat": 26.2648,
-        "lng": 82.0727,
-        "name": "Sultanpur"
-      },
-      "distanceKm": 161.25,
-      "weightKg": 450,
-      "packageType": "Clothing & Textiles",
-      "packageDescription": "10 Cartons of Readymade Garments",
-      "pickupTimeWindow": "Today 10:00 AM - 12:00 PM",
-      "deliveryDeadline": "Today 06:00 PM",
-      "fareEstimate": {
-        "baseFee": 50,
-        "distanceKm": 161.25,
-        "ratePerKm": 2,
-        "distanceFee": 323,
-        "weightKg": 450,
-        "ratePerKg": 1,
-        "weightFee": 450,
-        "packageType": "Clothing & Textiles",
-        "multiplier": 1,
-        "categorySurcharge": 0,
-        "totalFare": 823,
-        "dedicatedTruckComparison": 2304,
-        "estimatedSavings": 1481,
-        "savingsPercentage": 64
-      },
-      "status": "BOOKED",
-      "assignedTripId": "trip_1787311036970_apuh",
-      "driverId": "drv_manual",
-      "driverName": "Driver Partner",
-      "driverPhone": "+91 9800000000",
-      "pickupOtp": "1834",
-      "pickupOtpVerified": false,
-      "pickupPhoto": null,
-      "deliveryOtp": "4516",
-      "deliveryOtpVerified": false,
-      "deliveryPhoto": null,
-      "paymentStatus": "ESCROW_HELD",
-      "createdAt": "2026-08-21T10:31:26.130Z",
-      "updatedAt": "2026-08-21T12:00:26.965Z"
-    },
-    {
-      "id": "shp_1787300277756_dqhe",
-      "senderId": "usr_snd_anonymous",
-      "senderName": "Priya ",
-      "senderPhone": "+91 9415098765",
-      "pickupLocation": "Nihalgarh",
+      "id": "shp_lko_vns_102",
+      "senderId": "usr_snd_rajesh",
+      "senderName": "Rajesh Mishra (Auto Spares)",
+      "senderPhone": "+91 94150 77890",
+      "pickupLocation": "Nihalgarh (Highway Bypass)",
       "pickupCoords": {
         "lat": 26.6025,
         "lng": 81.652,
         "name": "Nihalgarh"
       },
-      "dropLocation": "Varanasi",
+      "dropLocation": "Sultanpur (Civil Lines Hub)",
       "dropCoords": {
-        "lat": 25.3176,
-        "lng": 82.9739,
-        "name": "Varanasi"
-      },
-      "distanceKm": 243.75,
-      "weightKg": 500,
-      "packageType": "Electronics",
-      "packageDescription": "10 Cartons ",
-      "pickupTimeWindow": "Today 10:00 AM - 12:00 PM",
-      "deliveryDeadline": "Today 06:00 PM",
-      "fareEstimate": {
-        "baseFee": 50,
-        "distanceKm": 243.75,
-        "ratePerKm": 2,
-        "distanceFee": 488,
-        "weightKg": 500,
-        "ratePerKg": 1,
-        "weightFee": 500,
-        "packageType": "Electronics",
-        "multiplier": 1.15,
-        "categorySurcharge": 156,
-        "totalFare": 1194,
-        "dedicatedTruckComparison": 3343,
-        "estimatedSavings": 2149,
-        "savingsPercentage": 64
-      },
-      "status": "BOOKED",
-      "assignedTripId": "trip_1787311036970_apuh",
-      "driverId": "drv_manual",
-      "driverName": "Driver Partner",
-      "driverPhone": "+91 9800000000",
-      "pickupOtp": "2275",
-      "pickupOtpVerified": false,
-      "pickupPhoto": null,
-      "deliveryOtp": "4611",
-      "deliveryOtpVerified": false,
-      "deliveryPhoto": null,
-      "paymentStatus": "ESCROW_HELD",
-      "createdAt": "2026-08-21T08:17:57.756Z",
-      "updatedAt": "2026-08-21T12:00:48.867Z"
-    },
-    {
-      "id": "shp_1787300256229_yvjd",
-      "senderId": "usr_snd_anonymous",
-      "senderName": "Priya ",
-      "senderPhone": "+91 9415098765",
-      "pickupLocation": "Sultanpur (Civil Lines)",
-      "pickupCoords": {
         "lat": 26.2648,
         "lng": 82.0727,
         "name": "Sultanpur"
       },
-      "dropLocation": "Jaunpur",
-      "dropCoords": {
+      "distanceKm": 58,
+      "weightKg": 450,
+      "packageType": "Industrial Hardware & Spares",
+      "packageDescription": "10 Cartons of Precision Auto Components",
+      "pickupTimeWindow": "Today 11:30 AM - 01:00 PM",
+      "deliveryDeadline": "Today 06:00 PM",
+      "fareEstimate": {
+        "baseFee": 50,
+        "distanceFee": 116,
+        "weightFee": 450,
+        "packageMultiplier": 1.25,
+        "totalFare": 820
+      },
+      "status": "PENDING",
+      "assignedTripId": null,
+      "driverId": null,
+      "pickupOtp": "5812",
+      "pickupOtpVerified": false,
+      "pickupPhoto": null,
+      "deliveryOtp": "7490",
+      "deliveryOtpVerified": false,
+      "deliveryPhoto": null,
+      "paymentStatus": "PENDING",
+      "createdAt": "2026-10-03T20:26:28.305Z"
+    },
+    {
+      "id": "shp_lko_vns_103",
+      "senderId": "usr_snd_vikram",
+      "senderName": "Vikram Singh (ElectroHub)",
+      "senderPhone": "+91 97920 44321",
+      "pickupLocation": "Jaunpur (Polytechnic Chauraha)",
+      "pickupCoords": {
         "lat": 25.7464,
         "lng": 82.6837,
         "name": "Jaunpur"
       },
-      "distanceKm": 105,
-      "weightKg": 500,
-      "packageType": "Electronics",
-      "packageDescription": "10 Cartons ",
-      "pickupTimeWindow": "Today 10:00 AM - 12:00 PM",
-      "deliveryDeadline": "Today 06:00 PM",
+      "dropLocation": "Varanasi (Cantonment Freight Yard)",
+      "dropCoords": {
+        "lat": 25.328,
+        "lng": 82.985,
+        "name": "Varanasi"
+      },
+      "distanceKm": 62,
+      "weightKg": 350,
+      "packageType": "Electronics & Appliances",
+      "packageDescription": "8 Solar Inverters & Storage Batteries",
+      "pickupTimeWindow": "Today 03:00 PM - 05:00 PM",
+      "deliveryDeadline": "Today 08:30 PM",
       "fareEstimate": {
         "baseFee": 50,
-        "distanceKm": 105,
-        "ratePerKm": 2,
-        "distanceFee": 210,
-        "weightKg": 500,
-        "ratePerKg": 1,
-        "weightFee": 500,
-        "packageType": "Electronics",
-        "multiplier": 1.15,
-        "categorySurcharge": 114,
-        "totalFare": 874,
-        "dedicatedTruckComparison": 2447,
-        "estimatedSavings": 1573,
-        "savingsPercentage": 64
+        "distanceFee": 124,
+        "weightFee": 350,
+        "packageMultiplier": 1.15,
+        "totalFare": 650
       },
-      "status": "BOOKED",
-      "assignedTripId": "trip_1787311036970_apuh",
-      "driverId": "drv_manual",
-      "driverName": "Driver Partner",
-      "driverPhone": "+91 9800000000",
-      "pickupOtp": "8068",
+      "status": "PENDING",
+      "assignedTripId": null,
+      "driverId": null,
+      "pickupOtp": "6251",
       "pickupOtpVerified": false,
       "pickupPhoto": null,
-      "deliveryOtp": "7989",
+      "deliveryOtp": "8914",
       "deliveryOtpVerified": false,
       "deliveryPhoto": null,
-      "paymentStatus": "ESCROW_HELD",
-      "createdAt": "2026-08-21T08:17:36.229Z",
-      "updatedAt": "2026-08-21T12:01:03.877Z"
+      "paymentStatus": "PENDING",
+      "createdAt": "2026-10-03T20:26:28.305Z"
     },
     {
-      "id": "shp_1787300228749_5bu3",
-      "senderId": "usr_snd_anonymous",
-      "senderName": "Priya Sharma (Retail Goods)",
-      "senderPhone": "+91 9415098765",
-      "pickupLocation": "Lucknow (Transport Nagar)",
+      "id": "shp_pry_del_201",
+      "senderId": "usr_snd_amitabh",
+      "senderName": "Amitabh Sen (Industrial Glassware)",
+      "senderPhone": "+91 98180 55123",
+      "pickupLocation": "Prayagraj (Naini Industrial Area)",
       "pickupCoords": {
-        "lat": 26.8467,
-        "lng": 80.9462,
-        "name": "Lucknow"
+        "lat": 25.39,
+        "lng": 81.86,
+        "name": "Prayagraj"
       },
-      "dropLocation": "Sultanpur (Civil Lines)",
+      "dropLocation": "New Delhi (Okhla Industrial Area)",
       "dropCoords": {
-        "lat": 26.2648,
-        "lng": 82.0727,
-        "name": "Sultanpur"
+        "lat": 28.5355,
+        "lng": 77.275,
+        "name": "New Delhi"
       },
-      "distanceKm": 161.25,
-      "weightKg": 450,
-      "packageType": "Clothing & Textiles",
-      "packageDescription": "10 Cartons of Readymade Garments",
-      "pickupTimeWindow": "Today 10:00 AM - 12:00 PM",
-      "deliveryDeadline": "Today 06:00 PM",
+      "distanceKm": 665,
+      "weightKg": 3200,
+      "packageType": "Glassware & Fragile",
+      "packageDescription": "40 Pallets of Heavy Borosilicate Industrial Glassware",
+      "pickupTimeWindow": "Today 08:00 AM - 10:00 AM",
+      "deliveryDeadline": "Tomorrow 08:00 AM",
       "fareEstimate": {
-        "baseFee": 50,
-        "distanceKm": 161.25,
-        "ratePerKm": 2,
-        "distanceFee": 323,
-        "weightKg": 450,
-        "ratePerKg": 1,
-        "weightFee": 450,
-        "packageType": "Clothing & Textiles",
-        "multiplier": 1,
-        "categorySurcharge": 0,
-        "totalFare": 823,
-        "dedicatedTruckComparison": 2304,
-        "estimatedSavings": 1481,
-        "savingsPercentage": 64
+        "baseFee": 100,
+        "distanceFee": 2660,
+        "weightFee": 3200,
+        "packageMultiplier": 1.35,
+        "totalFare": 8400
       },
       "status": "BOOKED",
-      "assignedTripId": "trip_1787300221391_5z1u",
-      "driverId": "drv_manual",
-      "driverName": "Driver Partner",
-      "driverPhone": "+91 9800000000",
-      "pickupOtp": "4225",
+      "assignedTripId": "trip_pry_del_02",
+      "driverId": "drv_harish",
+      "driverName": "Harish Chandra Yadav",
+      "driverPhone": "+91 94152 66780",
+      "pickupOtp": "3194",
       "pickupOtpVerified": false,
       "pickupPhoto": null,
-      "deliveryOtp": "5235",
+      "deliveryOtp": "6582",
       "deliveryOtpVerified": false,
       "deliveryPhoto": null,
       "paymentStatus": "ESCROW_HELD",
-      "createdAt": "2026-08-21T08:17:08.749Z",
-      "updatedAt": "2026-08-21T10:30:50.941Z"
+      "createdAt": "2026-10-03T20:26:28.305Z"
+    },
+    {
+      "id": "shp_pry_del_202",
+      "senderId": "usr_snd_sunil",
+      "senderName": "Sunil Chaurasia (Leather & Footwear Exports)",
+      "senderPhone": "+91 94151 22345",
+      "pickupLocation": "Kanpur (Jajmau Leather Complex)",
+      "pickupCoords": {
+        "lat": 26.435,
+        "lng": 80.395,
+        "name": "Kanpur"
+      },
+      "dropLocation": "Agra (Sikandra Transport Hub)",
+      "dropCoords": {
+        "lat": 27.22,
+        "lng": 77.94,
+        "name": "Agra"
+      },
+      "distanceKm": 275,
+      "weightKg": 1400,
+      "packageType": "Leather & Finished Goods",
+      "packageDescription": "25 Cartons of Finished Leather Jackets & Saddlery",
+      "pickupTimeWindow": "Today 12:00 PM - 02:00 PM",
+      "deliveryDeadline": "Today 09:00 PM",
+      "fareEstimate": {
+        "baseFee": 80,
+        "distanceFee": 1100,
+        "weightFee": 1400,
+        "packageMultiplier": 1.1,
+        "totalFare": 3100
+      },
+      "status": "PENDING",
+      "assignedTripId": null,
+      "driverId": null,
+      "pickupOtp": "4421",
+      "pickupOtpVerified": false,
+      "pickupPhoto": null,
+      "deliveryOtp": "7730",
+      "deliveryOtpVerified": false,
+      "deliveryPhoto": null,
+      "paymentStatus": "PENDING",
+      "createdAt": "2026-10-03T20:26:28.305Z"
+    },
+    {
+      "id": "shp_pry_del_203",
+      "senderId": "usr_snd_manish",
+      "senderName": "Manish Agarwal (Auto Die-Castings)",
+      "senderPhone": "+91 98370 11982",
+      "pickupLocation": "Agra (Foundry Nagar)",
+      "pickupCoords": {
+        "lat": 27.2,
+        "lng": 78.05,
+        "name": "Agra"
+      },
+      "dropLocation": "Greater Noida (Ecotech Industrial Park)",
+      "dropCoords": {
+        "lat": 28.46,
+        "lng": 77.51,
+        "name": "Greater Noida"
+      },
+      "distanceKm": 165,
+      "weightKg": 1100,
+      "packageType": "Heavy Machinery & Metal Castings",
+      "packageDescription": "18 Wooden Crates of Automotive Cast Iron Flanges",
+      "pickupTimeWindow": "Today 04:00 PM - 06:00 PM",
+      "deliveryDeadline": "Tomorrow 10:00 AM",
+      "fareEstimate": {
+        "baseFee": 80,
+        "distanceFee": 660,
+        "weightFee": 1100,
+        "packageMultiplier": 1.2,
+        "totalFare": 2600
+      },
+      "status": "PENDING",
+      "assignedTripId": null,
+      "driverId": null,
+      "pickupOtp": "8219",
+      "pickupOtpVerified": false,
+      "pickupPhoto": null,
+      "deliveryOtp": "1943",
+      "deliveryOtpVerified": false,
+      "deliveryPhoto": null,
+      "paymentStatus": "PENDING",
+      "createdAt": "2026-10-03T20:26:28.305Z"
+    },
+    {
+      "id": "shp_gkp_mrt_301",
+      "senderId": "usr_snd_devendra",
+      "senderName": "Devendra Pandey (Terai Agro Mills)",
+      "senderPhone": "+91 98392 33411",
+      "pickupLocation": "Gorakhpur (GIDA Industrial Hub)",
+      "pickupCoords": {
+        "lat": 26.74,
+        "lng": 83.31,
+        "name": "Gorakhpur"
+      },
+      "dropLocation": "Meerut (Partapur Industrial Estate)",
+      "dropCoords": {
+        "lat": 28.93,
+        "lng": 77.65,
+        "name": "Meerut"
+      },
+      "distanceKm": 690,
+      "weightKg": 2200,
+      "packageType": "Agricultural Produce & Seeds",
+      "packageDescription": "50 Sacks of Premium Terai Kalanamak Rice",
+      "pickupTimeWindow": "Today 09:00 AM - 11:00 AM",
+      "deliveryDeadline": "Tomorrow 11:00 AM",
+      "fareEstimate": {
+        "baseFee": 90,
+        "distanceFee": 2070,
+        "weightFee": 2200,
+        "packageMultiplier": 1.15,
+        "totalFare": 5600
+      },
+      "status": "BOOKED",
+      "assignedTripId": "trip_gkp_mrt_03",
+      "driverId": "drv_balwant",
+      "driverName": "Balwant Singh",
+      "driverPhone": "+91 98381 99234",
+      "pickupOtp": "7204",
+      "pickupOtpVerified": false,
+      "pickupPhoto": null,
+      "deliveryOtp": "9135",
+      "deliveryOtpVerified": false,
+      "deliveryPhoto": null,
+      "paymentStatus": "ESCROW_HELD",
+      "createdAt": "2026-10-03T20:26:28.305Z"
+    },
+    {
+      "id": "shp_gkp_mrt_302",
+      "senderId": "usr_snd_ramakant",
+      "senderName": "Ramakant Tiwari (Wooden Handicrafts)",
+      "senderPhone": "+91 94501 88920",
+      "pickupLocation": "Ayodhya (Naya Ghat Bypass)",
+      "pickupCoords": {
+        "lat": 26.7922,
+        "lng": 82.1998,
+        "name": "Ayodhya"
+      },
+      "dropLocation": "Lucknow (Chinhat Transport Yard)",
+      "dropCoords": {
+        "lat": 26.88,
+        "lng": 81.01,
+        "name": "Lucknow"
+      },
+      "distanceKm": 135,
+      "weightKg": 850,
+      "packageType": "Handicrafts & Timber Artifacts",
+      "packageDescription": "12 Crates of Carved Teakwood Temple Artifacts",
+      "pickupTimeWindow": "Today 11:00 AM - 01:00 PM",
+      "deliveryDeadline": "Today 07:00 PM",
+      "fareEstimate": {
+        "baseFee": 60,
+        "distanceFee": 405,
+        "weightFee": 850,
+        "packageMultiplier": 1.15,
+        "totalFare": 1750
+      },
+      "status": "PENDING",
+      "assignedTripId": null,
+      "driverId": null,
+      "pickupOtp": "5132",
+      "pickupOtpVerified": false,
+      "pickupPhoto": null,
+      "deliveryOtp": "8471",
+      "deliveryOtpVerified": false,
+      "deliveryPhoto": null,
+      "paymentStatus": "PENDING",
+      "createdAt": "2026-10-03T20:26:28.305Z"
+    },
+    {
+      "id": "shp_gkp_mrt_303",
+      "senderId": "usr_snd_farhan",
+      "senderName": "Farhan Ansari (Cane & Bamboo Works)",
+      "senderPhone": "+91 94122 77810",
+      "pickupLocation": "Bareilly (Clutterbuckganj Industrial Area)",
+      "pickupCoords": {
+        "lat": 28.38,
+        "lng": 79.38,
+        "name": "Bareilly"
+      },
+      "dropLocation": "Moradabad (Brassware Corridor)",
+      "dropCoords": {
+        "lat": 28.8386,
+        "lng": 78.7733,
+        "name": "Moradabad"
+      },
+      "distanceKm": 88,
+      "weightKg": 700,
+      "packageType": "Furniture & Cane Works",
+      "packageDescription": "16 Sets of Handwoven Cane & Bamboo Patio Chairs",
+      "pickupTimeWindow": "Today 03:00 PM - 05:00 PM",
+      "deliveryDeadline": "Tonight 10:00 PM",
+      "fareEstimate": {
+        "baseFee": 60,
+        "distanceFee": 264,
+        "weightFee": 700,
+        "packageMultiplier": 1.15,
+        "totalFare": 1450
+      },
+      "status": "PENDING",
+      "assignedTripId": null,
+      "driverId": null,
+      "pickupOtp": "3902",
+      "pickupOtpVerified": false,
+      "pickupPhoto": null,
+      "deliveryOtp": "6284",
+      "deliveryOtpVerified": false,
+      "deliveryPhoto": null,
+      "paymentStatus": "PENDING",
+      "createdAt": "2026-10-03T20:26:28.305Z"
     }
   ],
   "assignments": [
     {
-      "id": "asg_1787426695438",
-      "tripId": "trip_1787311036970_apuh",
-      "shipmentId": "shp_1787426592856_6xyv",
-      "assignedAt": "2026-08-22T19:24:55.438Z",
+      "id": "asg_demo_01",
+      "tripId": "trip_lko_vns_01",
+      "shipmentId": "shp_lko_vns_101",
+      "assignedAt": "2026-10-03T20:26:28.305Z",
       "acceptanceStatus": "ACCEPTED"
     },
     {
-      "id": "asg_1787313626994",
-      "tripId": "trip_1787311036970_apuh",
-      "shipmentId": "shp_1787308286130_nr7s",
-      "assignedAt": "2026-08-21T12:00:26.994Z",
+      "id": "asg_demo_02",
+      "tripId": "trip_pry_del_02",
+      "shipmentId": "shp_pry_del_201",
+      "assignedAt": "2026-10-03T20:26:28.305Z",
       "acceptanceStatus": "ACCEPTED"
     },
     {
-      "id": "asg_1787308250945",
-      "tripId": "trip_1787300221391_5z1u",
-      "shipmentId": "shp_1787300228749_5bu3",
-      "assignedAt": "2026-08-21T10:30:50.945Z",
+      "id": "asg_demo_03",
+      "tripId": "trip_gkp_mrt_03",
+      "shipmentId": "shp_gkp_mrt_301",
+      "assignedAt": "2026-10-03T20:26:28.305Z",
       "acceptanceStatus": "ACCEPTED"
     }
   ],
   "shipment_status_logs": [
     {
-      "id": "log_1787300228751_inl31",
-      "timestamp": "2026-08-21T08:17:08.751Z",
-      "shipmentId": "shp_1787300228749_5bu3",
-      "status": "PENDING",
-      "location": "Lucknow (Transport Nagar)",
-      "notes": "Shipment created and awaiting driver corridor match."
-    },
-    {
-      "id": "log_1787300256231_witml",
-      "timestamp": "2026-08-21T08:17:36.231Z",
-      "shipmentId": "shp_1787300256229_yvjd",
-      "status": "PENDING",
-      "location": "Sultanpur (Civil Lines)",
-      "notes": "Shipment created and awaiting driver corridor match."
-    },
-    {
-      "id": "log_1787300277758_57a8l",
-      "timestamp": "2026-08-21T08:17:57.758Z",
-      "shipmentId": "shp_1787300277756_dqhe",
-      "status": "PENDING",
-      "location": "Nihalgarh",
-      "notes": "Shipment created and awaiting driver corridor match."
-    },
-    {
-      "id": "log_1787308250947_nmhlr",
-      "timestamp": "2026-08-21T10:30:50.947Z",
-      "shipmentId": "shp_1787300228749_5bu3",
+      "id": "log_demo_01",
+      "shipmentId": "shp_lko_vns_101",
+      "timestamp": "2026-10-03T20:26:28.305Z",
       "status": "BOOKED",
-      "location": "Lucknow",
-      "notes": "Driver Driver Partner accepted the shipment for corridor delivery."
+      "location": "Lucknow Transport Nagar",
+      "notes": "Shipment confirmed and locked in Driver Ramesh trip route."
     },
     {
-      "id": "log_1787308286132_ac95f",
-      "timestamp": "2026-08-21T10:31:26.132Z",
-      "shipmentId": "shp_1787308286130_nr7s",
-      "status": "PENDING",
-      "location": "Lucknow (Transport Nagar)",
-      "notes": "Shipment created and awaiting driver corridor match."
-    },
-    {
-      "id": "log_1787313626996_dz9sq",
-      "timestamp": "2026-08-21T12:00:26.997Z",
-      "shipmentId": "shp_1787308286130_nr7s",
+      "id": "log_demo_02",
+      "shipmentId": "shp_pry_del_201",
+      "timestamp": "2026-10-03T20:26:28.305Z",
       "status": "BOOKED",
-      "location": "Lucknow",
-      "notes": "Driver Driver Partner accepted the shipment for corridor delivery."
+      "location": "Prayagraj Naini Industrial Area",
+      "notes": "Shipment confirmed and locked in Driver Harish trip route."
     },
     {
-      "id": "log_1787313675802_sccje",
-      "timestamp": "2026-08-21T12:01:15.802Z",
-      "shipmentId": "shp_1787313675799_s5y5",
-      "status": "PENDING",
-      "location": "Lucknow (Transport Nagar)",
-      "notes": "Shipment created and awaiting driver corridor match."
-    },
-    {
-      "id": "log_1787426592860_rxl7v",
-      "timestamp": "2026-08-22T19:23:12.861Z",
-      "shipmentId": "shp_1787426592856_6xyv",
-      "status": "PENDING",
-      "location": "Lucknow (Transport Nagar)",
-      "notes": "Shipment created and awaiting driver corridor match."
-    },
-    {
-      "id": "log_1787426658178_xuyt6",
-      "timestamp": "2026-08-22T19:24:18.178Z",
-      "shipmentId": "shp_1787426658175_zf7f",
-      "status": "PENDING",
-      "location": "Raebareli",
-      "notes": "Shipment created and awaiting driver corridor match."
-    },
-    {
-      "id": "log_1787426695441_3b7d9",
-      "timestamp": "2026-08-22T19:24:55.441Z",
-      "shipmentId": "shp_1787426592856_6xyv",
+      "id": "log_demo_03",
+      "shipmentId": "shp_gkp_mrt_301",
+      "timestamp": "2026-10-03T20:26:28.305Z",
       "status": "BOOKED",
-      "location": "Lucknow",
-      "notes": "Driver Driver Partner accepted the shipment for corridor delivery."
+      "location": "Gorakhpur GIDA Industrial Hub",
+      "notes": "Shipment confirmed and locked in Driver Balwant trip route."
     }
   ],
-  "payments": [],
-  "ratings": [],
+  "payments": [
+    {
+      "id": "pay_demo_01",
+      "shipmentId": "shp_lko_vns_101",
+      "senderId": "usr_snd_priya",
+      "driverId": "drv_ramesh",
+      "amount": 1870,
+      "currency": "INR",
+      "paymentStatus": "ESCROW_HELD",
+      "paidAt": "2026-10-03T20:26:28.305Z"
+    },
+    {
+      "id": "pay_demo_02",
+      "shipmentId": "shp_pry_del_201",
+      "senderId": "usr_snd_amitabh",
+      "driverId": "drv_harish",
+      "amount": 8400,
+      "currency": "INR",
+      "paymentStatus": "ESCROW_HELD",
+      "paidAt": "2026-10-03T20:26:28.305Z"
+    },
+    {
+      "id": "pay_demo_03",
+      "shipmentId": "shp_gkp_mrt_301",
+      "senderId": "usr_snd_devendra",
+      "driverId": "drv_balwant",
+      "amount": 5600,
+      "currency": "INR",
+      "paymentStatus": "ESCROW_HELD",
+      "paidAt": "2026-10-03T20:26:28.305Z"
+    }
+  ],
+  "ratings": [
+    {
+      "id": "rat_sample_01",
+      "shipmentId": "shp_past_001",
+      "driverId": "drv_ramesh",
+      "senderId": "usr_snd_priya",
+      "senderName": "Priya Sharma",
+      "rating": 5,
+      "comment": "Very professional driver. Timely pickup at Lucknow and verified OTP smoothly.",
+      "createdAt": "2026-10-01T20:26:28.305Z"
+    },
+    {
+      "id": "rat_sample_02",
+      "shipmentId": "shp_past_002",
+      "driverId": "drv_harish",
+      "senderId": "usr_snd_amitabh",
+      "senderName": "Amitabh Sen",
+      "rating": 5,
+      "comment": "Exceptional reliability on Prayagraj-Delhi run, fragile glassware delivered with zero breakage.",
+      "createdAt": "2026-09-30T20:26:28.305Z"
+    },
+    {
+      "id": "rat_sample_03",
+      "shipmentId": "shp_past_003",
+      "driverId": "drv_balwant",
+      "senderId": "usr_snd_devendra",
+      "senderName": "Devendra Pandey",
+      "rating": 5,
+      "comment": "Excellent heavy load handling for Gorakhpur agro freight, always on schedule.",
+      "createdAt": "2026-09-29T20:26:28.305Z"
+    }
+  ],
   "messages": []
 }

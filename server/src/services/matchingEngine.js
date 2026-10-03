@@ -224,7 +224,7 @@ async function generateCandidateRoutes(origin, destination) {
   const origKey = normalizeCityName(origin);
   const destKey = normalizeCityName(destination);
 
-  // Special scenario: Lucknow ↔ Varanasi (ensures demo consignments and corridors remain consistent)
+  // Special scenario 1: Lucknow ↔ Varanasi
   if (origKey === 'lucknow' && destKey === 'varanasi') {
     const [routeAData, routeBData, routeCData] = await Promise.all([
       getDrivingRouteMultiStop([
@@ -264,7 +264,8 @@ async function generateCandidateRoutes(origin, destination) {
           { name: 'Varanasi', lat: 25.3176, lng: 82.9739, type: 'destination' }
         ],
         geometry: routeAData?.geometry || null,
-        color: '#10b981'
+        color: '#10b981',
+        isRecommended: true
       },
       {
         id: 'route_B',
@@ -280,7 +281,8 @@ async function generateCandidateRoutes(origin, destination) {
           { name: 'Varanasi', lat: 25.3176, lng: 82.9739, type: 'destination' }
         ],
         geometry: routeBData?.geometry || null,
-        color: '#3b82f6'
+        color: '#3b82f6',
+        isRecommended: false
       },
       {
         id: 'route_C',
@@ -296,7 +298,188 @@ async function generateCandidateRoutes(origin, destination) {
           { name: 'Varanasi', lat: 25.3176, lng: 82.9739, type: 'destination' }
         ],
         geometry: routeCData?.geometry || null,
-        color: '#f59e0b'
+        color: '#f59e0b',
+        isRecommended: false
+      }
+    ];
+  }
+
+  // Special scenario 2: Prayagraj ↔ New Delhi
+  if ((origKey === 'prayagraj' || origKey === 'allahabad') && (destKey === 'new delhi' || destKey === 'delhi')) {
+    const [routeAData, routeBData, routeCData] = await Promise.all([
+      getDrivingRouteMultiStop([
+        { lat: 25.4358, lng: 81.8463 }, // Prayagraj
+        { lat: 26.4499, lng: 80.3319 }, // Kanpur
+        { lat: 26.7855, lng: 79.0154 }, // Etawah
+        { lat: 27.1767, lng: 78.0081 }, // Agra
+        { lat: 28.4744, lng: 77.5040 }, // Greater Noida
+        { lat: 28.6139, lng: 77.2090 }  // New Delhi
+      ]),
+      getDrivingRouteMultiStop([
+        { lat: 25.4358, lng: 81.8463 }, // Prayagraj
+        { lat: 25.9284, lng: 80.8130 }, // Fatehpur
+        { lat: 26.4499, lng: 80.3319 }, // Kanpur
+        { lat: 27.8974, lng: 78.0880 }, // Aligarh
+        { lat: 28.4070, lng: 77.8498 }, // Bulandshahr
+        { lat: 28.6139, lng: 77.2090 }  // New Delhi
+      ]),
+      getDrivingRouteMultiStop([
+        { lat: 25.4358, lng: 81.8463 }, // Prayagraj
+        { lat: 26.2236, lng: 81.2409 }, // Raebareli
+        { lat: 26.8467, lng: 80.9462 }, // Lucknow
+        { lat: 28.3670, lng: 79.4304 }, // Bareilly
+        { lat: 28.8386, lng: 78.7733 }, // Moradabad
+        { lat: 28.6139, lng: 77.2090 }  // New Delhi
+      ])
+    ]);
+
+    return [
+      {
+        id: 'route_A',
+        name: 'Route A: Yamuna & Agra-Lucknow Expressway Corridor',
+        corridor: 'Prayagraj → Kanpur → Etawah → Agra → Greater Noida → New Delhi',
+        distanceKm: routeAData?.distanceKm || 665,
+        estimatedDurationHours: routeAData ? Number((routeAData.durationMinutes / 60).toFixed(1)) : 9.5,
+        hubs: ['Prayagraj', 'Kanpur', 'Etawah', 'Agra', 'Greater Noida', 'New Delhi'],
+        stops: [
+          { name: 'Prayagraj', lat: 25.4358, lng: 81.8463, type: 'source' },
+          { name: 'Kanpur', lat: 26.4499, lng: 80.3319, type: 'hub' },
+          { name: 'Etawah', lat: 26.7855, lng: 79.0154, type: 'hub' },
+          { name: 'Agra', lat: 27.1767, lng: 78.0081, type: 'hub' },
+          { name: 'Greater Noida', lat: 28.4744, lng: 77.5040, type: 'hub' },
+          { name: 'New Delhi', lat: 28.6139, lng: 77.2090, type: 'destination' }
+        ],
+        geometry: routeAData?.geometry || null,
+        color: '#10b981',
+        isRecommended: true
+      },
+      {
+        id: 'route_B',
+        name: 'Route B: Grand Trunk Road / NH19 Corridor',
+        corridor: 'Prayagraj → Fatehpur → Kanpur → Aligarh → Bulandshahr → New Delhi',
+        distanceKm: routeBData?.distanceKm || 685,
+        estimatedDurationHours: routeBData ? Number((routeBData.durationMinutes / 60).toFixed(1)) : 10.5,
+        hubs: ['Prayagraj', 'Fatehpur', 'Kanpur', 'Aligarh', 'Bulandshahr', 'New Delhi'],
+        stops: [
+          { name: 'Prayagraj', lat: 25.4358, lng: 81.8463, type: 'source' },
+          { name: 'Fatehpur', lat: 25.9284, lng: 80.8130, type: 'hub' },
+          { name: 'Kanpur', lat: 26.4499, lng: 80.3319, type: 'hub' },
+          { name: 'Aligarh', lat: 27.8974, lng: 78.0880, type: 'hub' },
+          { name: 'Bulandshahr', lat: 28.4070, lng: 77.8498, type: 'hub' },
+          { name: 'New Delhi', lat: 28.6139, lng: 77.2090, type: 'destination' }
+        ],
+        geometry: routeBData?.geometry || null,
+        color: '#3b82f6',
+        isRecommended: false
+      },
+      {
+        id: 'route_C',
+        name: 'Route C: Central Awadh & Rohilkhand Bypass',
+        corridor: 'Prayagraj → Raebareli → Lucknow → Bareilly → Moradabad → New Delhi',
+        distanceKm: routeCData?.distanceKm || 730,
+        estimatedDurationHours: routeCData ? Number((routeCData.durationMinutes / 60).toFixed(1)) : 11.5,
+        hubs: ['Prayagraj', 'Raebareli', 'Lucknow', 'Bareilly', 'Moradabad', 'New Delhi'],
+        stops: [
+          { name: 'Prayagraj', lat: 25.4358, lng: 81.8463, type: 'source' },
+          { name: 'Raebareli', lat: 26.2236, lng: 81.2409, type: 'hub' },
+          { name: 'Lucknow', lat: 26.8467, lng: 80.9462, type: 'hub' },
+          { name: 'Bareilly', lat: 28.3670, lng: 79.4304, type: 'hub' },
+          { name: 'Moradabad', lat: 28.8386, lng: 78.7733, type: 'hub' },
+          { name: 'New Delhi', lat: 28.6139, lng: 77.2090, type: 'destination' }
+        ],
+        geometry: routeCData?.geometry || null,
+        color: '#f59e0b',
+        isRecommended: false
+      }
+    ];
+  }
+
+  // Special scenario 3: Gorakhpur ↔ Meerut
+  if (origKey === 'gorakhpur' && destKey === 'meerut') {
+    const [routeAData, routeBData, routeCData] = await Promise.all([
+      getDrivingRouteMultiStop([
+        { lat: 26.7606, lng: 83.3732 }, // Gorakhpur
+        { lat: 26.7922, lng: 82.1998 }, // Ayodhya
+        { lat: 26.8467, lng: 80.9462 }, // Lucknow
+        { lat: 28.3670, lng: 79.4304 }, // Bareilly
+        { lat: 28.8386, lng: 78.7733 }, // Moradabad
+        { lat: 28.9845, lng: 77.7064 }  // Meerut
+      ]),
+      getDrivingRouteMultiStop([
+        { lat: 26.7606, lng: 83.3732 }, // Gorakhpur
+        { lat: 26.7963, lng: 82.7483 }, // Basti
+        { lat: 27.1340, lng: 81.9619 }, // Gonda
+        { lat: 27.5683, lng: 80.6829 }, // Sitapur
+        { lat: 28.3670, lng: 79.4304 }, // Bareilly
+        { lat: 28.9845, lng: 77.7064 }  // Meerut
+      ]),
+      getDrivingRouteMultiStop([
+        { lat: 26.7606, lng: 83.3732 }, // Gorakhpur
+        { lat: 26.7922, lng: 82.1998 }, // Ayodhya
+        { lat: 26.9274, lng: 81.1834 }, // Barabanki
+        { lat: 27.3956, lng: 80.1317 }, // Hardoi
+        { lat: 28.7306, lng: 77.7759 }, // Hapur
+        { lat: 28.9845, lng: 77.7064 }  // Meerut
+      ])
+    ]);
+
+    return [
+      {
+        id: 'route_A',
+        name: 'Route A: Express Corridor via Purvanchal & Bareilly',
+        corridor: 'Gorakhpur → Ayodhya → Lucknow → Bareilly → Moradabad → Meerut',
+        distanceKm: routeAData?.distanceKm || 690,
+        estimatedDurationHours: routeAData ? Number((routeAData.durationMinutes / 60).toFixed(1)) : 10.2,
+        hubs: ['Gorakhpur', 'Ayodhya', 'Lucknow', 'Bareilly', 'Moradabad', 'Meerut'],
+        stops: [
+          { name: 'Gorakhpur', lat: 26.7606, lng: 83.3732, type: 'source' },
+          { name: 'Ayodhya', lat: 26.7922, lng: 82.1998, type: 'hub' },
+          { name: 'Lucknow', lat: 26.8467, lng: 80.9462, type: 'hub' },
+          { name: 'Bareilly', lat: 28.3670, lng: 79.4304, type: 'hub' },
+          { name: 'Moradabad', lat: 28.8386, lng: 78.7733, type: 'hub' },
+          { name: 'Meerut', lat: 28.9845, lng: 77.7064, type: 'destination' }
+        ],
+        geometry: routeAData?.geometry || null,
+        color: '#10b981',
+        isRecommended: true
+      },
+      {
+        id: 'route_B',
+        name: 'Route B: Northern Highway NH27 / NH730 via Basti & Sitapur',
+        corridor: 'Gorakhpur → Basti → Gonda → Sitapur → Bareilly → Meerut',
+        distanceKm: routeBData?.distanceKm || 715,
+        estimatedDurationHours: routeBData ? Number((routeBData.durationMinutes / 60).toFixed(1)) : 11.0,
+        hubs: ['Gorakhpur', 'Basti', 'Gonda', 'Sitapur', 'Bareilly', 'Meerut'],
+        stops: [
+          { name: 'Gorakhpur', lat: 26.7606, lng: 83.3732, type: 'source' },
+          { name: 'Basti', lat: 26.7963, lng: 82.7483, type: 'hub' },
+          { name: 'Gonda', lat: 27.1340, lng: 81.9619, type: 'hub' },
+          { name: 'Sitapur', lat: 27.5683, lng: 80.6829, type: 'hub' },
+          { name: 'Bareilly', lat: 28.3670, lng: 79.4304, type: 'hub' },
+          { name: 'Meerut', lat: 28.9845, lng: 77.7064, type: 'destination' }
+        ],
+        geometry: routeBData?.geometry || null,
+        color: '#3b82f6',
+        isRecommended: false
+      },
+      {
+        id: 'route_C',
+        name: 'Route C: Central Awadh & Western NCR Link via Hardoi',
+        corridor: 'Gorakhpur → Ayodhya → Barabanki → Hardoi → Hapur → Meerut',
+        distanceKm: routeCData?.distanceKm || 745,
+        estimatedDurationHours: routeCData ? Number((routeCData.durationMinutes / 60).toFixed(1)) : 11.8,
+        hubs: ['Gorakhpur', 'Ayodhya', 'Barabanki', 'Hardoi', 'Hapur', 'Meerut'],
+        stops: [
+          { name: 'Gorakhpur', lat: 26.7606, lng: 83.3732, type: 'source' },
+          { name: 'Ayodhya', lat: 26.7922, lng: 82.1998, type: 'hub' },
+          { name: 'Barabanki', lat: 26.9274, lng: 81.1834, type: 'hub' },
+          { name: 'Hardoi', lat: 27.3956, lng: 80.1317, type: 'hub' },
+          { name: 'Hapur', lat: 28.7306, lng: 77.7759, type: 'hub' },
+          { name: 'Meerut', lat: 28.9845, lng: 77.7064, type: 'destination' }
+        ],
+        geometry: routeCData?.geometry || null,
+        color: '#f59e0b',
+        isRecommended: false
       }
     ];
   }

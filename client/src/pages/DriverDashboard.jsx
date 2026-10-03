@@ -323,46 +323,42 @@ export default function DriverDashboard({
     );
 
     let targetShipment = upcomingCandidates[0];
+    const stops = activeRoute?.stops || [
+      { name: currentTrip?.source || 'Origin', lat: 26.8467, lng: 80.9462 },
+      { name: currentTrip?.destination || 'Destination', lat: 25.3176, lng: 82.9739 }
+    ];
 
     if (!targetShipment) {
-      const stops = activeRoute?.stops || [
-        { name: 'Lucknow', lat: 26.8467, lng: 80.9462 },
-        { name: 'Nihalgarh', lat: 26.6025, lng: 81.6520 },
-        { name: 'Sultanpur', lat: 26.2648, lng: 82.0727 },
-        { name: 'Jaunpur', lat: 25.7464, lng: 82.6837 },
-        { name: 'Varanasi', lat: 25.3176, lng: 82.9739 }
-      ];
       const unvisitedStops = stops.slice(1, stops.length - 1);
-      const nextStop = unvisitedStops[0] || stops[1];
+      const nextStop = unvisitedStops[0] || stops[1] || stops[0];
       targetShipment = {
         pickupLocation: nextStop.name,
         pickupCoords: { lat: nextStop.lat, lng: nextStop.lng }
       };
     }
 
-    const pLat = targetShipment.pickupCoords?.lat || 26.6025;
-    const pLng = targetShipment.pickupCoords?.lng || 81.6520;
+    const pLat = targetShipment.pickupCoords?.lat || (stops[1]?.lat ?? 26.6025);
+    const pLng = targetShipment.pickupCoords?.lng || (stops[1]?.lng ?? 81.6520);
     const locName = targetShipment.pickupLocation?.split('(')[0]?.trim() || targetShipment.pickupLocation || 'Upcoming Hub';
 
-    // Position truck exactly 10 km before the upcoming consignment pickup
-    // 10km offset (approx 0.090 degrees lat)
-    const approachCoord = {
-      lat: pLat + 0.075,
-      lng: pLng - 0.045,
-      name: `Approaching ${locName} (10 km before pickup)`
-    };
-
-    // Calculate nearest waypoint along route corridor so drive can resume smoothly from here
+    // Calculate nearest waypoint along route corridor that is ~9.5-10 km before this pickup
     const waypoints = generateRouteWaypoints();
     let closestIndex = 0;
-    let minDistance = Infinity;
+    let bestDistDiff = Infinity;
     waypoints.forEach((wp, idx) => {
-      const d = Math.hypot(wp.lat - approachCoord.lat, wp.lng - approachCoord.lng);
-      if (d < minDistance) {
-        minDistance = d;
+      const d = Math.hypot((wp.lat - pLat) * 111, (wp.lng - pLng) * 111 * Math.cos((pLat * Math.PI) / 180));
+      const diff = Math.abs(d - 9.5);
+      if (diff < bestDistDiff) {
+        bestDistDiff = diff;
         closestIndex = idx;
       }
     });
+
+    const approachCoord = waypoints[closestIndex] || {
+      lat: pLat,
+      lng: pLng,
+      name: `Approaching ${locName} (10 km before pickup)`
+    };
 
     currentStepRef.current = closestIndex;
     setSimulationStepIndex(closestIndex);
@@ -774,7 +770,7 @@ export default function DriverDashboard({
           </div>
           <h3 className="text-lg font-bold text-white mb-2">No Active Trips Posted Yet</h3>
           <p className="text-xs text-slate-400 max-w-md mx-auto mb-6">
-            You currently have no scheduled freight routes. Click "Post New Trip" above or click "Load Demo" in the top bar to test the Lucknow → Varanasi corridor.
+            You currently have no scheduled freight routes. Click "Post New Trip" above or click "Load Demo" in the top bar to test the 3 pre-engineered freight corridors.
           </p>
           <button
             onClick={() => setShowCreateForm(true)}
@@ -815,7 +811,7 @@ export default function DriverDashboard({
               <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
                 <div className="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-slate-800">
                   <div>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 flex-wrap">
                       <h2 className="text-lg font-bold text-white">
                         {currentTrip.source} <span className="text-emerald-400">→</span> {currentTrip.destination}
                       </h2>
@@ -829,9 +825,13 @@ export default function DriverDashboard({
                         {currentTrip.status}
                       </span>
                     </div>
-                    <p className="text-xs text-slate-400 mt-0.5">
-                      Vehicle: <span className="text-slate-200 font-mono font-medium">{currentTrip.vehicleNumber}</span> ({currentTrip.vehicleType})
-                    </p>
+                    <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1 text-xs text-slate-400 mt-1">
+                      <span>👤 Driver: <strong className="text-white">{currentTrip.driverName || 'Ramesh Verma'}</strong> <span className="text-[11px] text-slate-500">({currentTrip.driverPhone || '+91 98390 12345'})</span></span>
+                      <span>•</span>
+                      <span>⭐ <strong className="text-amber-400">{currentTrip.driverRating || 4.85}</strong></span>
+                      <span>•</span>
+                      <span>🚛 <span className="text-emerald-300 font-mono font-medium">{currentTrip.vehicleNumber}</span> ({currentTrip.vehicleType})</span>
+                    </div>
                   </div>
 
                   {/* Trip Action Button */}

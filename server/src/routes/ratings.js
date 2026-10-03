@@ -48,6 +48,16 @@ router.post('/', (req, res) => {
   }
 });
 
+// Get all ratings (or by query)
+router.get('/', (req, res) => {
+  try {
+    const ratings = db.getRatings(req.query.driverId);
+    res.json({ count: ratings.length, ratings });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch ratings' });
+  }
+});
+
 // Get all ratings for a driver
 router.get('/:driverId', (req, res) => {
   try {
