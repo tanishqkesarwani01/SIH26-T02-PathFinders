@@ -224,6 +224,21 @@ router.post('/:id/book-trip', (req, res) => {
   }
 });
 
+// Helper to verify if pickup and delivery photos match
+function arePhotosMatching(photoA, photoB) {
+  if (!photoA || !photoB) return false;
+  const a = String(photoA).trim();
+  const b = String(photoB).trim();
+  if (a === b) return true;
+
+  // Clean base64 headers if present
+  const cleanA = a.replace(/^data:image\/\w+;base64,/, '').trim();
+  const cleanB = b.replace(/^data:image\/\w+;base64,/, '').trim();
+  if (cleanA && cleanB && cleanA === cleanB) return true;
+
+  return false;
+}
+
 // Pickup Verification: Driver enters Sender's Pickup OTP + uploads parcel condition photo
 router.post('/:id/verify-pickup', (req, res) => {
   try {
@@ -236,9 +251,13 @@ router.post('/:id/verify-pickup', (req, res) => {
       return res.status(400).json({ error: 'Invalid Pickup OTP. Please ask the sender for the 4-digit code.' });
     }
 
+    if (!photoData) {
+      return res.status(400).json({ error: 'Pickup parcel photo proof is required.' });
+    }
+
     const updated = db.updateShipment(shipment.id, {
       pickupOtpVerified: true,
-      pickupPhoto: photoData || shipment.pickupPhoto || 'parcel_pickup_verified.jpg',
+      pickupPhoto: photoData,
       status: 'PICKED_UP'
     });
 
@@ -270,9 +289,23 @@ router.post('/:id/verify-delivery', (req, res) => {
       return res.status(400).json({ error: 'Invalid Delivery OTP. Please enter the 4-digit delivery security code.' });
     }
 
+    if (!photoData) {
+      return res.status(400).json({ error: 'Delivery proof photo is required for handover verification.' });
+    }
+
+    // MANDATORY PHOTO VERIFICATION RULE:
+    // Delivery photo MUST match the pickup parcel photo exactly.
+    // If photos are different, shipment CANNOT be verified or delivered!
+    const baselinePickupPhoto = shipment.pickupPhoto || 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=600&auto=format&fit=crop&q=80';
+    if (!arePhotosMatching(baselinePickupPhoto, photoData)) {
+      return res.status(400).json({ 
+        error: 'Photo verification failed: Delivery photo does not match the pickup cargo photo! Both images must be identical to confirm delivery.' 
+      });
+    }
+
     const updated = db.updateShipment(shipment.id, {
       deliveryOtpVerified: true,
-      deliveryPhoto: photoData || shipment.deliveryPhoto || 'parcel_delivery_proof.jpg',
+      deliveryPhoto: photoData,
       status: 'DELIVERED',
       paymentStatus: 'COMPLETED'
     });
@@ -290,11 +323,11 @@ router.post('/:id/verify-delivery', (req, res) => {
       shipmentId: shipment.id,
       status: 'DELIVERED',
       location: shipment.dropLocation,
-      notes: 'Delivery OTP verified & handover complete. ₹' + (shipment.fareEstimate?.totalFare || 'fare') + ' released to driver wallet.'
+      notes: 'Delivery OTP verified & identical cargo photo confirmed. ₹' + (shipment.fareEstimate?.totalFare || 'fare') + ' released to driver wallet.'
     });
 
     res.json({
-      message: 'Delivery confirmed! Escrow payment has been released to the driver.',
+      message: 'Delivery confirmed! Cargo photo verified and escrow payment released to the driver.',
       shipment: updated
     });
   } catch (err) {

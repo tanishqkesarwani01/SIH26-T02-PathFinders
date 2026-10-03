@@ -377,10 +377,17 @@ export default function TrackerDashboard({
             {/* Security Proof Photo Thumbnails */}
             {(currentShipment.pickupPhoto || currentShipment.deliveryPhoto) && (
               <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-3 animate-fadeIn">
-                <h4 className="text-xs font-bold text-white flex items-center gap-1.5">
-                  <Camera className="w-3.5 h-3.5 text-sky-400" />
-                  <span>Immutable Proof of Handover Photos</span>
-                </h4>
+                <div className="flex items-center justify-between">
+                  <h4 className="text-xs font-bold text-white flex items-center gap-1.5">
+                    <Camera className="w-3.5 h-3.5 text-sky-400" />
+                    <span>Immutable Proof of Handover Photos</span>
+                  </h4>
+                  {currentShipment.pickupPhoto && currentShipment.deliveryPhoto && (
+                    <span className="text-[10px] font-extrabold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/30 flex items-center gap-1">
+                      <CheckCircle className="w-3 h-3" /> Identical Cargo Match Verified
+                    </span>
+                  )}
+                </div>
 
                 <div className="grid grid-cols-2 gap-3">
                   {currentShipment.pickupPhoto && (
