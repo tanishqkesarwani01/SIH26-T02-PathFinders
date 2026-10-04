@@ -2,29 +2,29 @@
 @import "leaflet/dist/leaflet.css";
 
 @theme {
-  /* Emerald Ink Backgrounds */
-  --color-slate-950: #03241b;
-  --color-slate-900: #064e3b;
-  --color-slate-800: #0a6c53;
-  --color-slate-700: #108d6d;
+  /* Night Violet Backgrounds */
+  --color-slate-950: #0f0819;
+  --color-slate-900: #1E1033;
+  --color-slate-800: #2e184d;
+  --color-slate-700: #3d2066;
   
-  /* Champagne Texts */
-  --color-slate-400: #d6c5a7;
-  --color-slate-300: #e8d7b7;
-  --color-slate-100: #F8E7C9;
-  --color-white: #fff9f0;
+  /* Dragon Fruit Texts */
+  --color-slate-400: #ffa3cb;
+  --color-slate-300: #ff8ec0;
+  --color-slate-100: #ffe6f0;
+  --color-white: #ffffff;
 
-  /* Champagne Accents (mapping emerald/teal to Champagne shades) */
-  --color-emerald-400: #ffedd1;
-  --color-emerald-500: #F8E7C9;
-  --color-emerald-600: #e2ceab;
-  --color-teal-500: #F8E7C9;
-  --color-teal-600: #e2ceab;
+  /* Dragon Fruit Accents (mapping emerald/teal to Dragon Fruit shades) */
+  --color-emerald-400: #ff72ae;
+  --color-emerald-500: #FF4696;
+  --color-emerald-600: #e63f87;
+  --color-teal-500: #FF4696;
+  --color-teal-600: #e63f87;
   
-  /* Purple accents to Champagne variant */
-  --color-purple-400: #ffedd1;
-  --color-purple-500: #F8E7C9;
-  --color-purple-600: #e2ceab;
+  /* Purple accents to Dragon Fruit variant */
+  --color-purple-400: #ff72ae;
+  --color-purple-500: #FF4696;
+  --color-purple-600: #e63f87;
 }
 
 @layer base {
@@ -45,7 +45,7 @@
     letter-spacing: -0.03em;
   }
 
-  /* Color Contrast Fix for Champagne Buttons */
+  /* Color Contrast Fix for Dragon Fruit Buttons */
   button.bg-emerald-500, 
   button.bg-gradient-to-r,
   .bg-emerald-500, 
@@ -80,9 +80,9 @@
   z-index: 10;
 }
 
-/* Emerald Map Theme for OpenStreetMap */
+/* Dragon Fruit / Night Violet Map Theme for OpenStreetMap */
 .leaflet-container .leaflet-tile-pane {
-  filter: brightness(0.6) invert(1) contrast(3) hue-rotate(160deg) saturate(0.25) brightness(0.7);
+  filter: brightness(0.6) invert(1) contrast(3) hue-rotate(280deg) saturate(0.25) brightness(0.7);
 }
 
 .leaflet-popup-content-wrapper {
