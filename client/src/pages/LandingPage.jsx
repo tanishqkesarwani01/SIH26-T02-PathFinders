@@ -31,7 +31,8 @@ export default function LandingPage({
   trips = [],
   shipments = [],
   stats = {},
-  onSeedDemo
+  onSeedDemo,
+  onOpenLegal
 }) {
   const [searchOrigin, setSearchOrigin] = useState('Agra');
   const [searchDestination, setSearchDestination] = useState('Prayagraj');
@@ -698,21 +699,27 @@ export default function LandingPage({
 
       {/* Footer */}
       <footer className="py-10 bg-slate-950 border-t border-slate-800 text-xs text-slate-400">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <div className="w-7 h-7 rounded-lg bg-emerald-500 flex items-center justify-center text-slate-950 font-black">
-              <Truck className="w-4 h-4" />
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-6">
+          <div className="flex flex-col sm:flex-row items-center gap-4 text-center sm:text-left">
+            <div className="flex items-center gap-3">
+              <div className="w-7 h-7 rounded-lg bg-emerald-500 flex items-center justify-center text-slate-950 font-black">
+                <Truck className="w-4 h-4" />
+              </div>
+              <div>
+                <span className="font-extrabold text-white">LoadLink</span>
+                <span className="text-slate-500 ml-2 hidden sm:inline">• Shared Freight Network & Route Optimizer</span>
+              </div>
             </div>
-            <div>
-              <span className="font-extrabold text-white">LoadLink</span>
-              <span className="text-slate-500 ml-2">• Shared Freight Network & Route Optimizer</span>
+            
+            <div className="flex items-center gap-3 text-[11px] text-slate-400 font-medium sm:ml-4 sm:border-l sm:border-slate-800 sm:pl-4">
+              <button onClick={() => onOpenLegal('privacy')} className="hover:text-emerald-400 transition-colors">Privacy Policy</button>
+              <span>•</span>
+              <button onClick={() => onOpenLegal('terms')} className="hover:text-emerald-400 transition-colors">Terms & Conditions</button>
             </div>
           </div>
 
           <div className="flex items-center gap-4 text-[11px] text-slate-400">
-            <span>UP & NCR Corridor Network</span>
-            <span>•</span>
-            <span>OSRM Road Geometries</span>
+            <span>UP & NCR Corridor</span>
             <span>•</span>
             <span>Smart Escrow</span>
           </div>

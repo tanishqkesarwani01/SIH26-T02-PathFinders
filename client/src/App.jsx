@@ -9,8 +9,9 @@ import LandingPage from './pages/LandingPage';
 import TrustVerificationModal from './components/TrustVerificationModal';
 import DriverRatingModal from './components/DriverRatingModal';
 import AadhaarModal from './components/AadhaarModal';
+import CookieBanner from './components/CookieBanner';
+import LegalModal from './components/LegalModal';
 import { tripsAPI, shipmentsAPI, ratingsAPI, demoAPI, authAPI } from './services/api';
-
 export default function App() {
   const [activeMode, setActiveMode] = useState('landing'); // 'landing' | 'driver' | 'sender' | 'tracker' | 'admin'
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
@@ -36,7 +37,7 @@ export default function App() {
   });
 
   const [isAadhaarModalOpen, setIsAadhaarModalOpen] = useState(false);
-
+  const [legalModal, setLegalModal] = useState({ isOpen: false, type: 'privacy' });
   // Fetch all initial data
   const refreshAllData = async () => {
     try {
@@ -201,20 +202,19 @@ export default function App() {
     await refreshAllData();
   };
 
-  if (activeMode === 'landing') {
-    return (
-      <LandingPage
-        onNavigate={setActiveMode}
-        trips={trips}
-        shipments={shipments}
-        stats={stats}
-        onSeedDemo={handleSeedDemo}
-      />
-    );
-  }
-
   return (
-    <div className="theme-dashboard min-h-screen bg-slate-950 flex font-sans text-slate-100 selection:bg-emerald-500 selection:text-white">
+    <>
+      {activeMode === 'landing' ? (
+        <LandingPage
+          onNavigate={setActiveMode}
+          trips={trips}
+          shipments={shipments}
+          stats={stats}
+          onSeedDemo={handleSeedDemo}
+          onOpenLegal={(type) => setLegalModal({ isOpen: true, type })}
+        />
+      ) : (
+        <div className="theme-dashboard min-h-screen bg-slate-950 flex font-sans text-slate-100 selection:bg-emerald-500 selection:text-white">
       
       {/* Collapsible Vertical Sidebar */}
       <Sidebar
@@ -323,12 +323,14 @@ export default function App() {
             <span>•</span>
             <span>Shared Logistics & Route Optimization Platform</span>
           </div>
-          <div className="flex items-center gap-3 text-[11px] text-slate-400 font-medium">
+          <div className="flex items-center flex-wrap gap-3 text-[11px] text-slate-400 font-medium justify-center">
             <span>Dynamic Highway Corridors</span>
             <span>•</span>
-            <span>Escrow OTP Handshake</span>
-            <span>•</span>
             <span>Zero Deadhead Freight</span>
+            <span className="hidden sm:inline">•</span>
+            <button onClick={() => setLegalModal({ isOpen: true, type: 'privacy' })} className="hover:text-emerald-400 transition-colors">Privacy Policy</button>
+            <span>•</span>
+            <button onClick={() => setLegalModal({ isOpen: true, type: 'terms' })} className="hover:text-emerald-400 transition-colors">Terms & Conditions</button>
           </div>
         </footer>
 
@@ -364,6 +366,16 @@ export default function App() {
         onVerifyAadhaar={handleVerifyAadhaar}
       />
 
-    </div>
+        </div>
+      )}
+
+      {/* Legal & Compliance Components (Shared globally) */}
+      <LegalModal 
+        isOpen={legalModal.isOpen} 
+        type={legalModal.type} 
+        onClose={() => setLegalModal({ ...legalModal, isOpen: false })} 
+      />
+      <CookieBanner />
+    </>
   );
 }
