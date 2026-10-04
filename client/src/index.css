@@ -14,20 +14,42 @@
   --color-slate-100: #ffe6f0;
   --color-white: #ffffff;
 
-  /* Dragon Fruit Accents (mapping emerald/teal to Dragon Fruit shades) */
+  /* Dragon Fruit Accents */
   --color-emerald-400: #ff72ae;
   --color-emerald-500: #FF4696;
   --color-emerald-600: #e63f87;
   --color-teal-500: #FF4696;
   --color-teal-600: #e63f87;
-  
-  /* Purple accents to Dragon Fruit variant */
   --color-purple-400: #ff72ae;
   --color-purple-500: #FF4696;
   --color-purple-600: #e63f87;
 }
 
 @layer base {
+  .theme-dashboard {
+    /* Royal Iris Backgrounds */
+    --color-slate-950: #1d0652;
+    --color-slate-900: #3A0CA3;
+    --color-slate-800: #4910c2;
+    --color-slate-700: #5716df;
+    
+    /* Butter Yellow Texts */
+    --color-slate-400: #fffbbf;
+    --color-slate-300: #fff99f;
+    --color-slate-100: #fffee6;
+    --color-white: #ffffff;
+
+    /* Butter Yellow Accents */
+    --color-emerald-400: #fff699;
+    --color-emerald-500: #FFF275;
+    --color-emerald-600: #e6d869;
+    --color-teal-500: #FFF275;
+    --color-teal-600: #e6d869;
+    --color-purple-400: #fff699;
+    --color-purple-500: #FFF275;
+    --color-purple-600: #e6d869;
+  }
+
   body {
     background-color: var(--color-slate-950);
     color: var(--color-slate-100);
@@ -45,7 +67,7 @@
     letter-spacing: -0.03em;
   }
 
-  /* Color Contrast Fix for Dragon Fruit Buttons */
+  /* Color Contrast Fix for Accent Buttons */
   button.bg-emerald-500, 
   button.bg-gradient-to-r,
   .bg-emerald-500, 
@@ -83,6 +105,11 @@
 /* Dragon Fruit / Night Violet Map Theme for OpenStreetMap */
 .leaflet-container .leaflet-tile-pane {
   filter: brightness(0.6) invert(1) contrast(3) hue-rotate(280deg) saturate(0.25) brightness(0.7);
+}
+
+.theme-dashboard .leaflet-container .leaflet-tile-pane,
+.theme-dashboard.leaflet-container .leaflet-tile-pane {
+  filter: brightness(0.6) invert(1) contrast(3) hue-rotate(240deg) saturate(0.25) brightness(0.7);
 }
 
 .leaflet-popup-content-wrapper {

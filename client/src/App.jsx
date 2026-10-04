@@ -214,7 +214,7 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 flex font-sans text-slate-100 selection:bg-emerald-500 selection:text-white">
+    <div className="theme-dashboard min-h-screen bg-slate-950 flex font-sans text-slate-100 selection:bg-emerald-500 selection:text-white">
       
       {/* Collapsible Vertical Sidebar */}
       <Sidebar
