@@ -27,27 +27,27 @@
 
 @layer base {
   .theme-dashboard {
-    /* Royal Iris Backgrounds */
-    --color-slate-950: #1d0652;
-    --color-slate-900: #3A0CA3;
-    --color-slate-800: #4910c2;
-    --color-slate-700: #5716df;
+    /* Charcoal Backgrounds */
+    --color-slate-950: #1c171d;
+    --color-slate-900: #2E262F;
+    --color-slate-800: #463947;
+    --color-slate-700: #5d4d5e;
     
-    /* Butter Yellow Texts */
-    --color-slate-400: #fffbbf;
-    --color-slate-300: #fff99f;
-    --color-slate-100: #fffee6;
+    /* Neon Lime Texts */
+    --color-slate-400: #d3ff7a;
+    --color-slate-300: #c7ff54;
+    --color-slate-100: #edffc7;
     --color-white: #ffffff;
 
-    /* Butter Yellow Accents */
-    --color-emerald-400: #fff699;
-    --color-emerald-500: #FFF275;
-    --color-emerald-600: #e6d869;
-    --color-teal-500: #FFF275;
-    --color-teal-600: #e6d869;
-    --color-purple-400: #fff699;
-    --color-purple-500: #FFF275;
-    --color-purple-600: #e6d869;
+    /* Neon Lime Accents */
+    --color-emerald-400: #d3ff7a;
+    --color-emerald-500: #B6FF2E;
+    --color-emerald-600: #92d119;
+    --color-teal-500: #B6FF2E;
+    --color-teal-600: #92d119;
+    --color-purple-400: #d3ff7a;
+    --color-purple-500: #B6FF2E;
+    --color-purple-600: #92d119;
   }
 
   body {
@@ -109,7 +109,7 @@
 
 .theme-dashboard .leaflet-container .leaflet-tile-pane,
 .theme-dashboard.leaflet-container .leaflet-tile-pane {
-  filter: brightness(0.6) invert(1) contrast(3) hue-rotate(240deg) saturate(0.25) brightness(0.7);
+  filter: brightness(0.6) invert(1) contrast(3) hue-rotate(100deg) saturate(0.25) brightness(0.7);
 }
 
 .leaflet-popup-content-wrapper {
