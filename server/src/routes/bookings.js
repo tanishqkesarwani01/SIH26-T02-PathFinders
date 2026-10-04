@@ -82,11 +82,11 @@ router.post('/', authMiddleware, requireRole('SHIPPER', 'ADMIN'), async (req, re
     const reqVol = parseFloat(volumeCbm) || 0.5;
 
     if (trip.availableCapacityWeight < reqWeight) {
-      return res.status(400).json({ error: Not enough weight capacity on truck. Available:  kg });
+      return res.status(400).json({ error: `Not enough weight capacity on truck. Available: ${trip.availableCapacityWeight} kg` });
     }
 
     if (trip.availableCapacityVolume < reqVol) {
-      return res.status(400).json({ error: Not enough volume capacity on truck. Available:  CBM });
+      return res.status(400).json({ error: `Not enough volume capacity on truck. Available: ${trip.availableCapacityVolume} CBM` });
     }
 
     const distance = await getCityDistance(pickupLocation || trip.origin, dropLocation || trip.destination);
@@ -104,7 +104,7 @@ router.post('/', authMiddleware, requireRole('SHIPPER', 'ADMIN'), async (req, re
     const deliveryOtp = generateOtp();
 
     const newBooking = {
-      id: k_,
+      id: `bk_${uuidv4()}`,
       tripId: trip.id,
       shipperId: req.user.id,
       shipperName: req.user.name,
@@ -140,11 +140,11 @@ router.post('/', authMiddleware, requireRole('SHIPPER', 'ADMIN'), async (req, re
 
     // Initial coordination message
     db.createMessage({
-      id: msg_,
+      id: `msg_${uuidv4()}`,
       bookingId: newBooking.id,
       senderId: req.user.id,
       senderName: req.user.name,
-      text: Hi , I have submitted a shipment request for kg from  to .,
+      text: `Hi ${trip.driverName}, I have submitted a shipment request for ${reqWeight} kg from ${pickupLocation || trip.origin} to ${dropLocation || trip.destination}.`,
       timestamp: new Date().toISOString()
     });
 
@@ -174,11 +174,11 @@ router.put('/:id/accept', authMiddleware, requireRole('DRIVER', 'ADMIN'), (req, 
   const updated = db.updateBooking(booking.id, { status: 'ACCEPTED' });
 
   db.createMessage({
-    id: msg_,
+    id: `msg_${uuidv4()}`,
     bookingId: booking.id,
     senderId: req.user.id,
     senderName: req.user.name,
-    text: Booking accepted! I will contact you before arriving at . Keep the Pickup OTP ready.,
+    text: `Booking accepted! I will contact you before arriving at ${booking.pickupLocation}. Keep the Pickup OTP ready.`,
     timestamp: new Date().toISOString()
   });
 
@@ -211,11 +211,11 @@ router.post('/:id/verify-pickup', authMiddleware, requireRole('DRIVER', 'ADMIN')
   });
 
   db.createMessage({
-    id: msg_,
+    id: `msg_${uuidv4()}`,
     bookingId: booking.id,
     senderId: req.user.id,
     senderName: req.user.name,
-    text: Cargo picked up and verified with Pickup OTP! Consignment is now IN TRANSIT to .,
+    text: `Cargo picked up and verified with Pickup OTP! Consignment is now IN TRANSIT to ${booking.dropLocation}.`,
     timestamp: new Date().toISOString()
   });
 
@@ -241,11 +241,11 @@ router.post('/:id/verify-delivery', authMiddleware, requireRole('DRIVER', 'ADMIN
   });
 
   db.createMessage({
-    id: msg_,
+    id: `msg_${uuidv4()}`,
     bookingId: booking.id,
     senderId: req.user.id,
     senderName: req.user.name,
-    text: Cargo delivered successfully and verified with Delivery OTP! Payment of ₹ released to driver wallet. Thank you!,
+    text: `Cargo delivered successfully and verified with Delivery OTP! Payment of ₹${booking.calculatedPrice} released to driver wallet. Thank you!`,
     timestamp: new Date().toISOString()
   });
 

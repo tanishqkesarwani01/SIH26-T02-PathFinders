@@ -35,6 +35,7 @@ class Database {
       vehicles: [],
       trips: [],
       shipments: [],
+      bookings: [],
       assignments: [],
       shipment_status_logs: [],
       payments: [],
@@ -58,6 +59,7 @@ class Database {
       vehicles: [],
       trips: [],
       shipments: [],
+      bookings: [],
       assignments: [],
       shipment_status_logs: [],
       payments: [],
@@ -151,6 +153,26 @@ class Database {
       this.data.shipments[idx] = { ...this.data.shipments[idx], ...updates, updatedAt: new Date().toISOString() };
       this.save();
       return this.data.shipments[idx];
+    }
+    return null;
+  }
+
+  // Bookings
+  getBookings() { return this.data.bookings || []; }
+  findBookingById(id) { return this.getBookings().find(b => b.id === id); }
+  createBooking(booking) {
+    if (!this.data.bookings) this.data.bookings = [];
+    this.data.bookings.unshift(booking);
+    this.save();
+    return booking;
+  }
+  updateBooking(id, updates) {
+    if (!this.data.bookings) this.data.bookings = [];
+    const idx = this.data.bookings.findIndex(b => b.id === id);
+    if (idx !== -1) {
+      this.data.bookings[idx] = { ...this.data.bookings[idx], ...updates, updatedAt: new Date().toISOString() };
+      this.save();
+      return this.data.bookings[idx];
     }
     return null;
   }

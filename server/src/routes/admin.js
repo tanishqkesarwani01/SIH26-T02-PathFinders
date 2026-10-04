@@ -48,7 +48,7 @@ router.put('/drivers/:id/verify', authMiddleware, requireRole('ADMIN'), (req, re
   const { status } = req.body; // VERIFIED or REJECTED
   const updated = db.updateUser(req.params.id, { kycStatus: status || 'VERIFIED' });
   if (!updated) return res.status(404).json({ error: 'Driver not found' });
-  res.json({ message: Driver KYC set to , driver: updated });
+  res.json({ message: `Driver KYC set to ${status || 'VERIFIED'}`, driver: updated });
 });
 
 module.exports = router;
