@@ -33,21 +33,21 @@
     --color-slate-800: #463947;
     --color-slate-700: #5d4d5e;
     
-    /* Neon Lime Texts */
-    --color-slate-400: #d3ff7a;
-    --color-slate-300: #c7ff54;
-    --color-slate-100: #edffc7;
+    /* Muted Lime Texts */
+    --color-slate-400: #8abf22;
+    --color-slate-300: #74a11d;
+    --color-slate-100: #a0d92b;
     --color-white: #ffffff;
 
-    /* Neon Lime Accents */
-    --color-emerald-400: #d3ff7a;
-    --color-emerald-500: #B6FF2E;
-    --color-emerald-600: #92d119;
-    --color-teal-500: #B6FF2E;
-    --color-teal-600: #92d119;
-    --color-purple-400: #d3ff7a;
-    --color-purple-500: #B6FF2E;
-    --color-purple-600: #92d119;
+    /* Muted Lime Accents (Half brightness of #B6FF2E) */
+    --color-emerald-400: #8abf22;
+    --color-emerald-500: #5c8017;
+    --color-emerald-600: #405910;
+    --color-teal-500: #5c8017;
+    --color-teal-600: #405910;
+    --color-purple-400: #8abf22;
+    --color-purple-500: #5c8017;
+    --color-purple-600: #405910;
   }
 
   body {
