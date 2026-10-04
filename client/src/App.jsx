@@ -11,6 +11,7 @@ import DriverRatingModal from './components/DriverRatingModal';
 import AadhaarModal from './components/AadhaarModal';
 import CookieBanner from './components/CookieBanner';
 import LegalModal from './components/LegalModal';
+import NotFoundPage from './pages/NotFoundPage';
 import { tripsAPI, shipmentsAPI, ratingsAPI, demoAPI, authAPI } from './services/api';
 export default function App() {
   const [activeMode, setActiveMode] = useState('landing'); // 'landing' | 'driver' | 'sender' | 'tracker' | 'admin'
@@ -38,6 +39,14 @@ export default function App() {
 
   const [isAadhaarModalOpen, setIsAadhaarModalOpen] = useState(false);
   const [legalModal, setLegalModal] = useState({ isOpen: false, type: 'privacy' });
+
+  // Basic router check for 404
+  useEffect(() => {
+    if (window.location.pathname !== '/' && window.location.pathname !== '') {
+      setActiveMode('404');
+    }
+  }, []);
+
   // Fetch all initial data
   const refreshAllData = async () => {
     try {
@@ -204,7 +213,9 @@ export default function App() {
 
   return (
     <>
-      {activeMode === 'landing' ? (
+      {activeMode === '404' ? (
+        <NotFoundPage onNavigate={setActiveMode} />
+      ) : activeMode === 'landing' ? (
         <LandingPage
           onNavigate={setActiveMode}
           trips={trips}
