@@ -10,7 +10,7 @@ It represents our proposed solution to a logistics problem: loading vehicles may
 
 - 🌐 **Live Frontend:** https://loadlink-tanishqlabs01.vercel.app/
 - ⚙️ **Production Backend:** https://sih26-t02-pathfinders.onrender.com/
-- 💻 **GitHub:** 
+- 💻 **GitHub:** https://github.com/tanishqkesarwani01/SIH26205-PathFinders
 
 ---
 
