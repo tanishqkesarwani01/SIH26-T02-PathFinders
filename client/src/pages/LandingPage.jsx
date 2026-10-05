@@ -146,9 +146,7 @@ export default function LandingPage({
           {/* Main Title */}
           <h1 className="text-4xl sm:text-6xl lg:text-7xl font-extrabold text-white tracking-tight leading-[1.1] max-w-5xl mx-auto">
             Monetize Empty Truck Beds. <br className="hidden sm:inline" />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-teal-300 to-sky-400">
-              Ship Freight Along Highway Corridors.
-            </span>
+            Ship Freight Along Highway Corridors.
           </h1>
 
           {/* Subtitle */}
