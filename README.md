@@ -2,15 +2,15 @@
 
 > **Making the vehicles already on the road work smarter.**
 
-**LoadLink** is a prototype built by **Team PathFinders** for our college's Internal Smart India Hackathon 2026.
+**LoadLink** is a prototype built by **Team PathFinders** for Smart India Hackathon 2026.
 
 It represents our proposed solution to a logistics problem: loading vehicles may travel with unused capacity while small shippers need affordable transportation. LoadLink aims to connect available vehicle capacity with compatible shipments and make better use of journeys that are already happening.
 
 ## 🔗 Live Demo & Repository
 
-- 🌐 **Live Frontend:** https://sih-26-t02-path-finders.vercel.app/
+- 🌐 **Live Frontend:** https://loadlink-tanishqlabs01.vercel.app/
 - ⚙️ **Production Backend:** https://sih26-t02-pathfinders.onrender.com/
-- 💻 **GitHub:** https://github.com/tanishqkesarwani01/SIH26-T02-PathFinders
+- 💻 **GitHub:** 
 
 ---
 
