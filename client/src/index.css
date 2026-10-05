@@ -2,56 +2,32 @@
 @import "leaflet/dist/leaflet.css";
 
 @theme {
-  /* Night Violet Backgrounds */
-  --color-slate-950: #0f0819;
-  --color-slate-900: #1E1033;
-  --color-slate-800: #2e184d;
-  --color-slate-700: #3d2066;
+  /* Midnight Slate Backgrounds (Dashboard Theme) */
+  --color-slate-950: #0B0F19;
+  --color-slate-900: #111827;
+  --color-slate-800: #1F2937;
+  --color-slate-700: #374151;
   
-  /* Dragon Fruit Texts */
-  --color-slate-400: #ffa3cb;
-  --color-slate-300: #ff8ec0;
-  --color-slate-100: #ffe6f0;
+  /* Clean Crisp Texts */
+  --color-slate-400: #9CA3AF;
+  --color-slate-300: #D1D5DB;
+  --color-slate-100: #F3F4F6;
   --color-white: #ffffff;
 
-  /* Dragon Fruit Accents */
-  --color-emerald-400: #ff72ae;
-  --color-emerald-500: #FF4696;
-  --color-emerald-600: #e63f87;
-  --color-teal-500: #FF4696;
-  --color-teal-600: #e63f87;
-  --color-purple-400: #ff72ae;
-  --color-purple-500: #FF4696;
-  --color-purple-600: #e63f87;
+  /* Glowing Cyan Accents */
+  --color-emerald-400: #22d3ee;
+  --color-emerald-500: #06b6d4;
+  --color-emerald-600: #0891b2;
+  --color-teal-500: #06b6d4;
+  --color-teal-600: #0891b2;
+  
+  /* Indigo Secondary Accents */
+  --color-purple-400: #818cf8;
+  --color-purple-500: #6366f1;
+  --color-purple-600: #4f46e5;
 }
 
 @layer base {
-  .theme-dashboard {
-    /* Midnight Slate Backgrounds */
-    --color-slate-950: #0B0F19;
-    --color-slate-900: #111827;
-    --color-slate-800: #1F2937;
-    --color-slate-700: #374151;
-    
-    /* Clean Crisp Texts */
-    --color-slate-400: #9CA3AF;
-    --color-slate-300: #D1D5DB;
-    --color-slate-100: #F3F4F6;
-    --color-white: #ffffff;
-
-    /* Glowing Cyan Accents */
-    --color-emerald-400: #22d3ee;
-    --color-emerald-500: #06b6d4;
-    --color-emerald-600: #0891b2;
-    --color-teal-500: #06b6d4;
-    --color-teal-600: #0891b2;
-    
-    /* Indigo Secondary Accents */
-    --color-purple-400: #818cf8;
-    --color-purple-500: #6366f1;
-    --color-purple-600: #4f46e5;
-  }
-
   body {
     background-color: var(--color-slate-950);
     color: var(--color-slate-100);
@@ -104,13 +80,8 @@
   z-index: 10;
 }
 
-/* Dragon Fruit / Night Violet Map Theme for OpenStreetMap */
+/* Dashboard Theme for OpenStreetMap */
 .leaflet-container .leaflet-tile-pane {
-  filter: brightness(0.6) invert(1) contrast(3) hue-rotate(280deg) saturate(0.25) brightness(0.7);
-}
-
-.theme-dashboard .leaflet-container .leaflet-tile-pane,
-.theme-dashboard.leaflet-container .leaflet-tile-pane {
   filter: brightness(0.6) invert(1) contrast(3) hue-rotate(100deg) saturate(0.25) brightness(0.7);
 }
 
